@@ -3,15 +3,15 @@ import { Button } from "./Button";
 import {
   useAccount,
   useReadContract,
-  useWalletClient,
   useWriteContract,
 } from "wagmi";
-import { safeZkSafeZkEmailRecoveryPlugin } from "../../contracts.base-sepolia.json";
+import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import { abi as safeAbi } from "../abi/Safe.json";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { StepsContext } from "../App";
 import { STEPS } from "../constants";
 import Loader from "./Loader";
+import infoIcon from "../assets/infoIcon.svg";
 import toast from "react-hot-toast";
 
 const EnableSafeModule = () => {
@@ -20,27 +20,21 @@ const EnableSafeModule = () => {
   const stepsContext = useContext(StepsContext);
   const [isEnableModalLoading, setIsEnableModuleLoading] = useState(false);
 
-  console.log(address);
-
-  // useEffect(() => {
-  //   if (!address) {
-  //     stepsContext?.setStep(STEPS.CONNECT_WALLETS);
-  //   }
-  // }, [address, stepsContext]);
+  console.log("Account address:", address);
 
   const { data: isModuleEnabled, isLoading: isCheckModuleEnabledLoading } =
     useReadContract({
       address,
       abi: safeAbi,
       functionName: "isModuleEnabled",
-      args: [safeZkSafeZkEmailRecoveryPlugin],
+      args: [safeEmailRecoveryModule],
     });
 
   useEffect(() => {
     console.log(isModuleEnabled);
   }, [isModuleEnabled]);
 
-  console.log(isModuleEnabled);
+  console.log("isModuleEnabled", isModuleEnabled);
 
   if (isModuleEnabled) {
     console.log("Module is enabled");
@@ -65,7 +59,7 @@ const EnableSafeModule = () => {
       abi: safeAbi,
       address,
       functionName: "enableModule",
-      args: [safeZkSafeZkEmailRecoveryPlugin],
+      args: [safeEmailRecoveryModule],
     });
   }, [address, writeContractAsync]);
 

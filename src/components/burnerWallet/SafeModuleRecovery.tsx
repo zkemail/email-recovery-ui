@@ -6,9 +6,9 @@ import {
   useWalletClient,
   useWriteContract,
 } from "wagmi";
-import { safeZkSafeZkEmailRecoveryPlugin } from "../../../contracts.base-sepolia.json";
+import { safeEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
 import { abi as safeAbi } from "../../abi/Safe.json";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { StepsContext } from "../../App";
 import { STEPS } from "../../constants";
 
@@ -31,7 +31,7 @@ const SafeModuleRecovery = () => {
     address,
     abi: safeAbi,
     functionName: "isModuleEnabled",
-    args: [safeZkSafeZkEmailRecoveryPlugin],
+    args: [safeEmailRecoveryModule],
   });
 
   console.log(isModuleEnabled);
@@ -52,7 +52,7 @@ const SafeModuleRecovery = () => {
       abi: safeAbi,
       address,
       functionName: "enableModule",
-      args: [safeZkSafeZkEmailRecoveryPlugin],
+      args: [safeEmailRecoveryModule],
     });
   }, [address, writeContractAsync]);
 

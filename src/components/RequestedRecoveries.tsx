@@ -1,5 +1,4 @@
 import { useCallback, useContext, useState } from "react";
-import { Web3Provider } from "../providers/Web3Provider";
 import { ConnectKitButton } from "connectkit";
 import { Button } from "./Button";
 import cancelRecoveryIcon from "../assets/cancelRecoveryIcon.svg";
@@ -9,9 +8,9 @@ import { useAppContext } from "../context/AppContextHook";
 import { useAccount, useReadContract } from "wagmi";
 
 import { relayer } from "../services/relayer";
-import { abi as recoveryPluginAbi } from "../abi/SafeZkEmailRecoveryPlugin.json";
+import { abi as recoveryPluginAbi } from "../abi/SafeEmailRecoveryModule.json";
 import { getRequestsRecoverySubject, templateIdx } from "../utils/email";
-import { safeZkSafeZkEmailRecoveryPlugin } from "../../contracts.base-sepolia.json";
+import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import { StepsContext } from "../App";
 import { STEPS } from "../constants";
 import { FlowContext } from "./StepSelection";
@@ -44,7 +43,7 @@ const RequestedRecoveries = () => {
 
   const { data: recoveryRouterAddr } = useReadContract({
     abi: recoveryPluginAbi,
-    address: safeZkSafeZkEmailRecoveryPlugin as `0x${string}`,
+    address: safeEmailRecoveryModule as `0x${string}`,
     functionName: "getRouterForSafe",
     args: [safeWalletAddress],
   });

@@ -6,8 +6,8 @@ import { abi as safeAbi } from "../abi/Safe.json";
 import infoIcon from "../assets/infoIcon.svg";
 import { useAppContext } from "../context/AppContextHook";
 
-import { abi as recoveryPluginAbi } from "../abi/SafeZkEmailRecoveryPlugin.json";
-import { safeZkSafeZkEmailRecoveryPlugin } from "../../contracts.base-sepolia.json";
+import { abi as safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule.json";
+import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import {
   genAccountCode,
   getRequestGuardianSubject,
@@ -15,7 +15,6 @@ import {
 } from "../utils/email";
 import { readContract } from "wagmi/actions";
 import { config } from "../providers/config";
-import { pad } from "viem";
 import { relayer } from "../services/relayer";
 import { StepsContext } from "../App";
 import { STEPS } from "../constants";
@@ -32,6 +31,7 @@ const GuardianSetup = () => {
   const [loading, setLoading] = useState(false);
   // 0 = 2 week default delay, don't do for demo
   const [recoveryDelay, setRecoveryDelay] = useState(1);
+  const [recoveryExpiry, setRecoveryExpiry] = useState(1);
 
   const isMobile = window.innerWidth < 768;
 
@@ -78,40 +78,30 @@ const GuardianSetup = () => {
         guardianEmail
       );
       const guardianAddr = await readContract(config, {
-        abi: recoveryPluginAbi,
-        address: safeZkSafeZkEmailRecoveryPlugin as `0x${string}`,
+        abi: safeEmailRecoveryModuleAbi,
+        address: safeEmailRecoveryModule as `0x${string}`,
         functionName: "computeEmailAuthAddress",
         args: [guardianSalt],
       });
-      // TODO Should this be something else?
-      const previousOwnerInLinkedList = pad("0x1", {
-        size: 20,
-      });
 
       await writeContractAsync({
-        abi: recoveryPluginAbi,
-        address: safeZkSafeZkEmailRecoveryPlugin as `0x${string}`,
+        abi: safeEmailRecoveryModuleAbi,
+        address: safeEmailRecoveryModule as `0x${string}`,
         functionName: "configureRecovery",
         args: [
-          firstSafeOwner,
-          guardianAddr,
+          [guardianAddr],
+          [1n],
+          [1n],
           recoveryDelay,
-          previousOwnerInLinkedList,
+          recoveryExpiry
         ],
       });
 
       console.debug("recovery configured");
 
-      const recoveryRouterAddr = (await readContract(config, {
-        abi: recoveryPluginAbi,
-        address: safeZkSafeZkEmailRecoveryPlugin as `0x${string}`,
-        functionName: "getRouterForSafe",
-        args: [address],
-      })) as string;
-
       const subject = getRequestGuardianSubject(address);
       const { requestId } = await relayer.acceptanceRequest(
-        recoveryRouterAddr,
+        safeEmailRecoveryModule as `0x${string}`,
         guardianEmail,
         acctCode,
         templateIdx,
@@ -120,39 +110,14 @@ const GuardianSetup = () => {
 
       console.debug("accept req id", requestId);
 
-      // TODO Use polling instead
+      // TODO: Use polling instead
       stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
-      // let checkGuardianAcceptanceInterval = null
-
-      // const checkGuardianAcceptance = async () => {
-      //   if (!requestId) {
-      //     throw new Error("missing guardian request id");
-      //   }
-      //   const resBody = await relayer.requestStatus(requestId);
-      //   console.debug("guardian req res body", resBody);
-      //   if(resBody?.is_success) {
-      //     stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
-      //     checkGuardianAcceptanceInterval?.clearInterval()
-      //   }
-      // }
-      // checkGuardianAcceptanceInterval = setInterval(async () => {
-      //     const res = await checkGuardianAcceptance();
-      //     console.log(res)
-      // }, 5000);
     } catch (err) {
       toast.error(err.shortMessage);
     } finally {
       setLoading(false);
     }
-  }, [
-    address,
-    firstSafeOwner,
-    guardianEmail,
-    recoveryDelay,
-    accountCode,
-    setAccountCode,
-    writeContractAsync,
-  ]);
+  }, [address, guardianEmail, firstSafeOwner, setAccountCode, accountCode, writeContractAsync, recoveryDelay, recoveryExpiry, stepsContext]);
 
   return (
     <div
@@ -213,7 +178,17 @@ const GuardianSetup = () => {
                 type="number"
                 min={1}
                 value={recoveryDelay}
-                onChange={(e) => setRecoveryDelay(e.target.value)}
+                onChange={(e) => setRecoveryDelay(parseInt((e.target as HTMLInputElement).value))}
+              />
+            </div>
+            <div>
+              <span>Recovery Expiry (seconds)</span>
+              <input
+                style={{ width: "1.875rem", marginLeft: "1rem" }}
+                type="number"
+                min={1}
+                value={recoveryExpiry}
+                onChange={(e) => setRecoveryExpiry(parseInt((e.target as HTMLInputElement).value))}
               />
             </div>
           </div>

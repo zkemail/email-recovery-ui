@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import "./App.css";
 import { STEPS } from "./constants";
 import { AppContextProvider } from "./context/AppContextProvider";
@@ -8,7 +8,6 @@ import ErrorPage from "./pages/errorPage";
 import SafeWalletFlow from "./pages/safeWalletFlow";
 import BurnerWalletFlow from "./pages/burnerWalletFlow";
 import RecoverWalletFlow from "./pages/recoverWalletFlow";
-import toast from "react-hot-toast";
 
 export const StepsContext = createContext(null);
 
@@ -16,18 +15,6 @@ function App() {
   const [step, setStep] = useState(STEPS.STEP_SELECTION);
 
   return (
-    // <AppContextProvider>
-    //   <StepsContext.Provider
-    //     value={{
-    //       step,
-    //       setStep,
-    //     }}
-    //   >
-    //     <div className="app">
-    //       <StepSelection />
-    //     </div>
-    //   </StepsContext.Provider>
-    // </AppContextProvider>
     <AppContextProvider>
       <StepsContext.Provider
         value={{

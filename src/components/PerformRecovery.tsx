@@ -1,13 +1,13 @@
 import { useState, useCallback } from 'react'
 import { Button } from './Button'
 import { relayer } from '../services/relayer'
-import { abi as recoveryPluginAbi } from '../abi/SafeZkEmailRecoveryPlugin.json'
+import { abi as recoveryPluginAbi } from '../abi/safeEmailRecoveryModule.json'
 import { useReadContract, useAccount } from 'wagmi'
 import {
     getRequestsRecoverySubject,
     templateIdx
 } from '../utils/email'
-import { safeZkSafeZkEmailRecoveryPlugin } from '../../contracts.base-sepolia.json'
+import { safeEmailRecoveryModule } from '../../contracts.base-sepolia.json'
 import { useAppContext } from '../context/AppContextHook'
 
 export function PerformRecovery() {
@@ -26,7 +26,7 @@ export function PerformRecovery() {
 
     const { data: recoveryRouterAddr } = useReadContract({
         abi: recoveryPluginAbi,
-        address: safeZkSafeZkEmailRecoveryPlugin as `0x${string}`,
+        address: safeEmailRecoveryModule as `0x${string}`,
         functionName: 'getRouterForSafe',
         args: [address]
     });

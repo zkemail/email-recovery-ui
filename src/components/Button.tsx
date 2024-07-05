@@ -5,13 +5,13 @@ type ButtonProps = {
   loading?: boolean;
 } & React.ComponentPropsWithoutRef<"button">;
 
-export function Button({ children, ...buttonProps }: ButtonProps) {
+export function Button({ children, endIcon, loading, ...buttonProps }: ButtonProps) {
   return (
     <div className="button">
       <button {...buttonProps}>
         {children}
-        {buttonProps?.endIcon ? buttonProps?.endIcon : null}
-        {buttonProps?.loading ? <div className="loader" /> : null}
+        {endIcon ? endIcon : null}
+        {loading ? <div className="loader" /> : null}
       </button>
     </div>
   );
