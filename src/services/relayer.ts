@@ -41,7 +41,7 @@ class Relayer {
 			method: "POST",
 			url: `${this.apiUrl}/acceptanceRequest`,
 			data: {
-				wallet_eth_addr: walletEthAddr,
+				controller_eth_addr: walletEthAddr,
 				guardian_email_addr: guardianEmailAddr,
 				account_code: accountCode,
 				template_idx: templateIdx,
@@ -62,7 +62,7 @@ class Relayer {
 			method: "POST",
 			url: `${this.apiUrl}/recoveryRequest`,
 			data: {
-				wallet_eth_addr: walletEthAddr,
+				controller_eth_addr: walletEthAddr,
 				guardian_email_addr: guardianEmailAddr,
 				template_idx: templateIdx,
 				subject,
@@ -72,12 +72,14 @@ class Relayer {
 		return { requestId };
     }
 
-    async completeRecovery(walletEthAddr: string) {
+    async completeRecovery(walletEthAddr: string, account_eth_addr: string, complete_calldata: string) {
 		const data = await axios({
 			method: "POST",
-			url: `${this.apiUrl}/completeRecovery`,
+			url: `${this.apiUrl}/completeRequest`,
 			data: {
-				wallet_eth_addr: walletEthAddr,
+				controller_eth_addr: walletEthAddr,
+				account_eth_addr,
+				complete_calldata
 			}
 		})
 		return data;
