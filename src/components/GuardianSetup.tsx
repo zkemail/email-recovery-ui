@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { Button } from "./Button";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
@@ -28,6 +28,9 @@ const GuardianSetup = () => {
     useAppContext();
   const stepsContext = useContext(StepsContext);
 
+  const [isAccountInitialized, setIsAccountInitialized] = useState(false);
+  const [isAccountInitializedLoading, setIsAccountInitializedLoading] =
+    useState(false);
   const [loading, setLoading] = useState(false);
   // 0 = 2 week default delay, don't do for demo
   const [recoveryDelay, setRecoveryDelay] = useState(1);
@@ -48,6 +51,23 @@ const GuardianSetup = () => {
     return safeOwners[0];
   }, [safeOwnersData]);
 
+  const checkIfRecoveryIsConfigured = async () => {
+    setIsAccountInitializedLoading(true);
+    const getGuardianConfig = await readContract(config, {
+      abi: safeEmailRecoveryModuleAbi,
+      address: safeEmailRecoveryModule as `0x${string}`,
+      functionName: "getGuardianConfig",
+      args: [address],
+    });
+
+    setIsAccountInitialized(getGuardianConfig?.initialized);
+    setIsAccountInitializedLoading(false);
+  };
+
+  useEffect(() => {
+    checkIfRecoveryIsConfigured();
+  }, []);
+
   const configureRecoveryAndRequestGuardian = useCallback(async () => {
     if (!address) {
       throw new Error("unable to get account address");
@@ -66,8 +86,8 @@ const GuardianSetup = () => {
       toast("Please check Safe Website to complete transaction", {
         icon: <img src={infoIcon} />,
         style: {
-          background: 'white'
-        }
+          background: "white",
+        },
       });
 
       const acctCode = await genAccountCode();
@@ -81,20 +101,14 @@ const GuardianSetup = () => {
         abi: safeEmailRecoveryModuleAbi,
         address: safeEmailRecoveryModule as `0x${string}`,
         functionName: "computeEmailAuthAddress",
-        args: [guardianSalt],
+        args: [address, guardianSalt],
       });
 
       await writeContractAsync({
         abi: safeEmailRecoveryModuleAbi,
         address: safeEmailRecoveryModule as `0x${string}`,
         functionName: "configureRecovery",
-        args: [
-          [guardianAddr],
-          [1n],
-          [1n],
-          recoveryDelay,
-          recoveryExpiry
-        ],
+        args: [[guardianAddr], [1n], [1n], recoveryDelay, recoveryExpiry],
       });
 
       console.debug("recovery configured");
@@ -113,11 +127,26 @@ const GuardianSetup = () => {
       // TODO: Use polling instead
       stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
     } catch (err) {
+      console.log(err);
       toast.error(err.shortMessage);
     } finally {
       setLoading(false);
     }
-  }, [address, guardianEmail, firstSafeOwner, setAccountCode, accountCode, writeContractAsync, recoveryDelay, recoveryExpiry, stepsContext]);
+  }, [
+    address,
+    guardianEmail,
+    firstSafeOwner,
+    setAccountCode,
+    accountCode,
+    writeContractAsync,
+    recoveryDelay,
+    recoveryExpiry,
+    stepsContext,
+  ]);
+
+  if (isAccountInitializedLoading) {
+    return <>Loading...</>;
+  }
 
   return (
     <div
@@ -178,7 +207,11 @@ const GuardianSetup = () => {
                 type="number"
                 min={1}
                 value={recoveryDelay}
-                onChange={(e) => setRecoveryDelay(parseInt((e.target as HTMLInputElement).value))}
+                onChange={(e) =>
+                  setRecoveryDelay(
+                    parseInt((e.target as HTMLInputElement).value)
+                  )
+                }
               />
             </div>
             <div>
@@ -188,14 +221,22 @@ const GuardianSetup = () => {
                 type="number"
                 min={1}
                 value={recoveryExpiry}
-                onChange={(e) => setRecoveryExpiry(parseInt((e.target as HTMLInputElement).value))}
+                onChange={(e) =>
+                  setRecoveryExpiry(
+                    parseInt((e.target as HTMLInputElement).value)
+                  )
+                }
               />
             </div>
           </div>
         </div>
       </div>
       <div style={{ margin: "auto" }}>
-        <Button disabled={!guardianEmail} loading={loading} onClick={configureRecoveryAndRequestGuardian}>
+        <Button
+          disabled={!guardianEmail || isAccountInitialized}
+          loading={loading}
+          onClick={configureRecoveryAndRequestGuardian}
+        >
           Configure Recovery and Request Guardian
         </Button>
       </div>

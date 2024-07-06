@@ -15,6 +15,9 @@ import { StepsContext } from "../App";
 import { STEPS } from "../constants";
 import { FlowContext } from "./StepSelection";
 import toast from "react-hot-toast";
+import { readContract } from "wagmi/actions";
+import { config } from "../providers/config";
+import { abi as safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule.json";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -34,7 +37,7 @@ const RequestedRecoveries = () => {
   const [guardianEmailAddress, setGuardianEmailAddress] =
     useState(guardianEmail);
   const [buttonState, setButtonState] = useState(
-    BUTTON_STATES.TRIGGER_RECOVERY
+    BUTTON_STATES.COMPLETE_RECOVERY
   );
   const flowContext = useContext(FlowContext);
 
@@ -47,6 +50,38 @@ const RequestedRecoveries = () => {
     functionName: "getRouterForSafe",
     args: [safeWalletAddress],
   });
+
+  const checkIfRecoveryCanBeCompleted = async () => {
+    // setIsAccountInitializedLoading(true);
+    const getRecoveryRequest = await readContract(config, {
+      abi: safeEmailRecoveryModuleAbi,
+      address: safeEmailRecoveryModule as `0x${string}`,
+      functionName: "getRecoveryRequest",
+      args: [address],
+    });
+
+    const getGuardianConfig = await readContract(config, {
+      abi: safeEmailRecoveryModuleAbi,
+      address: safeEmailRecoveryModule as `0x${string}`,
+      functionName: "getGuardianConfig",
+      args: [address],
+    });
+
+    if (getRecoveryRequest.currentWeight < getGuardianConfig.threshold) {
+      setButtonState(BUTTON_STATES.TRIGGER_RECOVERY);
+    } else {
+      setButtonState(BUTTON_STATES.COMPLETE_RECOVERY);
+    }
+
+    // setIsAccountInitialized(getGuardianConfig?.initialized);
+    // setIsAccountInitializedLoading(false);
+  };
+
+  // useEffect(() => {
+  checkIfRecoveryCanBeCompleted();
+  // }, []);
+
+  console.log(recoveryRouterAddr);
 
   const requestRecovery = useCallback(async () => {
     setLoading(true);
@@ -62,15 +97,15 @@ const RequestedRecoveries = () => {
       throw new Error("new owner not set");
     }
 
-    if (!recoveryRouterAddr) {
-      throw new Error("could not find recovery router for safe");
-    }
+    // if (!recoveryRouterAddr) {
+    //   throw new Error("could not find recovery router for safe");
+    // }
 
     const subject = getRequestsRecoverySubject(safeWalletAddress, newOwner);
 
     try {
       const { requestId } = await relayer.recoveryRequest(
-        recoveryRouterAddr as string,
+        safeEmailRecoveryModule as string,
         guardianEmailAddress,
         templateIdx,
         subject
@@ -80,7 +115,7 @@ const RequestedRecoveries = () => {
       setButtonState(BUTTON_STATES.COMPLETE_RECOVERY);
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong while requesting recovery")
+      toast.error("Something went wrong while requesting recovery");
       setLoading(false);
     } finally {
       setLoading(false);
@@ -111,11 +146,15 @@ const RequestedRecoveries = () => {
 
   const completeRecovery = useCallback(async () => {
     setLoading(true);
-    if (!recoveryRouterAddr) {
-      throw new Error("could not find recovery router for safe");
-    }
+    // if (!recoveryRouterAddr) {
+    //   throw new Error("could not find recovery router for safe");
+    // }
 
-    const res = relayer.completeRecovery(recoveryRouterAddr as string);
+    const res = relayer.completeRecovery(
+      safeEmailRecoveryModule as string,
+      safeWalletAddress as string,
+      "0xe318b52b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000039a67afa3b68589a65f43c24feadd24df4bb74e7000000000000000000000000b73d634be2a7466bf7ba08c1ae1a1941eae155f1"
+    );
 
     console.debug("complete recovery res", res);
     setLoading(false);

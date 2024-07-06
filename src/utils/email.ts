@@ -1,6 +1,7 @@
 import { buildPoseidon } from "circomlibjs";
+import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 
-export const templateIdx = 0
+export const templateIdx = 0;
 
 // From https://github.com/zkemail/email-wallet/blob/main/packages/frontend/src/components/RegisterUnclaim.tsx
 // function padStringToBytes(str: string, len: number): Uint8Array {
@@ -24,16 +25,16 @@ export const templateIdx = 0
 // }
 
 export function bytesToHex(bytes: Uint8Array) {
-    return [...bytes]
-        .reverse()
-        .map(x => x.toString(16).padStart(2, "0"))
-        .join("");
+  return [...bytes]
+    .reverse()
+    .map((x) => x.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 export async function genAccountCode(): Promise<string> {
-    const poseidon = await buildPoseidon();
-    const accountCodeBytes: Uint8Array = poseidon.F.random();
-    return bytesToHex(accountCodeBytes);
+  const poseidon = await buildPoseidon();
+  const accountCodeBytes: Uint8Array = poseidon.F.random();
+  return bytesToHex(accountCodeBytes);
 }
 
 // Use relayer.getAccountSalt instead
@@ -48,7 +49,11 @@ export async function genAccountCode(): Promise<string> {
 // }
 
 // TODO Update both with safe module accept subject
-export const getRequestGuardianSubject = (acctAddr: string) => 
-    `Accept guardian request for ${acctAddr}`;
-export const getRequestsRecoverySubject = (acctAddr: string, newOwner: string) => 
-    `Update owner to ${newOwner} on account ${acctAddr}`;
+export const getRequestGuardianSubject = (acctAddr: string) =>
+  `Accept guardian request for ${acctAddr}`;
+export const getRequestsRecoverySubject = (
+  acctAddr: string,
+  newOwner: string
+) =>
+  // `Update owner to ${newOwner} on account ${acctAddr}`;
+  `Recover account ${acctAddr} from old owner ${"0x39A67aFa3b68589a65F43c24FEaDD24df4Bb74e7"} to new owner ${newOwner} using recovery module ${safeEmailRecoveryModule}`;
