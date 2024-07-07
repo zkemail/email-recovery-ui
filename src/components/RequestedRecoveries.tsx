@@ -86,6 +86,15 @@ const RequestedRecoveries = () => {
 
   console.log(newOwner);
 
+  const { data: safeOwnersData } = useReadContract({
+    address,
+    abi: safeAbi,
+    functionName: "getOwners",
+  });
+
+  console.log(safeOwnersData)
+
+
   const requestRecovery = useCallback(async () => {
     setLoading(true);
     if (!safeWalletAddress) {
@@ -147,13 +156,11 @@ const RequestedRecoveries = () => {
   const completeRecovery = useCallback(async () => {
     setLoading(true);
 
-    console.log(newOwner, address)
-
     const callData = encodeFunctionData(
       {
         abi: safeAbi,
         functionName: "swapOwner",
-        args: ["0x0000000000000000000000000000000000000001" ,address, newOwner]
+        args: ["0x0000000000000000000000000000000000000001" ,safeOwnersData[0], newOwner]
       }
     )
 
@@ -204,7 +211,7 @@ const RequestedRecoveries = () => {
         return (
           <Button
             loading={loading}
-            onClick={() => stepsContext.setStep(STEPS.CONNECT_WALLETS)}
+            onClick={() => stepsContext.setStep(STEPS.STEP_SELECTION)}
           >
             Complete! Connect new wallet to set new guardians ➔
           </Button>
