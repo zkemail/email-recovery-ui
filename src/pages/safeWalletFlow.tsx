@@ -30,7 +30,7 @@ const SafeWalletFlow = () => {
       case STEPS.REQUEST_GUARDIAN:
         return <GuardianSetup />;
       case STEPS.REQUESTED_RECOVERIES:
-        return <RequestedRecoveries />;
+        return <RequestedRecoveries />;    
       case STEPS.TRIGGER_ACCOUNT_RECOVERY:
         return <TriggerAccountRecovery />;
       default:
@@ -45,7 +45,9 @@ const SafeWalletFlow = () => {
         <div className="app">
           {renderBody()}
 
-          <GuardianSetup/>
+          {/* <GuardianSetup/> */}
+          {/* <RequestedRecoveries /> */}
+          {/* <TriggerAccountRecovery/> */}
           
         </div>
       </Web3Provider>

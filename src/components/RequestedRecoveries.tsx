@@ -21,6 +21,14 @@ import { abi as safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModul
 import { abi as safeAbi } from "../abi/Safe.json";
 import { encodeFunctionData } from "viem";
 
+import InputField from "./InputField";
+import { Typography, Box } from "@mui/material";
+import { useTheme } from '@mui/material/styles';
+
+import StatusTag from "./StatusTag";
+import SecurityIcon from '@mui/icons-material/Security';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
   CANCEL_RECOVERY: "Cancel Recovery",
@@ -29,6 +37,9 @@ const BUTTON_STATES = {
 };
 
 const RequestedRecoveries = () => {
+  
+  const theme = useTheme();
+
   const isMobile = window.innerWidth < 768;
   const { address } = useAccount();
   const { guardianEmail } = useAppContext();
@@ -109,6 +120,11 @@ const RequestedRecoveries = () => {
       throw new Error("new owner not set");
     }
 
+
+    // if (!recoveryRouterAddr) {
+    //   throw new Error("could not find recovery router for safe");
+    // }
+
     const subject = getRequestsRecoverySubject(safeWalletAddress, newOwner);
 
     try {
@@ -187,19 +203,20 @@ const RequestedRecoveries = () => {
     switch (buttonState) {
       case BUTTON_STATES.TRIGGER_RECOVERY:
         return (
-          <Button loading={loading || isButtonStateLoading} onClick={requestRecovery}>
+          <Button filled={true} loading={loading || isButtonStateLoading} onClick={requestRecovery}>
             Trigger Recovery
           </Button>
         );
       case BUTTON_STATES.CANCEL_RECOVERY:
         return (
-          <Button endIcon={<img src={cancelRecoveryIcon} />}>
+          <Button filled={true} endIcon={<img src={cancelRecoveryIcon} />}>
             Cancel Recovery
           </Button>
         );
       case BUTTON_STATES.COMPLETE_RECOVERY:
         return (
           <Button
+            filled={true}
             loading={loading || isButtonStateLoading}
             onClick={completeRecovery}
             endIcon={<img src={completeRecoveryIcon} />}
@@ -210,6 +227,7 @@ const RequestedRecoveries = () => {
       case BUTTON_STATES.RECOVERY_COMPLETED:
         return (
           <Button
+            filled={true}
             loading={loading}
             onClick={() => stepsContext.setStep(STEPS.STEP_SELECTION)}
           >
@@ -219,21 +237,27 @@ const RequestedRecoveries = () => {
     }
   };
 
+
+
   return (
+  
+    <Box sx={{marginX:'auto', marginTop:'200px'}}>
+      <Typography variant='h2' sx={{ paddingBottom: '20px'}}>Recover Your Wallet</Typography>
+      <Typography variant='h6' sx={{paddingBottom: '80px'}}>Enter your guardian email address and the new <br></br> wallet you want to transfer to</Typography>
     <div
-      style={{
-        maxWidth: isMobile ? "100%" : "50%",
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "flex-start",
-        gap: "2rem",
-      }}
-    >
-      {flowContext === "WALLET_RECOVERY" ? null : (
+        style={{
+          maxWidth: isMobile ? "100%" : "50%",
+          margin: 'auto',
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "flex-start",
+          gap: "2rem",
+        }}
+      >
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          Connected wallet:
+          <Typography sx={{textAlign:'left'}}>Connected wallet:</Typography>
           <div
             style={{
               display: "flex",
@@ -245,99 +269,86 @@ const RequestedRecoveries = () => {
           >
             <ConnectKitButton />
             {buttonState === BUTTON_STATES.RECOVERY_COMPLETED ? (
-              <div
-                style={{
-                  background: "#4E1D09",
-                  border: "1px solid #93370D",
-                  color: "#FEC84B",
-                  padding: "0.25rem 0.75rem",
-                  borderRadius: "3.125rem",
-                  width: "fit-content",
-                  height: "fit-content",
-                }}
-              >
-                Recovered
-                <img src={recoveredIcon} style={{ marginRight: "0.5rem" }} />
-              </div>
+            <div
+                  style={{
+                    display:'flex',
+                    background: "#E7FDED",
+                    border: "1px solid #6DD88B",
+                    color: "#0A6825",
+                    padding: "0.25rem 0.75rem",
+                    borderRadius: "3.125rem",
+                    width: "fit-content",
+                    height: "fit-content",
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}
+                >
+                  <Typography sx={{ marginLeft: "0.5rem", }}>Recovered</Typography>
+                  <MonetizationOnIcon sx={{padding:'6px'}}/>
+                </div>
             ) : null}
           </div>
         </div>
-      )}
-      {buttonState === BUTTON_STATES.RECOVERY_COMPLETED ? null : (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem",
-            width: "100%",
-          }}
-        >
-          Requested Recoveries:
-          <div className="container">
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                gap: isMobile ? "1rem" : "3rem",
-                width: "100%",
-                alignItems: "flex-end",
-                flexWrap: "wrap",
-              }}
-            >
+        {buttonState === BUTTON_STATES.RECOVERY_COMPLETED ? null : (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+              width: "100%",
+              textAlign: 'left',
+            }}
+          >
+            <Typography>Requested Recoveries:</Typography>
+            <div className="container">
               <div
                 style={{
                   display: "flex",
-                  flexDirection: "column",
-                  width: isMobile ? "90%" : "45%",
+                  flexDirection: "row",
+                  gap: isMobile ? "1rem" : "3rem",
+                  width: "100%",
+                  alignItems: "flex-end",
+                  flexWrap: "wrap",
                 }}
               >
-                <p>Guardian's Email</p>
-                <input
-                  style={{ width: "100%" }}
-                  type="email"
-                  value={guardianEmailAddress}
-                  onChange={(e) => setGuardianEmailAddress(e.target.value)}
-                  readOnly={guardianEmail ? true : false}
-                />
-              </div>
-              {address ? null : (
                 <div
                   style={{
                     display: "flex",
                     flexDirection: "column",
                     width: isMobile ? "90%" : "45%",
+                    textAlign: 'left',
                   }}
                 >
-                  <p>Safe Wallet Address</p>
-                  <input
-                    style={{ width: "100%" }}
+                  <InputField
                     type="email"
-                    value={safeWalletAddress}
-                    onChange={(e) => setSafeWalletAddress(e.target.value)}
+                    value={guardianEmailAddress}
+                    onChange={(e) => setGuardianEmailAddress(e.target.value)}
+                    readOnly={guardianEmail ? true : false}
+                    label="Guardian's Email"
                   />
                 </div>
-              )}
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  width: isMobile ? "90%" : "45%",
-                }}
-              >
-                <p>Requested New Wallet Address</p>
-                <input
-                  style={{ width: "100%" }}
-                  type="email"
-                  value={newOwner}
-                  onChange={(e) => setNewOwner(e.target.value)}
-                />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: isMobile ? "90%" : "45%",
+                    textAlign: 'left',
+                  }}
+                >
+                  <InputField
+                    type="email"
+                    value={newOwner || ""}
+                    onChange={(e) => setNewOwner(e.target.value)}
+                    label="Requested New Wallet Address"
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-      <div style={{ margin: "auto" }}>{getButtonComponent()}</div>
-    </div>
+        )}
+        <div style={{ margin: "auto" }}>{getButtonComponent()}</div>
+      </div>
+    </Box>
   );
 };
 

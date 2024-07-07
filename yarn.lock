@@ -8138,7 +8138,7 @@ pbkdf2@^3.0.17, pbkdf2@^3.0.3, pbkdf2@^3.1.2:
 
 permissionless@^0.1.36:
   version "0.1.36"
-  resolved "https://registry.yarnpkg.com/permissionless/-/permissionless-0.1.36.tgz#bab01978c9c8eac9aef74388fb633fb7efb6ad2c"
+  resolved "https://registry.npmjs.org/permissionless/-/permissionless-0.1.36.tgz"
   integrity sha512-v+VMpkHX9wr13ZPV6nilwQ0yiFU1K4498j6ohmNzD2eLlP1R/FB77xQrbMkZo98ATYca2CYh2gcBYsxmOC3VmA==
 
 picocolors@^1.0.0, picocolors@^1.0.1:
@@ -9912,7 +9912,7 @@ viem@^1.1.4:
     isows "1.0.3"
     ws "8.13.0"
 
-viem@2.*, viem@2.x:
+viem@^2.14.1, viem@2.*, viem@2.x:
   version "2.17.2"
   resolved "https://registry.npmjs.org/viem/-/viem-2.17.2.tgz"
   integrity sha512-76BMUK5nenFX8klvQrS4srHN1aa+j1/Z8PajQFCOZHy1UjfCtsFs7W1VSw58uB530COxswbtnEv2NvNVVxKrag==

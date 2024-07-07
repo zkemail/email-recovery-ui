@@ -11,6 +11,8 @@ import TriggerAccountRecovery from "../components/TriggerAccountRecovery";
 import Loader from "../components/Loader";
 import toast from "react-hot-toast";
 import { install, run } from "../utils/burnerWalletUtils";
+import { Web3Provider } from "../providers/Web3Provider";
+import NavBar from "../components/NavBar";
 
 const BurnerWalletFlow = () => {
   const stepsContext = useContext(StepsContext);
@@ -51,9 +53,14 @@ const BurnerWalletFlow = () => {
   }
 
   return (
-    <BurnerWalletProvider config={burnerWalletConfig}>
-      <div className="app">{renderBody()}</div>
-    </BurnerWalletProvider>
+
+    <div>
+    <NavBar/>
+    {/* eesha can't test this flow */}
+        <BurnerWalletProvider config={burnerWalletConfig}>
+          <div className="app">{renderBody()}</div>
+        </BurnerWalletProvider>
+    </div>
   );
 };
 

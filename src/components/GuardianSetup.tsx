@@ -215,8 +215,8 @@ const GuardianSetup = () => {
               />
             </Box>
 
-            <div>
-              <span>Recovery Expiry (hours)</span>
+            <Box display="flex" alignItems="center">
+            <Typography variant="body1" sx={{ marginRight: '25px' }}>Recovery Expiry (hours)</Typography>
               <InputNumber
                 style={{ width: "1.875rem", marginLeft: "1rem" }}
                 type="number"
@@ -228,7 +228,11 @@ const GuardianSetup = () => {
                   )
                 }
               />
-            </div>
+              <MoreInfoDialog
+                title='Recovery Expiry'
+                message='This is the expiry delay that...'
+              />
+            </Box>
 
 
             <Box display="flex" flexDirection="column" gap="1rem" sx={{ textAlign: 'left' }}>
