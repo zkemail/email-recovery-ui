@@ -31,8 +31,8 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/safe-wallet" element={<SafeWalletFlow />} />
-            <Route path="/burner-wallet" element={<BurnerWalletFlow />} />
-            <Route path="/wallet-recovery" element={<RecoverWalletFlow />} />
+            {/* <Route path="/burner-wallet" element={<BurnerWalletFlow />} />
+            <Route path="/wallet-recovery" element={<RecoverWalletFlow />} /> */}
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </BrowserRouter>
