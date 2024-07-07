@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { Button } from "./Button";
 import cancelRecoveryIcon from "../assets/cancelRecoveryIcon.svg";
@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 import { readContract } from "wagmi/actions";
 import { config } from "../providers/config";
 import { abi as safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule.json";
+import { encodeFunctionData } from "viem";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -37,12 +38,13 @@ const RequestedRecoveries = () => {
   const [guardianEmailAddress, setGuardianEmailAddress] =
     useState(guardianEmail);
   const [buttonState, setButtonState] = useState(
-    BUTTON_STATES.COMPLETE_RECOVERY
+    BUTTON_STATES.TRIGGER_RECOVERY
   );
   const flowContext = useContext(FlowContext);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [gurdianRequestId, setGuardianRequestId] = useState<number>();
+  const [isButtonStateLoading, setIsButtonStateLoading] = useState(false)
 
   const { data: recoveryRouterAddr } = useReadContract({
     abi: recoveryPluginAbi,
@@ -52,7 +54,7 @@ const RequestedRecoveries = () => {
   });
 
   const checkIfRecoveryCanBeCompleted = async () => {
-    // setIsAccountInitializedLoading(true);
+    setIsButtonStateLoading(true)
     const getRecoveryRequest = await readContract(config, {
       abi: safeEmailRecoveryModuleAbi,
       address: safeEmailRecoveryModule as `0x${string}`,
@@ -67,19 +69,23 @@ const RequestedRecoveries = () => {
       args: [address],
     });
 
+    console.log(getRecoveryRequest.currentWeight, getGuardianConfig.threshold)
+
     if (getRecoveryRequest.currentWeight < getGuardianConfig.threshold) {
       setButtonState(BUTTON_STATES.TRIGGER_RECOVERY);
     } else {
       setButtonState(BUTTON_STATES.COMPLETE_RECOVERY);
     }
+    setIsButtonStateLoading(false)
 
     // setIsAccountInitialized(getGuardianConfig?.initialized);
     // setIsAccountInitializedLoading(false);
   };
 
-  // useEffect(() => {
+  useEffect(() => {
+  //   const interval = setInterval
   checkIfRecoveryCanBeCompleted();
-  // }, []);
+  }, []);
 
   console.log(recoveryRouterAddr);
 
@@ -142,13 +148,23 @@ const RequestedRecoveries = () => {
     //     const res = await checkGuardianAcceptance();
     //     console.log(res)
     // }, 5000);
+
   }, [recoveryRouterAddr, safeWalletAddress, guardianEmailAddress, newOwner]);
 
   const completeRecovery = useCallback(async () => {
     setLoading(true);
-    // if (!recoveryRouterAddr) {
-    //   throw new Error("could not find recovery router for safe");
-    // }
+
+    const callData = encodeFunctionData(
+      {
+        abi: safeEmailRecoveryModuleAbi,
+        functionName: "swapOwner",
+        // args: [address ,address, newOwner]
+        args: ["0x39A67aFa3b68589a65F43c24FEaDD24df4Bb74e7" ,"0x39A67aFa3b68589a65F43c24FEaDD24df4Bb74e7", "0xB73D634be2a7466bf7Ba08c1aE1A1941eaE155F1"]
+      }
+    )
+
+    console.log(callData)
+    return
 
     const res = relayer.completeRecovery(
       safeEmailRecoveryModule as string,
@@ -162,20 +178,11 @@ const RequestedRecoveries = () => {
     setButtonState(BUTTON_STATES.RECOVERY_COMPLETED);
   }, [recoveryRouterAddr]);
 
-  // const checkGuardianAcceptance = useCallback(async () => {
-  //   if (!gurdianRequestId) {
-  //     throw new Error("missing guardian request id");
-  //   }
-
-  //   const resBody = await relayer.requestStatus(gurdianRequestId);
-  //   console.debug("guardian req res body", resBody);
-  // }, [gurdianRequestId]);
-
   const getButtonComponent = () => {
     switch (buttonState) {
       case BUTTON_STATES.TRIGGER_RECOVERY:
         return (
-          <Button loading={loading} onClick={requestRecovery}>
+          <Button loading={loading || isButtonStateLoading} onClick={requestRecovery}>
             Trigger Recovery
           </Button>
         );
@@ -188,7 +195,7 @@ const RequestedRecoveries = () => {
       case BUTTON_STATES.COMPLETE_RECOVERY:
         return (
           <Button
-            loading={loading}
+            loading={loading || isButtonStateLoading}
             onClick={completeRecovery}
             endIcon={<img src={completeRecoveryIcon} />}
           >
