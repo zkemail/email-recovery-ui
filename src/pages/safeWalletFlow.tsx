@@ -43,11 +43,14 @@ const SafeWalletFlow = () => {
       <NavBar/>
       <Web3Provider>
         <div className="app">
-          {renderBody()}
+          {/* {renderBody()} */}
 
-          {/* <GuardianSetup/> */}
+          {/* <ConnectWallets/> */}
+          {/* <EnableSafeModule/> */}
+          {/* <GuardianSetup/>  */}
+          {/* change height and padding bottom */}
           {/* <RequestedRecoveries /> */}
-          {/* <TriggerAccountRecovery/> */}
+          <TriggerAccountRecovery/>
           
         </div>
       </Web3Provider>

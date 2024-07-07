@@ -13,9 +13,8 @@ import { STEPS } from "../constants";
 import Loader from "./Loader";
 import infoIcon from "../assets/infoIcon.svg";
 import toast from "react-hot-toast";
-import {Box, Typography} from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import CircleIcon from '@mui/icons-material/Circle';
-
 
 const EnableSafeModule = () => {
   const { address } = useAccount();
@@ -23,7 +22,13 @@ const EnableSafeModule = () => {
   const stepsContext = useContext(StepsContext);
   const [isEnableModalLoading, setIsEnableModuleLoading] = useState(false);
 
-  console.log("Account address:", address);
+  useEffect(() => {
+    if (address) {
+      console.log("Wallet is connected:", address);
+    } else {
+      console.log("Wallet is not connected");
+    }
+  }, [address]);
 
   const { data: isModuleEnabled, isLoading: isCheckModuleEnabledLoading } =
     useReadContract({
@@ -32,12 +37,14 @@ const EnableSafeModule = () => {
       functionName: "isModuleEnabled",
       args: [safeEmailRecoveryModule],
     });
-    
-  if (isModuleEnabled) {
-    console.log("Module is enabled");
-    setIsEnableModuleLoading(false);
-    stepsContext?.setStep(STEPS.REQUEST_GUARDIAN);
-  }
+
+  useEffect(() => {
+    if (isModuleEnabled) {
+      console.log("Module is enabled");
+      setIsEnableModuleLoading(false);
+      stepsContext?.setStep(STEPS.REQUEST_GUARDIAN);
+    }
+  }, [isModuleEnabled, stepsContext]);
 
   const enableEmailRecoveryModule = useCallback(async () => {
     setIsEnableModuleLoading(true);
@@ -50,7 +57,7 @@ const EnableSafeModule = () => {
       style: {
         background: 'white'
       }
-    })
+    });
 
     await writeContractAsync({
       abi: safeAbi,
@@ -65,34 +72,38 @@ const EnableSafeModule = () => {
   }
 
   return (
-    <Box sx={{ marginX: 'auto', marginTop:'200px'}}>
-    <Typography variant='h2' sx={{ paddingBottom: '10px'}}>Set Up Wallet Recovery</Typography>
-    <Typography variant='h6' sx={{paddingBottom: '80px'}}>Connect your wallet now to make your wallet <br></br>recoverable by guardian.</Typography>
-    <div style={{ display: "flex", gap: "2rem", flexDirection: "column"}}>
-
-
-      <Box borderRadius={3} sx={{  marginX: 'auto', backgroundColor: '#FCFCFC', border: '1px solid #E3E3E3', paddingY:'20px', paddingX:'25px' }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <CircleIcon sx={{padding:'5px', color: '#6DD88B', marginRight:'-10px'}}/>
-          <Typography> Connected wallet: </Typography><ConnectKitButton />
-        </div>
-      </Box>
-
-      {!isModuleEnabled ? (
-        <Box sx={{marginX: 'auto', width: '310px'}}>
-          <Button     
-            disabled={isEnableModalLoading}
-            loading={isEnableModalLoading}
-            onClick={enableEmailRecoveryModule}
-          >
-            Enable Email Recovery Module
-          </Button>
+    <Box sx={{ marginX: 'auto', marginTop: '200px' }}>
+      <Typography variant='h2' sx={{ paddingBottom: '10px' }}>Set Up Wallet Recovery</Typography>
+      <Typography variant='h6' sx={{ paddingBottom: '80px' }}>
+        Connect your wallet now to make your wallet<br />recoverable by guardian.
+      </Typography>
+      <div style={{ display: "flex", gap: "2rem", flexDirection: "column" }}>
+        <Box borderRadius={3} sx={{ marginX: 'auto', backgroundColor: '#FCFCFC', border: '1px solid #E3E3E3', paddingY: '20px', paddingX: '25px' }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <CircleIcon 
+              sx={{ 
+                padding: '5px', 
+                color: address ? '#6DD88B' : '#FB3E3E', 
+                marginRight: '-10px',
+                transition: 'color 0.5s ease-in-out'
+              }} 
+            />
+            <Typography> Connected wallet: </Typography><ConnectKitButton />
+          </div>
         </Box>
 
-      ) : null}      {/* {isEnableModalLoading ? (
-        <>Please check Safe Website to complete transaction</>
-      ) : null} */}
-    </div>
+        {!isModuleEnabled ? (
+          <Box sx={{ marginX: 'auto', width: '310px' }}>
+            <Button
+              disabled={isEnableModalLoading}
+              loading={isEnableModalLoading}
+              onClick={enableEmailRecoveryModule}
+            >
+              Enable Email Recovery Module
+            </Button>
+          </Box>
+        ) : null}
+      </div>
     </Box>
   );
 };

@@ -24,6 +24,7 @@ const NavBar: React.FC = () => {
             <AppBar
                 position="static"
                 sx={{
+                    height:'60px',
                     width: '100%',
                     backgroundColor: 'white',
                     paddingY: '0px',
@@ -33,13 +34,14 @@ const NavBar: React.FC = () => {
                     },
                     zIndex: '10',
                     position: 'relative',
+                    marginTop:'-7.5px',
                     borderBottom:'0.5px solid black'
                 }}
             >
                 <Grid container sx={{ justifyContent: 'space-between'}}>
                   <Grid item xs={2} sx={{ borderRight:'1px solid black',  paddingY:'10px'}}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                        <MailOutlineIcon  style={{ fill: '#000000' }}/>
+                        <MailOutlineIcon  style={{ fill: '#000000', marginRight:'10px'}}/>
                         {/* <img src="path_to_logo" alt="Logo" style={{ marginRight: theme.spacing(2) }} /> */}
                         <Link  to='https://prove.email/' target='_blank'>
                             <Typography variant="h6" color="black">ZKEmail</Typography>

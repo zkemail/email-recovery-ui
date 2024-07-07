@@ -6,6 +6,7 @@ import { useTheme, Grid, Typography, Box, TextField, Stack } from '@mui/material
 import '../App.css';
 import DraftsOutlinedIcon from '@mui/icons-material/DraftsOutlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import SvgWrapper from '../components/SvgIconWrapper';
 import gnosisSafeLogo from '../assets/gnosis-safe-logo.svg';
 import MoreInfoDialog from "../components/MoreInfoDialog";
@@ -79,7 +80,7 @@ const LandingPage = () => {
                         </Box>
                         <SvgWrapper src={gnosisSafeLogo} sx={{marginTop:'25px', width: '40px', height: '40px'}} />
                         <Typography variant='h4' sx={{fontWeight:'medium', letterSpacing: -2, paddingBottom:'10px', paddingTop:'10px'}}>Gnosis Safe</Typography>
-                        <Typography sx={{color:'#848281', fontWeight:'regular', fontSize: '16px', paddingBottom:'10px'}}>Copy the link and import into your Safe wallet</Typography>
+                        <Typography sx={{color:'#848281', fontWeight:'regular', fontSize: '16px', paddingBottom:'14px'}}>Copy the link and import into your Safe wallet</Typography>
                         {/* <ConnectWallet /> */}
                         <Box width='190px' margin='auto'>
                           <Button onClick={() => handleClick("SAFE_WALLET")}>
@@ -102,7 +103,7 @@ const LandingPage = () => {
                         </Box>
                         <AccountBalanceWalletOutlinedIcon sx={{marginTop:'25px', width: '35px', height: '35px',  color:'#000000'}} />
                         <Typography variant='h4' sx={{fontWeight:'medium', letterSpacing: -2, paddingBottom:'10px', paddingTop:'10px'}}>Test Wallet </Typography>
-                        <Typography sx={{color:'#848281', fontWeight:'regular', fontSize: '16px', paddingBottom:'10px'}}>Connect to see the test wallet flow</Typography>
+                        <Typography sx={{color:'#848281', fontWeight:'regular', fontSize: '16px', paddingBottom:'14px'}}>Connect to see the test wallet flow</Typography>
                         {/* <ConnectWallet /> */}
                         <Box width='190px' margin='auto'>
                           <Button onClick={() => handleClick("BURNER_WALLET")}>
@@ -131,27 +132,29 @@ const LandingPage = () => {
 
 
                 /* RECOVERY FLOW! */
-                <Box sx={{height:'310px', width:'800px', marginX: 'auto', background:'#FFFFFF', border:'1px solid #DDDDDD', borderRadius:'18px', marginY:'25px', paddingY: '20px', paddingX: '50px', position:'relative'}}>
+                
+                <Box sx={{height:'250px', width:'500px', marginX: 'auto', background:'#FFFFFF', border:'1px solid #DDDDDD', borderRadius:'18px', marginY:'25px', paddingX: '40px', position:'relative'}}>
                   <Box sx={{ position: 'absolute', top: '10px', right: '15px'}}>
                     <MoreInfoDialog
                       title='Recover Your Lost Recovery Enabled Wallet' 
                       message='If you forgot your lost wallet address reach out to your gaurdians, they will have the lost wallet address inside the emails they got when they agreed to be gaurdians, they can also identify the email by looking for your gaurdian message inside the email. If you forgot your gaurdian emails you can still atempt recovery'
                     />
                   </Box>
-                  <Typography variant='h4' sx={{fontWeight:'medium', letterSpacing: -2, paddingBottom:'30px', paddingTop:'20px'}}>Recover Wallet</Typography>
 
-                  <Grid container spacing={2} sx={{textAlign:'left'}}>
+                  <SwapHorizIcon sx={{marginTop:'25px', width: '40px', height: '40px',  color:'#000000'}} />
+                  <Typography variant='h4' sx={{fontWeight:'medium', letterSpacing: -2, paddingBottom:'10px', paddingTop:'10px'}}>Recover Wallet</Typography>
+                  <Typography sx={{color:'#848281', fontWeight:'regular', fontSize: '16px', paddingBottom:'14px'}}>Request Wallet Transfer via Email Guardians</Typography>
+
+                  {/* <Grid container spacing={2} sx={{textAlign:'left'}}>
                     <Grid item xs={6}>
                       <InputField label="Lost Wallet" type='text' value=" " />
                     </Grid>
                     <Grid item xs={6}>
                       <InputField label="Requested New Wallet Address" type='text' value=" " />
                     </Grid>
-                  </Grid>
+                  </Grid> */}
 
-                  <Stack  sx={{ marginTop: '30px', width:'270px', marginX: 'auto'}}>
-                    {/* <Button>Request Wallet Transfer</Button> */}
-
+                  <Stack  sx={{ width:'210px', marginX: 'auto'}}>
                     <Button onClick={() => handleClick("WALLET_RECOVERY")}>
                       Recover Wallet Flow
                     </Button>

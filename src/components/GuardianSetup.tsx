@@ -187,7 +187,7 @@ const GuardianSetup = () => {
   }
 
   return (
-    <Box sx={{ marginX: 'auto', marginTop:'200px' }}>
+    <Box sx={{ marginX: 'auto', marginTop:'200px', marginBottom:'100px'  }}>
       <Typography variant='h2' sx={{ paddingBottom: '20px'}}>Set Up Guardian Details </Typography>
       <Typography variant='h6' sx={{paddingBottom: '80px'}}>Choose a Guardian you trust to be enable wallet recovery <br></br> via email. They'll receive an email request.</Typography>
 

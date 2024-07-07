@@ -241,10 +241,21 @@ const RequestedRecoveries = () => {
 
   return (
   
-    <Box sx={{marginX:'auto', marginTop:'200px'}}>
-      <Typography variant='h2' sx={{ paddingBottom: '20px'}}>Recover Your Wallet</Typography>
-      <Typography variant='h6' sx={{paddingBottom: '80px'}}>Enter your guardian email address and the new <br></br> wallet you want to transfer to</Typography>
-    <div
+    <Box sx={{marginX:'auto', marginTop:'200px', marginBottom:'100px' }}>
+
+      {buttonState === BUTTON_STATES.RECOVERY_COMPLETED ? (
+        <>
+          <Typography variant='h2' sx={{ paddingBottom: '20px'}}>Completed Wallet Transfer!</Typography>
+          <Typography variant='h6' sx={{paddingBottom: '65px'}}>Great job your old wallet has successfully transferred ownership</Typography>
+        </>
+      ) : (
+        <>
+          <Typography variant='h2' sx={{ paddingBottom: '20px'}}>Recover Your Wallet</Typography>
+          <Typography variant='h6' sx={{paddingBottom: '65px'}}>Enter your guardian email address and the new <br></br> wallet you want to transfer to</Typography>
+        </>
+      )}
+      
+      <div
         style={{
           maxWidth: isMobile ? "100%" : "50%",
           margin: 'auto',
