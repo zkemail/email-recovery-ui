@@ -23,14 +23,14 @@ const LandingPage = () => {
     <div className="app">
       <div style={{ display: "flex", gap: "2rem" }}>
         <Button onClick={() => handleClick("SAFE_WALLET")}>
-          Safe Wallet Flow
+          Safe Wallet Flow (v1.3)
         </Button>
-        {/* <Button onClick={() => handleClick("BURNER_WALLET")}>
-          Burner Wallet Flow
+        <Button onClick={() => handleClick("BURNER_WALLET")}>
+          Burner Safe Flow (v1.4.1)
         </Button>
         <Button onClick={() => handleClick("WALLET_RECOVERY")}>
           Recover Wallet Flow
-        </Button> */}
+        </Button>
       </div>
     </div>
   );
