@@ -59,6 +59,7 @@ const GuardianSetup = () => {
     abi: safeAbi,
     functionName: "getOwners",
   });
+  console.log(safeOwnersData)
   const firstSafeOwner = useMemo(() => {
     const safeOwners = safeOwnersData as string[];
     if (!safeOwners?.length) {
@@ -76,7 +77,10 @@ const GuardianSetup = () => {
       args: [address],
     });
 
+    // TODO: add polling for this
+
     setIsAccountInitialized(getGuardianConfig?.initialized);
+    stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
     setIsAccountInitializedLoading(false);
   };
 
@@ -142,7 +146,7 @@ const GuardianSetup = () => {
         abi: safeEmailRecoveryModuleAbi,
         address: safeEmailRecoveryModule as `0x${string}`,
         functionName: "configureRecovery",
-        args: [[guardianAddr], [1n], [1n], recoveryDelay * 3600, recoveryExpiry * 3600],
+        args: [[guardianAddr], [1n], [1n], recoveryDelay, recoveryExpiry * 3600],
       });
 
       console.debug("recovery configured");
@@ -210,6 +214,22 @@ const GuardianSetup = () => {
                 message='This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians.'
               />
             </Box>
+
+            <div>
+              <span>Recovery Expiry (hours)</span>
+              <InputNumber
+                style={{ width: "1.875rem", marginLeft: "1rem" }}
+                type="number"
+                min={1}
+                value={recoveryExpiry}
+                onChange={(e) =>
+                  setRecoveryExpiry(
+                    parseInt((e.target as HTMLInputElement).value)
+                  )
+                }
+              />
+            </div>
+
 
             <Box display="flex" flexDirection="column" gap="1rem" sx={{ textAlign: 'left' }}>
               <Typography variant="body1">Connected wallet:</Typography>
