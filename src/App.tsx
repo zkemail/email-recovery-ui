@@ -6,8 +6,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LandingPage from "./pages/landingPage";
 import ErrorPage from "./pages/errorPage";
 import SafeWalletFlow from "./pages/safeWalletFlow";
-import BurnerWalletFlow from "./pages/burnerWalletFlow";
-import RecoverWalletFlow from "./pages/recoverWalletFlow";
+// import BurnerWalletFlow from "./pages/burnerWalletFlow";
+// import RecoverWalletFlow from "./pages/recoverWalletFlow";
 
 export const StepsContext = createContext(null);
 
@@ -26,8 +26,8 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/safe-wallet" element={<SafeWalletFlow />} />
-            <Route path="/burner-wallet" element={<BurnerWalletFlow />} />
-            <Route path="/wallet-recovery" element={<RecoverWalletFlow />} />
+            {/* <Route path="/burner-wallet" element={<BurnerWalletFlow />} />
+            <Route path="/wallet-recovery" element={<RecoverWalletFlow />} /> */}
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </BrowserRouter>

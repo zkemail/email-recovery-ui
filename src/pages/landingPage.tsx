@@ -25,12 +25,12 @@ const LandingPage = () => {
         <Button onClick={() => handleClick("SAFE_WALLET")}>
           Safe Wallet Flow
         </Button>
-        <Button onClick={() => handleClick("BURNER_WALLET")}>
+        {/* <Button onClick={() => handleClick("BURNER_WALLET")}>
           Burner Wallet Flow
         </Button>
         <Button onClick={() => handleClick("WALLET_RECOVERY")}>
           Recover Wallet Flow
-        </Button>
+        </Button> */}
       </div>
     </div>
   );
