@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 import { readContract } from "wagmi/actions";
 import { config } from "../providers/config";
 import { abi as safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule.json";
+import { abi as safeAbi } from "../abi/Safe.json";
 import { encodeFunctionData } from "viem";
 
 const BUTTON_STATES = {
@@ -77,17 +78,13 @@ const RequestedRecoveries = () => {
       setButtonState(BUTTON_STATES.COMPLETE_RECOVERY);
     }
     setIsButtonStateLoading(false)
-
-    // setIsAccountInitialized(getGuardianConfig?.initialized);
-    // setIsAccountInitializedLoading(false);
   };
 
   useEffect(() => {
-  //   const interval = setInterval
   checkIfRecoveryCanBeCompleted();
   }, []);
 
-  console.log(recoveryRouterAddr);
+  console.log(newOwner);
 
   const requestRecovery = useCallback(async () => {
     setLoading(true);
@@ -102,10 +99,6 @@ const RequestedRecoveries = () => {
     if (!newOwner) {
       throw new Error("new owner not set");
     }
-
-    // if (!recoveryRouterAddr) {
-    //   throw new Error("could not find recovery router for safe");
-    // }
 
     const subject = getRequestsRecoverySubject(safeWalletAddress, newOwner);
 
@@ -154,29 +147,34 @@ const RequestedRecoveries = () => {
   const completeRecovery = useCallback(async () => {
     setLoading(true);
 
+    console.log(newOwner, address)
+
     const callData = encodeFunctionData(
       {
-        abi: safeEmailRecoveryModuleAbi,
+        abi: safeAbi,
         functionName: "swapOwner",
-        // args: [address ,address, newOwner]
-        args: ["0x39A67aFa3b68589a65F43c24FEaDD24df4Bb74e7" ,"0x39A67aFa3b68589a65F43c24FEaDD24df4Bb74e7", "0xB73D634be2a7466bf7Ba08c1aE1A1941eaE155F1"]
+        args: ["0x0000000000000000000000000000000000000001" ,address, newOwner]
       }
     )
 
-    console.log(callData)
-    return
+    try {
+      const res = await relayer.completeRecovery(
+        safeEmailRecoveryModule as string,
+        safeWalletAddress as string,
+        callData
+      );
 
-    const res = relayer.completeRecovery(
-      safeEmailRecoveryModule as string,
-      safeWalletAddress as string,
-      "0xe318b52b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000039a67afa3b68589a65f43c24feadd24df4bb74e7000000000000000000000000b73d634be2a7466bf7ba08c1ae1a1941eae155f1"
-    );
+      console.debug("complete recovery res", res);
+      setButtonState(BUTTON_STATES.RECOVERY_COMPLETED);
+    } catch(err) {
+      toast.error("Something went wrong while completing recovery process")
+    } finally {
+      setLoading(false);
+    }
 
-    console.debug("complete recovery res", res);
-    setLoading(false);
 
-    setButtonState(BUTTON_STATES.RECOVERY_COMPLETED);
-  }, [recoveryRouterAddr]);
+
+  }, [recoveryRouterAddr, newOwner]);
 
   const getButtonComponent = () => {
     switch (buttonState) {
