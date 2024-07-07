@@ -9,6 +9,7 @@ import TriggerAccountRecovery from "../components/TriggerAccountRecovery";
 import { STEPS } from "../constants";
 import { Web3Provider } from "../providers/Web3Provider";
 import NavBar from "../components/NavBar";
+import { Box } from "@mui/material";
 
 export const FlowContext = createContext(null);
 
@@ -41,7 +42,12 @@ const SafeWalletFlow = () => {
     <div>
       <NavBar/>
       <Web3Provider>
-        <div className="app">{renderBody()}</div>
+        <div className="app">
+          {renderBody()}
+
+          <GuardianSetup/>
+          
+        </div>
       </Web3Provider>
     </div>
 

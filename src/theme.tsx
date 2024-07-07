@@ -33,6 +33,10 @@ const theme = createTheme({
       color: '#333741',
     },
 
+    h5: {
+      color: '#333741'
+    },
+
     h6: {
       // fontFamily: berkeleyOldStyle.style.fontFamily, // Use Berkeley Old Style for h1
       color: '#8E8E8E',
