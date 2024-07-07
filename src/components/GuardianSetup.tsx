@@ -80,10 +80,15 @@ const GuardianSetup = () => {
     if (!firstSafeOwner) {
       throw new Error("safe owner not found");
     }
+    
+    if(recoveryExpiry - recoveryDelay < 48) {
+      toast.error("Differnece between recovery expiry and recovery delay can't be less than 48 hrs");
+      throw new Error("Differnece between recovery expiry and recovery delay can't be less than 48 hrs");
+    }
 
     try {
       setLoading(true);
-      toast("Please check Safe Website to complete transaction", {
+      toast("Please check Safe Website to complete transaction and check your email later", {
         icon: <img src={infoIcon} />,
         style: {
           background: "white",
@@ -108,7 +113,7 @@ const GuardianSetup = () => {
         abi: safeEmailRecoveryModuleAbi,
         address: safeEmailRecoveryModule as `0x${string}`,
         functionName: "configureRecovery",
-        args: [[guardianAddr], [1n], [1n], recoveryDelay, recoveryExpiry],
+        args: [[guardianAddr], [1n], [1n], recoveryDelay * 3600, recoveryExpiry * 3600],
       });
 
       console.debug("recovery configured");
@@ -201,7 +206,7 @@ const GuardianSetup = () => {
               />
             </div>
             <div>
-              <span>Recovery Delay (seconds)</span>
+              <span>Recovery Delay (hours)</span>
               <input
                 style={{ width: "1.875rem", marginLeft: "1rem" }}
                 type="number"
@@ -215,7 +220,7 @@ const GuardianSetup = () => {
               />
             </div>
             <div>
-              <span>Recovery Expiry (seconds)</span>
+              <span>Recovery Expiry (hours)</span>
               <input
                 style={{ width: "1.875rem", marginLeft: "1rem" }}
                 type="number"
