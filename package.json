@@ -11,8 +11,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@safe-global/protocol-kit": "git@github.com:safe-global/safe-core-sdk.git#df0dfc6f926128547b2a79d560fd7dd3f2e1fd61",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.16.0",
+    "@mui/material": "^5.16.0",
+    "@safe-global/protocol-kit": "^4.0.2",
     "@safe-global/safe-core-sdk-types": "git@github.com:safe-global/safe-core-sdk.git#df0dfc6f926128547b2a79d560fd7dd3f2e1fd61",
+    "@svgr/webpack": "^8.1.0",
     "@tanstack/react-query": "^5.28.14",
     "@wagmi/cli": "^2.1.4",
     "axios": "^1.6.8",
@@ -22,7 +27,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",
-    "react-router-dom": "^6.23.1",
     "viem": "2.x",
     "wagmi": "^2.5.18"
   },
@@ -34,9 +38,13 @@
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "postcss": "^8.4.39",
+    "react-router-dom": "^6.24.1",
+    "tailwindcss": "^3.4.4",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
     "vite-plugin-node-polyfills": "^0.21.0"

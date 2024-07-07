@@ -40,3 +40,26 @@ yarn dev
 8. To initiate the recovery process, paste your new owner address into the "New Owner" field and click "Request Recovery".
 9. Your guardian will receive an email asking them to confirm the recovery request. They can do this by replying "Confirm" to the email. The relayer will then generate a zkp from this email and verify it onchain. After about a minute or two, the guardian will receive an email confirmation that their recovery approval has been a success.
 10. After the recovery delay has passed, click the "Complete Recovery" button in the recovery dApp. This will rotate the owner on the Safe and replace it with the new owner. Refresh the Safe Wallet app and visit settings to see the new owner rotated successfully.
+
+
+
+
+
+
+
+
+# Comments from Eesha
+Figma Flow:
+https://www.figma.com/design/bDHeBEeeUdCkHKQ3e9raO9/Account-Recover-Redesign?node-id=0-1&t=zw2wwNSrKyLJKxF5-0
+
+## things I added
+- npm install -D tailwindcss postcss autoprefixer
+- npm install @mui/material @emotion/react @emotion/styled
+- npm install @mui/icons-material
+- npm i -D react-router-dom 
+- npm install @svgr/webpack
+
+- npm install @safe-global/protocol-kit@latest   
+was getting error:
+[plugin:vite:import-analysis] Failed to resolve entry for package "@safe-global/protocol-kit". The package may have incorrect main/module/exports specified in its package.json.
+

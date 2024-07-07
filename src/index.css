@@ -1,11 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Space Grotesk", sans-serif;;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
+  /* color-scheme: light dark; */
   color: rgba(255, 255, 255, 0.87);
-  background-color: #0C111D;
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,98 +18,39 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #3c3c3c;
   text-decoration: inherit;
 }
-
 a:hover {
-  color: #535bf2;
+  color: #434343;
 }
 
 body {
-  margin: 0;
-}
-
-.app {
-  display: flex;
-  padding: 0 2rem;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  height: 100vh;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 h1 {
-  font-size: 2.25rem;
+  font-size: 3.2em;
   line-height: 1.1;
-  text-align: center;
-  font-weight: 600;
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
+  border-radius: 26px;
+  border: 1px solid #94969C;
   padding: 0.6em 1.2em;
   font-size: 1em;
-  display: flex;
-  gap: 1rem;
-  font-weight: 600;
-  font-family: inherit;
+  font-weight: 500;
+  font-family: "Space Grotesk", sans-serif;
+  background-color: rgba(0, 255, 255, 0);
   cursor: pointer;
   transition: border-color 0.25s;
-  border: none;
-  box-shadow: 0px 1px 2px 0px #1018280D;
-  background: linear-gradient(354.6deg, #0069E4 37.48%, #37C3FF 107.66%);
-  border-image-source: linear-gradient(144.35deg, #0069E4 33.65%, #37C3FF 93.17%);
-  padding: 22px;
 }
-
-.tooltip {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-}
-
-/* Tooltip text */
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  padding: 5px 0;
-  border-radius: 6px;
- 
-  /* Position the tooltip text - see examples below! */
-  position: absolute;
-  z-index: 1;
-}
-
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-}
-
-.tooltip .tooltiptext::after {
-  content: " ";
-  position: absolute;
-  top: 100%; /* At the bottom of the tooltip */
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: black transparent transparent transparent;
-}
-
-
-button:hover {
-  border-color: #646cff;
-}
-
 button:focus,
 button:focus-visible {
-  /* outline: 4px auto -webkit-focus-ring-color; */
+  outline: 4px auto -webkit-focus-ring-color;
 }
 
 @media (prefers-color-scheme: light) {
@@ -114,60 +58,12 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
-
   a:hover {
-    color: #747bff;
+    color: #343434;
   }
-
   button {
     background-color: #f9f9f9;
   }
-}
-
-.navbar {
-  position: absolute;
-  top: 1.25rem;
-  right: 1.25rem;
-  width: 100vw;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-}
-
-.connect-wallets-container {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  flex-direction: column;
-  width: fit-content;
-  align-items: center;
-}
-
-input {
-  background: var(--Colors-Background-bg-tertiary, #1F242F);
-  border: 1px solid var(--Colors-Border-border-primary, #333741);
-  box-shadow: 0px 1px 2px 0px #1018280D;
-  border-radius: 4px;
-  padding: 8px 12px;
-  color: #85888E;
-
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-  background: var(--Colors-Background-bg-secondary, #161B26);
-
-  border: 1px solid var(--Colors-Border-border-primary, #333741);
-  padding: 20px 24px 20px 24px;
-  gap: 20px;
-  border-radius: 12px;
-  border: 1px 0px 0px 0px;
-  opacity: 0px;
-  color: #94969C;
-  font-weight: 500;
 }
 
 .loader {
