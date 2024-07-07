@@ -173,6 +173,8 @@ const RequestedRecoveries = () => {
   const completeRecovery = useCallback(async () => {
     setLoading(true);
 
+    console.log(newOwner, address)
+
     const callData = encodeFunctionData(
       {
         abi: safeAbi,
