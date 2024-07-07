@@ -10,6 +10,7 @@ import RequestedRecoveries from "../components/RequestedRecoveries";
 import TriggerAccountRecovery from "../components/TriggerAccountRecovery";
 import Loader from "../components/Loader";
 import toast from "react-hot-toast";
+import { install, run } from "../utils/burnerWalletUtils";
 
 const BurnerWalletFlow = () => {
   const stepsContext = useContext(StepsContext);
@@ -17,23 +18,8 @@ const BurnerWalletFlow = () => {
   const [burnerWalletConfig, setBurnerWalletConfig] = useState();
 
   useEffect(() => {
-    const createBurnerWallet = async () => {
-      stepsContext?.setStep(STEPS.CONNECT_WALLETS);
-      setIsBurnerWalletCreating(true);
-
-      try {
-        const config = await createBurnerSafeConfig();
-
-        setBurnerWalletConfig(config);
-      } catch (error) {
-        console.log(error)
-        toast.error("something went wrong")
-      } finally {
-        setIsBurnerWalletCreating(false);
-      }
-    };
-
-    createBurnerWallet();
+    run();
+    install()
   }, []);
 
   const renderBody = () => {
