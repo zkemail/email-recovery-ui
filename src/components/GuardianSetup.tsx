@@ -43,6 +43,7 @@ const GuardianSetup = () => {
     abi: safeAbi,
     functionName: "getOwners",
   });
+  console.log(safeOwnersData)
   const firstSafeOwner = useMemo(() => {
     const safeOwners = safeOwnersData as string[];
     if (!safeOwners?.length) {
@@ -60,7 +61,10 @@ const GuardianSetup = () => {
       args: [address],
     });
 
+    // TODO: add polling for this
+
     setIsAccountInitialized(getGuardianConfig?.initialized);
+    stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
     setIsAccountInitializedLoading(false);
   };
 
@@ -113,7 +117,7 @@ const GuardianSetup = () => {
         abi: safeEmailRecoveryModuleAbi,
         address: safeEmailRecoveryModule as `0x${string}`,
         functionName: "configureRecovery",
-        args: [[guardianAddr], [1n], [1n], recoveryDelay * 3600, recoveryExpiry * 3600],
+        args: [[guardianAddr], [1n], [1n], recoveryDelay, recoveryExpiry * 3600],
       });
 
       console.debug("recovery configured");
@@ -206,7 +210,7 @@ const GuardianSetup = () => {
               />
             </div>
             <div>
-              <span>Recovery Delay (hours)</span>
+              <span>Recovery Delay (secs)</span>
               <input
                 style={{ width: "1.875rem", marginLeft: "1rem" }}
                 type="number"

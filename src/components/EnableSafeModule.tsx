@@ -29,13 +29,7 @@ const EnableSafeModule = () => {
       functionName: "isModuleEnabled",
       args: [safeEmailRecoveryModule],
     });
-
-  useEffect(() => {
-    console.log(isModuleEnabled);
-  }, [isModuleEnabled]);
-
-  console.log("isModuleEnabled", isModuleEnabled);
-
+    
   if (isModuleEnabled) {
     console.log("Module is enabled");
     setIsEnableModuleLoading(false);
