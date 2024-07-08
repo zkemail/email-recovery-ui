@@ -21,15 +21,6 @@ import { abi as safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModul
 import { abi as safeAbi } from "../abi/Safe.json";
 import { encodeFunctionData } from "viem";
 
-import InputField from "./InputField";
-import { Typography, Box } from "@mui/material";
-import { useTheme } from '@mui/material/styles';
-import CircleIcon from '@mui/icons-material/Circle';
-
-import StatusTag from "./StatusTag";
-import SecurityIcon from '@mui/icons-material/Security';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
   CANCEL_RECOVERY: "Cancel Recovery",
@@ -173,8 +164,6 @@ const RequestedRecoveries = () => {
   const completeRecovery = useCallback(async () => {
     setLoading(true);
 
-    console.log(newOwner, address)
-
     const callData = encodeFunctionData(
       {
         abi: safeAbi,
@@ -207,6 +196,7 @@ const RequestedRecoveries = () => {
       case BUTTON_STATES.TRIGGER_RECOVERY:
         return (
           <Button filled={true} loading={loading || isButtonStateLoading} onClick={requestRecovery}>
+          <Button loading={loading || isButtonStateLoading} onClick={requestRecovery}>
             Trigger Recovery
           </Button>
         );
@@ -219,7 +209,6 @@ const RequestedRecoveries = () => {
       case BUTTON_STATES.COMPLETE_RECOVERY:
         return (
           <Button
-            filled={true}
             loading={loading || isButtonStateLoading}
             onClick={completeRecovery}
             endIcon={<img src={completeRecoveryIcon} />}

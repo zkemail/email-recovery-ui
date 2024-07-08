@@ -6,11 +6,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LandingPage from "./pages/landingPage";
 import ErrorPage from "./pages/errorPage";
 import SafeWalletFlow from "./pages/safeWalletFlow";
-import BurnerWalletFlow from "./pages/burnerWalletFlow";
-import RecoverWalletFlow from "./pages/recoverWalletFlow";
+// import BurnerWalletFlow from "./pages/burnerWalletFlow";
+// import RecoverWalletFlow from "./pages/recoverWalletFlow";
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme'; // Import custom theme
-
 
 export const StepsContext = createContext(null);
 

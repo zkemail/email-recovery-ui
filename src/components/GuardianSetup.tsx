@@ -59,7 +59,7 @@ const GuardianSetup = () => {
     abi: safeAbi,
     functionName: "getOwners",
   });
-  console.log(safeOwnersData);
+  console.log(safeOwnersData)
   const firstSafeOwner = useMemo(() => {
     const safeOwners = safeOwnersData as string[];
     if (!safeOwners?.length) {
