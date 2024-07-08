@@ -43,9 +43,10 @@ const SafeWalletFlow = () => {
       <NavBar/>
       <Web3Provider>
         <div className="app">
-          {/* {renderBody()} */}
+           {renderBody()} 
 
           {/* <ConnectWallets/> */}
+          {/* need to add a loading screen to EnableSafeModule otherwise looks blank for 3 seconds*/}
           {/* <EnableSafeModule/> */}
           {/* <GuardianSetup/>  */}
           {/* change height and padding bottom */}

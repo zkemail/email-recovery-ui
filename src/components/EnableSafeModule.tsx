@@ -93,7 +93,7 @@ const EnableSafeModule = () => {
         </Box>
 
         {!isModuleEnabled ? (
-          <Box sx={{ marginX: 'auto', width: '280px' }}>
+          <Box sx={{ marginX: 'auto', width: '300px' }}>
             <Button
               filled={true}
               disabled={isEnableModalLoading}
