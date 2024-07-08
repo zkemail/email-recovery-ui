@@ -20,6 +20,11 @@ import { config } from "../providers/config";
 import { abi as safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule.json";
 import { abi as safeAbi } from "../abi/Safe.json";
 import { encodeFunctionData } from "viem";
+import InputField from "./InputField";
+import { Box, Typography, useTheme } from "@mui/material";
+
+import CircleIcon from '@mui/icons-material/Circle';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -196,7 +201,6 @@ const RequestedRecoveries = () => {
       case BUTTON_STATES.TRIGGER_RECOVERY:
         return (
           <Button filled={true} loading={loading || isButtonStateLoading} onClick={requestRecovery}>
-          <Button loading={loading || isButtonStateLoading} onClick={requestRecovery}>
             Trigger Recovery
           </Button>
         );
