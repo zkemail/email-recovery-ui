@@ -26,9 +26,9 @@ const TriggerAccountRecovery = () => {
   const [buttonState, setButtonState] = useState(BUTTON_STATES.CANCEL_RECOVERY);
 
   return (
-    <Box sx={{ marginX: 'auto', marginTop:'200px', marginBottom:'100px'  }}>
-    <Typography variant='h2' sx={{ paddingBottom: '20px'}}>Account Recovery Triggered </Typography>
-    <Typography variant='h6' sx={{paddingBottom: '65px'}}>Cancel or complete recovery to transfer to new wallet</Typography>
+    <Box sx={{ marginX: 'auto', marginTop:'100px', marginBottom:'100px'  }}>
+    <Typography variant='h2' sx={{ paddingBottom: '15px'}}>Account Recovery Triggered </Typography>
+    <Typography variant='h6' sx={{paddingBottom: '40px'}}>Cancel or complete recovery to transfer to new wallet</Typography>
 
       <div
         style={{

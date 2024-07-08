@@ -60,6 +60,8 @@ const NavBar: React.FC = () => {
                   <Grid item xs={4} sx={{ paddingY:'10px',  margin: 'auto'}}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 'auto'}}>
                         <Button variant="outlined" 
+                        href='https://prove.email/blog/recovery'
+                        target='_blank'
                         sx={{ 
                             marginRight: theme.spacing(2) ,
                             textTransform:'none',

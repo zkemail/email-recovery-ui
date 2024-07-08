@@ -213,6 +213,7 @@ const RequestedRecoveries = () => {
       case BUTTON_STATES.COMPLETE_RECOVERY:
         return (
           <Button
+            filled={true}
             loading={loading || isButtonStateLoading}
             onClick={completeRecovery}
             endIcon={<img src={completeRecoveryIcon} />}

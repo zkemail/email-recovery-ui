@@ -30,6 +30,8 @@ const RecoverWalletFlow = () => {
       <NavBar/>
       <Web3Provider>
         <div className="app">{renderBody()}</div>
+          {/* <RequestedRecoveries /> */}
+          {/* <TriggerAccountRecovery/> */}
       </Web3Provider>
     </div>
   );
