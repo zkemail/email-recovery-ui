@@ -109,7 +109,11 @@ const RequestedRecoveries = () => {
       throw new Error("new owner not set");
     }
 
-    const subject = getRequestsRecoverySubject(safeWalletAddress, newOwner);
+    if(!safeOwnersData[0]) {
+      toast.error("Could not find safe owner. Please check if safe is configured correctly.")
+    }
+
+    const subject = getRequestsRecoverySubject(safeOwnersData[0], safeWalletAddress, newOwner);
 
     try {
       const { requestId } = await relayer.recoveryRequest(

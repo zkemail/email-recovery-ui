@@ -52,8 +52,9 @@ export async function genAccountCode(): Promise<string> {
 export const getRequestGuardianSubject = (acctAddr: string) =>
   `Accept guardian request for ${acctAddr}`;
 export const getRequestsRecoverySubject = (
+  userAccountAddr: string,
   acctAddr: string,
   newOwner: string
 ) =>
   // `Update owner to ${newOwner} on account ${acctAddr}`;
-  `Recover account ${acctAddr} from old owner ${"0x39A67aFa3b68589a65F43c24FEaDD24df4Bb74e7"} to new owner ${newOwner} using recovery module ${safeEmailRecoveryModule}`;
+  `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner} using recovery module ${safeEmailRecoveryModule}`;
