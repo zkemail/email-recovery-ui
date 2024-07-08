@@ -43,12 +43,12 @@ export default function CustomizedToggleButton({ onFlowChange }) {
       exclusive
       onChange={handleAlignment}
       aria-label="toggle button"
-      sx={{marginY:'25px'}}
+      sx={{marginY:'25px', paddingX:'30px', height:'40px',  width:'250px', justifyContent:'center', gap:'10px' }}
     >
-      <ToggleButton value="setup" aria-label="set up">
+      <ToggleButton value="setup" aria-label="set up" sx={{textTransform:'none',  paddingY: '3px', paddingX:'30px'}}>
         Set Up
       </ToggleButton>
-      <ToggleButton value="recover" aria-label="recover">
+      <ToggleButton value="recover" aria-label="recover" sx={{textTransform:'none',  paddingY: '3px', paddingX:'30px'}}>
         Recover
       </ToggleButton>
     </StyledToggleButtonGroup>

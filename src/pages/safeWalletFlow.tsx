@@ -47,10 +47,10 @@ const SafeWalletFlow = () => {
 
           {/* <ConnectWallets/> */}
           {/* <EnableSafeModule/> */}
-          {/* <GuardianSetup/>  */}
+          <GuardianSetup/> 
           {/* change height and padding bottom */}
           {/* <RequestedRecoveries /> */}
-          <TriggerAccountRecovery/>
+          {/* <TriggerAccountRecovery/> */}
           
         </div>
       </Web3Provider>

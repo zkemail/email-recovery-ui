@@ -43,17 +43,17 @@ const NavBar: React.FC = () => {
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                         <MailOutlineIcon  style={{ fill: '#000000', marginRight:'10px'}}/>
                         {/* <img src="path_to_logo" alt="Logo" style={{ marginRight: theme.spacing(2) }} /> */}
-                        <Link  to='https://prove.email/' target='_blank'>
+                        <Link  to='/'>
                             <Typography variant="h6" color="black">ZKEmail</Typography>
                         </Link>
                     </Box>
                   </Grid>
                   <Grid item xs={6} sx={{borderRight:'0.5px solid black', paddingLeft:'25px', paddingY:'10px'}}>
                       <Box sx={{ display: 'flex', alignItems: 'center',  }}>
-                        <Button color='primary' href='/' sx={{marginRight: theme.spacing(2), textTransform:'none'}}>Home</Button>
+                        {/* <Button color='primary' href='/' sx={{marginRight: theme.spacing(2), textTransform:'none'}}>Home</Button> */}
                         <Button color="primary" href='https://prove.email/blog' target='_blank' sx={{marginRight: theme.spacing(2), textTransform:'none' }}>Blog</Button>
                         <Button color="primary" href='https://zkemail.gitbook.io/zk-email' target='_blank'sx={{ marginRight: theme.spacing(2), textTransform:'none' }}>Docs</Button>
-                        <Button color="primary" href='https://prove.email/projects' target='_blank' sx={{ marginRight: theme.spacing(2), textTransform:'none' }}>Demos</Button>
+                        <Button color="primary" href='https://prove.email/' target='_blank' sx={{ marginRight: theme.spacing(2), textTransform:'none' }}>Demos</Button>
                         <Button color="primary" href='https://t.me/zkemail' target='_blank' sx={{ marginRight: theme.spacing(2), textTransform:'none' }}>Contact</Button>
                     </Box>
                   </Grid>
@@ -63,6 +63,7 @@ const NavBar: React.FC = () => {
                         sx={{ 
                             marginRight: theme.spacing(2) ,
                             textTransform:'none',
+                            borderRadius:'26px',
                             ':hover': {
                                 backgroundColor: '#E0F6FF', // Background color on hover
                             },

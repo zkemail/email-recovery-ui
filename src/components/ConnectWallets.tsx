@@ -23,9 +23,9 @@ const ConnectWallets = () => {
   return (
     <div className="connect-wallets-container">
 
-      <Box sx={{ marginX: 'auto', marginTop:'200px' }}>
+      <Box sx={{ marginX: 'auto', marginTop:'180px' }}>
       <Typography variant='h2' sx={{ paddingBottom: '20px'}}>Set Up Wallet Recovery</Typography>
-      <Typography variant='h6' sx={{paddingBottom: '80px'}}>Connect your wallet now to make your wallet <br></br>recoverable by guardian.</Typography>
+      <Typography variant='h6' sx={{paddingBottom: '30px'}}>Connect your wallet now to make your wallet <br></br>recoverable by guardian.</Typography>
       {/* <Button endIcon={<img src={walletIcon} />}>Connect Genosis Safe</Button>
 
       <p color="#CECFD2" style={{ display: "flex", gap: "0.5rem" }}>
@@ -35,8 +35,8 @@ const ConnectWallets = () => {
       <ConnectKitButton.Custom>
         {({ show }) => {
           return (
-            <Box width='190px' margin='auto'>
-              <Button onClick={show} endIcon={<AccountBalanceWalletOutlinedIcon/>}>
+            <Box width='200px' margin='auto'>
+              <Button filled={true} onClick={show} endIcon={<AccountBalanceWalletOutlinedIcon/>}>
                 Connect Safe
               </Button>
             </Box>

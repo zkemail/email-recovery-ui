@@ -72,9 +72,9 @@ const EnableSafeModule = () => {
   }
 
   return (
-    <Box sx={{ marginX: 'auto', marginTop: '200px' }}>
+    <Box sx={{ marginX: 'auto', marginTop: '150px' }}>
       <Typography variant='h2' sx={{ paddingBottom: '10px' }}>Set Up Wallet Recovery</Typography>
-      <Typography variant='h6' sx={{ paddingBottom: '80px' }}>
+      <Typography variant='h6' sx={{ paddingBottom: '40px' }}>
         Connect your wallet now to make your wallet<br />recoverable by guardian.
       </Typography>
       <div style={{ display: "flex", gap: "2rem", flexDirection: "column" }}>
@@ -88,13 +88,14 @@ const EnableSafeModule = () => {
                 transition: 'color 0.5s ease-in-out'
               }} 
             />
-            <Typography> Connected wallet: </Typography><ConnectKitButton />
+            <Typography> Connected Wallet: </Typography><ConnectKitButton />
           </div>
         </Box>
 
         {!isModuleEnabled ? (
-          <Box sx={{ marginX: 'auto', width: '310px' }}>
+          <Box sx={{ marginX: 'auto', width: '280px' }}>
             <Button
+              filled={true}
               disabled={isEnableModalLoading}
               loading={isEnableModalLoading}
               onClick={enableEmailRecoveryModule}

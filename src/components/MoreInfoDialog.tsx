@@ -22,14 +22,14 @@ const MoreInfoDialog: React.FC<MoreInfoDialogProps> = ({ title, message }) => {
     <>
       <IconButton
         onClick={handleClickOpen}
-        sx={{ color: 'blue', '&:focus': { outline: 'none' } }}
+        sx={{ color: '#207CE9', '&:focus': { outline: 'none' } }}
       >
         <InfoOutlinedIcon />
       </IconButton>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{title}</DialogTitle>
+        <DialogTitle sx={{color:'#FD4BA1'}}>{title}</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText sx={{fontWeight:100}}>
             {message}
           </DialogContentText>
         </DialogContent>

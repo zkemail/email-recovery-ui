@@ -24,6 +24,7 @@ import { encodeFunctionData } from "viem";
 import InputField from "./InputField";
 import { Typography, Box } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
+import CircleIcon from '@mui/icons-material/Circle';
 
 import StatusTag from "./StatusTag";
 import SecurityIcon from '@mui/icons-material/Security';
@@ -241,17 +242,17 @@ const RequestedRecoveries = () => {
 
   return (
   
-    <Box sx={{marginX:'auto', marginTop:'200px', marginBottom:'100px' }}>
+    <Box sx={{marginX:'auto', marginTop:'100px', marginBottom:'100px' }}>
 
       {buttonState === BUTTON_STATES.RECOVERY_COMPLETED ? (
         <>
           <Typography variant='h2' sx={{ paddingBottom: '20px'}}>Completed Wallet Transfer!</Typography>
-          <Typography variant='h6' sx={{paddingBottom: '65px'}}>Great job your old wallet has successfully transferred ownership</Typography>
+          <Typography variant='h6' sx={{paddingBottom: '50px'}}>Great job your old wallet has successfully transferred ownership</Typography>
         </>
       ) : (
         <>
           <Typography variant='h2' sx={{ paddingBottom: '20px'}}>Recover Your Wallet</Typography>
-          <Typography variant='h6' sx={{paddingBottom: '65px'}}>Enter your guardian email address and the new <br></br> wallet you want to transfer to</Typography>
+          <Typography variant='h6' sx={{paddingBottom: '50px'}}>Enter your guardian email address and the new <br></br> wallet you want to transfer to</Typography>
         </>
       )}
       
@@ -267,8 +268,7 @@ const RequestedRecoveries = () => {
           gap: "2rem",
         }}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <Typography sx={{textAlign:'left'}}>Connected wallet:</Typography>
+        <div style={{ display: "flex", width:'100%', flexDirection: "column", gap: "1rem" }}>
           <div
             style={{
               display: "flex",
@@ -278,26 +278,59 @@ const RequestedRecoveries = () => {
               gap: "1rem",
             }}
           >
-            <ConnectKitButton />
+            
             {buttonState === BUTTON_STATES.RECOVERY_COMPLETED ? (
-            <div
-                  style={{
-                    display:'flex',
-                    background: "#E7FDED",
-                    border: "1px solid #6DD88B",
-                    color: "#0A6825",
-                    padding: "0.25rem 0.75rem",
-                    borderRadius: "3.125rem",
-                    width: "fit-content",
-                    height: "fit-content",
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                  }}
-                >
-                  <Typography sx={{ marginLeft: "0.5rem", }}>Recovered</Typography>
-                  <MonetizationOnIcon sx={{padding:'6px'}}/>
-                </div>
-            ) : null}
+              <Box width='100%' height='100px' alignContent='center' justifyItems='center' borderRadius={3} sx={{ marginX: 'auto', backgroundColor: '#FCFCFC', border: '1px solid #E3E3E3', paddingY: '20px', paddingX: '25px', position:'relative' }}>
+              <Box  justifyContent='center' sx={{ display: "flex", alignItems: "center", gap: "1rem", marginX:'auto', marginTop:'10px'}}>
+                <CircleIcon 
+                  sx={{ 
+                    padding: '5px', 
+                    color: address ? '#6DD88B' : '#FB3E3E', 
+                    marginRight: '-10px',
+                    transition: 'color 0.5s ease-in-out'
+                  }} 
+                />
+                <Typography> Connected Wallet: </Typography>
+                <ConnectKitButton />
+              </Box>
+              <div
+                style={{
+                  display:'flex',
+                  background: "#E7FDED",
+                  border: "1px solid #6DD88B",
+                  color: "#0A6825",
+                  padding: "0.25rem 0.75rem",
+                  borderRadius: "26px",
+                  width: "fit-content",
+                  height: "18px",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  position: 'absolute', 
+                  top: '10px', 
+                  right: '12px'
+                }}
+              >
+                <Typography sx={{ marginLeft: "0.5rem", fontSize:'12px', color:'#0A6825' }}>Recovered</Typography>
+                <MonetizationOnIcon sx={{padding:'6px', fontSize:'12px'}}/>
+              </div>
+            </Box>
+            ) : (
+              
+              <Box width='100%' height='70px' alignContent='center' justifyItems='center' borderRadius={3} sx={{ marginX: 'auto', backgroundColor: '#FCFCFC', border: '1px solid #E3E3E3', paddingY: '20px', paddingX: '25px', position:'relative' }}>
+              <Box  justifyContent='center' sx={{ display: "flex", alignItems: "center", gap: "1rem", marginX:'auto', marginTop:'10px'}}>
+                <CircleIcon 
+                  sx={{ 
+                    padding: '5px', 
+                    color: address ? '#6DD88B' : '#FB3E3E', 
+                    marginRight: '-10px',
+                    transition: 'color 0.5s ease-in-out'
+                  }} 
+                />
+                <Typography> Connected Wallet: </Typography>
+                <ConnectKitButton />
+              </Box>
+            </Box>
+          )}
           </div>
         </div>
         {buttonState === BUTTON_STATES.RECOVERY_COMPLETED ? null : (
@@ -310,7 +343,7 @@ const RequestedRecoveries = () => {
               textAlign: 'left',
             }}
           >
-            <Typography>Requested Recoveries:</Typography>
+            <Typography sx={{fontWeight:700}}>Requested Recoveries:</Typography>
             <div className="container">
               <div
                 style={{
@@ -334,7 +367,7 @@ const RequestedRecoveries = () => {
                     type="email"
                     value={guardianEmailAddress}
                     onChange={(e) => setGuardianEmailAddress(e.target.value)}
-                    readOnly={guardianEmail ? true : false}
+                    locked={guardianEmail ? true : false}
                     label="Guardian's Email"
                   />
                 </div>
@@ -357,7 +390,7 @@ const RequestedRecoveries = () => {
             </div>
           </div>
         )}
-        <div style={{ margin: "auto" }}>{getButtonComponent()}</div>
+        <div style={{ margin: "auto", minWidth:'300px' }}>{getButtonComponent()}</div>
       </div>
     </Box>
   );

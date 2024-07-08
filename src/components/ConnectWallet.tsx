@@ -82,7 +82,7 @@ const ConnectWallet = () => {
           return (
             <Box width='170px' margin='auto'>
               <Web3Provider>
-              <Button onClick={show} endIcon={<AccountBalanceWalletOutlinedIcon sx={{color:'#000000'}}/>}>
+              <Button filled={true} onClick={show} endIcon={<AccountBalanceWalletOutlinedIcon sx={{color:'#000000'}}/>}>
                 Connect Safe
               </Button>
               </Web3Provider>

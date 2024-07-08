@@ -19,7 +19,7 @@ const theme = createTheme({
     fontFamily: "Space Grotesk",
     h1: {
       // fontFamily: berkeleyOldStyle.style.fontFamily, // Use Berkeley Old Style for h1
-      fontSize: '5rem', // Default font size for the smallest screens (xs)
+      fontSize: '3.5rem', // Default font size for the smallest screens (xs)
       letterSpacing: -3,
       fontWeight: '500'
     },

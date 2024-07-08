@@ -50,11 +50,13 @@ const LandingPage = () => {
     <div>
         <NavBar/>
         <div className='bg-white'>
-              <Grid sx={{color:'10px', paddingTop: '120px'}}>
-                <Box display='flex' justifyContent='center' alignItems='center' sx={{borderRadius:'25.95px', border:'1px solid #CECFD2', width: '170px', marginX: 'auto', padding:'5px', marginBottom:'20px'}}>
-                  <DraftsOutlinedIcon sx={{marginX:'5px', padding:'4px', color:'#000000'}} />
-                    <Typography>ZK Email Tech</Typography>
+              <Grid sx={{ paddingTop: '120px'}}>
+              <Link  to='https://prove.email/' target="_blank">
+                <Box display='flex' alignItems='center' sx={{borderRadius:'25.95px', border:'1px solid #CECFD2', width: '160px', marginX: 'auto', marginBottom:'20px', backgroundColor:'#ffffff'}}>
+                  <DraftsOutlinedIcon sx={{marginLeft:'15px', marginRight:'9px', padding:'4px', color:'#000000', fontSize:'18px'}} />
+                    <Typography sx={{fontSize:'12px', fontWeight:700, textAlign:'left'}}>ZKEmail Tech</Typography>
                 </Box>
+              </Link>
                 <Typography variant='h1' sx={{color: theme.palette.primary.main}}>
                   Email Recovery Demo
                 </Typography>   
@@ -67,8 +69,9 @@ const LandingPage = () => {
 
               {flow === 'setup' ? (
                 // SETUP FLOW
+                //eesha make this gap smaller bettwen home cards
                 <Box sx={{height:'250px', alignContent: 'center', justifyContent: 'center', marginX: 'auto'}}>
-                  <Grid container>
+                  <Grid container sx={{paddingX:'100px'}}>
                     {/* GNOSIS SAFE */}
                     <Grid item xs={6} padding='20px'>
                       <Box sx={{height:'250px', width:'500px', marginX: 'auto', background:'#FFFFFF', border:'1px solid #DDDDDD', borderRadius:'18px', position:'relative'}}>

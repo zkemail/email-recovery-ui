@@ -187,7 +187,7 @@ const GuardianSetup = () => {
   }
 
   return (
-    <Box sx={{ marginX: 'auto', marginTop:'200px', marginBottom:'100px'  }}>
+    <Box sx={{ marginX: 'auto', marginTop:'100px', marginBottom:'100px'  }}>
       <Typography variant='h2' sx={{ paddingBottom: '20px'}}>Set Up Guardian Details </Typography>
       <Typography variant='h6' sx={{paddingBottom: '80px'}}>Choose a Guardian you trust to be enable wallet recovery <br></br> via email. They'll receive an email request.</Typography>
 
@@ -195,9 +195,9 @@ const GuardianSetup = () => {
 
         <Grid item xs={6} sx={{ borderRight: '1px solid #EBEBEB', paddingRight: '30px' }}>
           <Box display="flex" flexDirection="column" gap="1rem" sx={{ paddingRight: '5px' }}>
-            <Box display="flex" alignItems="center" justifyContent="space-between">
-              <Box display="flex" alignItems="center">
-                <Typography variant="body1" sx={{ marginRight: '25px' }}>Recovery Delay (seconds)</Typography>
+
+            <Box display="flex" justifyContent="space-between" alignItems='center' sx={{marginRight:'35px'}}>
+                <Typography variant="body1" sx={{ marginRight: '25px', textAlign:'left' }}>Recovery Delay (seconds)</Typography>
                 <InputNumber
                   type='number'
                   value={recoveryDelay}
@@ -207,18 +207,14 @@ const GuardianSetup = () => {
                     )
                   }
                   min={1}
+                  title='Recovery Delay'
+                  message='This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians.'
                 />
-              </Box>
-              <MoreInfoDialog
-                title='Recovery Delay'
-                message='This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians.'
-              />
             </Box>
 
-            <Box display="flex" alignItems="center">
-            <Typography variant="body1" sx={{ marginRight: '25px' }}>Recovery Expiry (hours)</Typography>
+            <Box display="flex" justifyContent="space-between" alignItems='center'  sx={{marginRight:'35px'}}>
+            <Typography variant="body1" sx={{ marginRight: '25px', textAlign:'left' }}>Recovery Expiry (hours)</Typography>
               <InputNumber
-                style={{ width: "1.875rem", marginLeft: "1rem" }}
                 type="number"
                 min={1}
                 value={recoveryExpiry}
@@ -227,16 +223,14 @@ const GuardianSetup = () => {
                     parseInt((e.target as HTMLInputElement).value)
                   )
                 }
-              />
-              <MoreInfoDialog
-                title='Recovery Expiry'
+                title='Recovery Expiry (hours)'
                 message='This is the expiry delay that...'
               />
             </Box>
 
 
             <Box display="flex" flexDirection="column" gap="1rem" sx={{ textAlign: 'left' }}>
-              <Typography variant="body1">Connected wallet:</Typography>
+              <Typography variant="body1">Connected Wallet:</Typography>
               <ConnectKitButton />
             </Box>
             {/* <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ textAlign: 'left' }}>
@@ -285,7 +279,7 @@ const GuardianSetup = () => {
         </Grid>
 
         <Grid item sx={{marginX: 'auto'}}>
-          <Box  sx={{width:'330px', marginX: 'auto'}}></Box>
+          <Box  sx={{width:'330px', marginX: 'auto', marginTop:'30px'}}></Box>
           <Button
           disabled={!guardianEmail || isAccountInitialized}
           loading={loading}

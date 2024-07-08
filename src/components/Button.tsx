@@ -62,6 +62,10 @@ export function Button({ children, endIcon, loading, filled = false, ...buttonPr
         ':active': {
           outline: 'none', // Remove outline on active
         },
+        ':disabled':{
+          backgroundColor: '#FAC5DF',
+          color:'#ffffff'
+        }
       }}
       {...buttonProps}
       endIcon={loading ? <CircularProgress size={24} /> : endIcon}
