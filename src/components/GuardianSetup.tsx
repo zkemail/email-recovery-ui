@@ -20,6 +20,29 @@ import { StepsContext } from "../App";
 import { STEPS } from "../constants";
 import toast from "react-hot-toast";
 
+const TIME_UNITS = {
+  SECS: {
+    value: "SECS",
+    multiplier: 1,
+    label: "Secs",
+  },
+  MINS: {
+    value: "MINS",
+    multiplier: 60,
+    label: "Mins",
+  },
+  HOURS: {
+    value: "HOURS",
+    multiplier: 60 * 60,
+    label: "Hours",
+  },
+  DAYS: {
+    value: "DAYS",
+    multiplier: 60 * 60 * 24,
+    label: "Days",
+  },
+};
+
 const GuardianSetup = () => {
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
@@ -34,7 +57,13 @@ const GuardianSetup = () => {
   const [loading, setLoading] = useState(false);
   // 0 = 2 week default delay, don't do for demo
   const [recoveryDelay, setRecoveryDelay] = useState(1);
-  const [recoveryExpiry, setRecoveryExpiry] = useState(1);
+  const [recoveryExpiry, setRecoveryExpiry] = useState(7);
+  const [recoveryDelayUnit, setRecoveryDelayUnit] = useState(
+    TIME_UNITS.SECS.value
+  );
+  const [recoveryExpiryUnit, setRecoveryExpiryUnit] = useState(
+    TIME_UNITS.DAYS.value
+  );
 
   const isMobile = window.innerWidth < 768;
 
@@ -129,8 +158,8 @@ const GuardianSetup = () => {
           [guardianAddr],
           [1n],
           [1n],
-          recoveryDelay,
-          recoveryExpiry * 3600,
+          recoveryDelay * TIME_UNITS[recoveryDelayUnit].multiplier,
+          recoveryExpiry * TIME_UNITS[recoveryExpiryUnit].multiplier,
         ],
       });
 
@@ -170,7 +199,10 @@ const GuardianSetup = () => {
   if (isAccountInitializedLoading) {
     return <>Loading...</>;
   }
-
+  console.log(
+    recoveryDelay * TIME_UNITS[recoveryDelayUnit].multiplier,
+    recoveryExpiry * TIME_UNITS[recoveryExpiryUnit].multiplier,
+  );
   return (
     <div
       style={{
@@ -224,7 +256,7 @@ const GuardianSetup = () => {
               />
             </div>
             <div>
-              <span>Recovery Delay (secs)</span>
+              <span>Recovery delay</span>
               <input
                 style={{ width: "1.875rem", marginLeft: "1rem" }}
                 type="number"
@@ -236,9 +268,22 @@ const GuardianSetup = () => {
                   )
                 }
               />
+              <select
+                style={{ marginLeft: "1rem" }}
+                value={recoveryDelayUnit}
+                onChange={(e) => setRecoveryDelayUnit(e.target.value)}
+              >
+                {Object.keys(TIME_UNITS).map((timeUnit) => {
+                  return (
+                    <option value={TIME_UNITS[timeUnit].value}>
+                      {TIME_UNITS[timeUnit].label}
+                    </option>
+                  );
+                })}
+              </select>
             </div>
             <div>
-              <span>Recovery Expiry (hours)</span>
+              <span>Recovery Expiry</span>
               <input
                 style={{ width: "1.875rem", marginLeft: "1rem" }}
                 type="number"
@@ -250,6 +295,19 @@ const GuardianSetup = () => {
                   )
                 }
               />
+              <select
+                style={{ marginLeft: "1rem" }}
+                value={recoveryExpiryUnit}
+                onChange={(e) => setRecoveryExpiryUnit(e.target.value)}
+              >
+                {Object.keys(TIME_UNITS).map((timeUnit) => {
+                  return (
+                    <option value={TIME_UNITS[timeUnit].value}>
+                      {TIME_UNITS[timeUnit].label}
+                    </option>
+                  );
+                })}
+              </select>
             </div>
           </div>
         </div>
