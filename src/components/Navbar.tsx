@@ -68,7 +68,7 @@ const NavBar: React.FC = () => {
                                     ':active': {
                                         outline: 'none', // Remove outline on active
                                     }
-                                }}>Check out Demo</Button>
+                                }}>Blog</Button>
                             <Web3Provider>
                                 <ConnectKitButton />
                             </Web3Provider>
