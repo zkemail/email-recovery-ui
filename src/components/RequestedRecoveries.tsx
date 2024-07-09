@@ -26,6 +26,7 @@ import { Box, Typography, useTheme } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import InputField from "./InputField";
+import { useNavigate } from "react-router-dom";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -40,6 +41,7 @@ const RequestedRecoveries = () => {
   const { address } = useAccount();
   const { guardianEmail } = useAppContext();
   const stepsContext = useContext(StepsContext);
+  const navigate = useNavigate();
 
   const [newOwner, setNewOwner] = useState<string>();
   const [safeWalletAddress, setSafeWalletAddress] = useState(address);
@@ -98,15 +100,12 @@ const RequestedRecoveries = () => {
 
   const requestRecovery = useCallback(async () => {
     setLoading(true);
-    toast(
-      "Please check your email and accept the email",
-      {
-        icon: <img src={infoIcon} />,
-        style: {
-          background: "white",
-        },
-      }
-    );
+    toast("Please check your email and accept the email", {
+      icon: <img src={infoIcon} />,
+      style: {
+        background: "white",
+      },
+    });
     if (!safeWalletAddress) {
       throw new Error("unable to get account address");
     }
@@ -209,11 +208,7 @@ const RequestedRecoveries = () => {
         );
       case BUTTON_STATES.RECOVERY_COMPLETED:
         return (
-          <Button
-            filled={true}
-            loading={loading}
-            onClick={() => stepsContext.setStep(STEPS.STEP_SELECTION)}
-          >
+          <Button filled={true} loading={loading} onClick={() => navigate("/")}>
             Complete! Connect new wallet to set new guardians ➔
           </Button>
         );

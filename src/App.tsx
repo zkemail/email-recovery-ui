@@ -10,11 +10,14 @@ import SafeWalletFlow from "./pages/safeWalletFlow";
 // import RecoverWalletFlow from "./pages/recoverWalletFlow";
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme'; // Import custom theme
+import RecoverWalletFlow from "./pages/recoverWalletFlow";
 
 export const StepsContext = createContext(null);
 
 function App() {
   const [step, setStep] = useState(STEPS.STEP_SELECTION);
+
+  console.log(step)
 
   return (
     <AppContextProvider>
@@ -29,8 +32,8 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/safe-wallet" element={<SafeWalletFlow />} />
-            {/* <Route path="/burner-wallet" element={<BurnerWalletFlow />} />
-            <Route path="/wallet-recovery" element={<RecoverWalletFlow />} /> */}
+            {/* <Route path="/burner-wallet" element={<BurnerWalletFlow />} /> */}
+            <Route path="/wallet-recovery" element={<RecoverWalletFlow />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </BrowserRouter>
