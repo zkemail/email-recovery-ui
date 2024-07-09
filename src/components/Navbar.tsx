@@ -27,14 +27,13 @@ const NavBar: React.FC = () => {
                     },
                     zIndex: '10',
                     position: 'relative',
-                    marginTop: '-7.5px',
                     borderBottom: '0.5px solid black',
                     paddingX: {xs:'20px', sm:'5px', md:'0px'}
                 }}
             >
                 <Grid container sx={{ justifyContent: 'space-between', width: '100%' }}>
                     <Grid item xs={4} sm={2} sx={{ borderRight: '1px solid black', paddingY: '10px' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: {xs:'left', md:'center'} }}>
+                        <Box sx={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: {xs:'left', md:'center'} }}>
                             <MailOutlineIcon style={{ fill: '#000000', marginRight: '10px' }} />
                             <Link to='/'>
                                 <Typography variant="h6" color="black">ZKEmail</Typography>
