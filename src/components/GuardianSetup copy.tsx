@@ -236,34 +236,88 @@ const GuardianSetup = () => {
     recoveryExpiry * TIME_UNITS[recoveryExpiryUnit].multiplier,
   );
   return (
-    <Box sx={{ marginX: 'auto', marginTop:'100px', marginBottom:'100px'  }}>
-      <Typography variant='h2' sx={{ paddingBottom: '20px'}}>Set Up Guardian Details </Typography>
-      <Typography variant='h6' sx={{paddingBottom: '80px'}}>Choose a Guardian you trust to be enable wallet recovery <br></br> via email. They'll receive an email request.</Typography>
-
-      <Grid container spacing={3} sx={{ maxWidth: isMobile ? "100%" : "60%", width: "100%", marginX: 'auto' }}>
-
-        <Grid item xs={6} sx={{ borderRight: '1px solid #EBEBEB', paddingRight: '30px' }}>
-          <Box display="flex" flexDirection="column" gap="1rem" sx={{ paddingRight: '5px' }}>
-
-            <Box display="flex" justifyContent="space-between" alignItems='center' sx={{marginRight:'35px'}}>
-                <Typography variant="body1" sx={{ marginRight: '25px', textAlign:'left' }}>Recovery Delay (seconds)</Typography>
-                <InputNumber
-                  type='number'
-                  value={recoveryDelay}
-                  onChange={(e) =>
-                    setRecoveryDelay(
-                      parseInt((e.target as HTMLInputElement).value)
-                    )
-                  }
-                  min={1}
-                  title='Recovery Delay'
-                  message='This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians.'
-                />
-            </Box>
-
-            <Box display="flex" justifyContent="space-between" alignItems='center'  sx={{marginRight:'35px'}}>
-            <Typography variant="body1" sx={{ marginRight: '25px', textAlign:'left' }}>Recovery Expiry (hours)</Typography>
-              <InputNumber
+    <div
+      style={{
+        maxWidth: isMobile ? "100%" : "50%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "flex-start",
+        gap: "2rem",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        Connected wallet:
+        <ConnectKitButton />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+          width: "100%",
+        }}
+      >
+        Guardian Details:
+        <div className="container">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: "2rem",
+              width: "100%",
+              alignItems: "flex-end",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: isMobile ? "90%" : "60%",
+              }}
+            >
+              <p>Guardian's Email</p>
+              <input
+                style={{ width: "100%" }}
+                type="email"
+                value={guardianEmail}
+                onChange={(e) => setGuardianEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <span>Recovery delay</span>
+              <input
+                style={{ width: "1.875rem", marginLeft: "1rem" }}
+                type="number"
+                min={1}
+                value={recoveryDelay}
+                onChange={(e) =>
+                  setRecoveryDelay(
+                    parseInt((e.target as HTMLInputElement).value)
+                  )
+                }
+              />
+              <select
+                style={{ marginLeft: "1rem" }}
+                value={recoveryDelayUnit}
+                onChange={(e) => setRecoveryDelayUnit(e.target.value)}
+              >
+                {Object.keys(TIME_UNITS).map((timeUnit) => {
+                  return (
+                    <option value={TIME_UNITS[timeUnit].value}>
+                      {TIME_UNITS[timeUnit].label}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+            <div>
+              <span>Recovery Expiry</span>
+              <input
+                style={{ width: "1.875rem", marginLeft: "1rem" }}
                 type="number"
                 min={1}
                 value={recoveryExpiry}
@@ -272,56 +326,34 @@ const GuardianSetup = () => {
                     parseInt((e.target as HTMLInputElement).value)
                   )
                 }
-                title='Recovery Expiry (hours)'
-                message='This is the expiry delay that...'
               />
-            </Box>
-
-
-            <Box display="flex" flexDirection="column" gap="1rem" sx={{ textAlign: 'left' }}>
-              <Typography variant="body1">Connected Wallet:</Typography>
-              <ConnectKitButton />
-            </Box>
-            
-          </Box>
-        </Grid>
-
-        <Grid item xs={6} sx={{ textAlign: 'left' }}>
-          <Box sx={{ paddingLeft: '25px' }}>
-            <Typography variant="h5" sx={{ paddingBottom: '20px', fontWeight: 700 }}>Guardian Details:</Typography>
-            <Box display="flex" flexDirection="column" gap="1rem">
-              {[1].map((index) => (
-                <InputField
-                  placeholderText='guardian@prove.email'
-                  key={index}
-                  type="email"
-                  value={guardianEmail}
-                  onChange={(e) => setGuardianEmail(e.target.value)}
-                  label={`Guardian's Email`}
-                  locked={false}
-                  {...(guardianEmail && {
-                    status: emailError ? 'error' : 'okay',
-                    statusNote: emailError ? 'Please enter the correct email address' : 'Okay'
-                  })}
-                />
-              ))}
-            </Box>
-          </Box>
-        </Grid>
-
-        <Grid item sx={{marginX: 'auto'}}>
-          <Box  sx={{width:'330px', marginX: 'auto', marginTop:'30px'}}></Box>
-          <Button
+              <select
+                style={{ marginLeft: "1rem" }}
+                value={recoveryExpiryUnit}
+                onChange={(e) => setRecoveryExpiryUnit(e.target.value)}
+              >
+                {Object.keys(TIME_UNITS).map((timeUnit) => {
+                  return (
+                    <option value={TIME_UNITS[timeUnit].value}>
+                      {TIME_UNITS[timeUnit].label}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style={{ margin: "auto" }}>
+        <Button
           disabled={!guardianEmail || isAccountInitialized}
           loading={loading}
           onClick={configureRecoveryAndRequestGuardian}
-          filled={true}
-          >
-            Configure Recovery & Request Guardian
-          </Button>
-        </Grid>
-      </Grid>
-    </Box>
+        >
+          Configure Recovery and Request Guardian
+        </Button>
+      </div>
+    </div>
   );
 };
 

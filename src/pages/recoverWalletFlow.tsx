@@ -5,6 +5,7 @@ import TriggerAccountRecovery from "../components/TriggerAccountRecovery";
 import { STEPS } from "../constants";
 import { StepsContext } from "../App";
 import { Web3Provider } from "../providers/Web3Provider";
+import NavBar from "../components/NavBar";
 
 const RecoverWalletFlow = () => {
   const stepsContext = useContext(StepsContext);
@@ -24,9 +25,12 @@ const RecoverWalletFlow = () => {
   };
 
   return (
-    <Web3Provider>
-      <div className="app">{renderBody()}</div>
-    </Web3Provider>
+    <div>
+      <NavBar/>
+      <Web3Provider>
+        <div className="app">{renderBody()}</div>
+      </Web3Provider>
+    </div>
   );
 };
 

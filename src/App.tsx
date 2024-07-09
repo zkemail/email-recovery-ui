@@ -8,6 +8,8 @@ import ErrorPage from "./pages/errorPage";
 import SafeWalletFlow from "./pages/safeWalletFlow";
 // import BurnerWalletFlow from "./pages/burnerWalletFlow";
 // import RecoverWalletFlow from "./pages/recoverWalletFlow";
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import theme from './theme'; // Import custom theme
 
 export const StepsContext = createContext(null);
 
@@ -16,6 +18,7 @@ function App() {
 
   return (
     <AppContextProvider>
+      <ThemeProvider theme={theme}>
       <StepsContext.Provider
         value={{
           step,
@@ -32,6 +35,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </StepsContext.Provider>
+      </ThemeProvider>
     </AppContextProvider>
   );
 }

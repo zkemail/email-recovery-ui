@@ -5,7 +5,7 @@ import { StepsContext } from "../App";
 
 import { createContext, useEffect, useState } from "react";
 import ConnectWallets from "./ConnectWallets";
-import Navbar from "./Navbar";
+import Navbar from "./NavBar";
 import RequestedRecoveries from "./RequestedRecoveries";
 import RequestGuardian from "./GuardianSetup";
 import React from "react";

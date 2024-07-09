@@ -4,6 +4,8 @@ import { ConnectKitButton } from "connectkit";
 import { Button } from "./Button";
 import cancelRecoveryIcon from "../assets/cancelRecoveryIcon.svg";
 import completeRecoveryIcon from "../assets/completeRecoveryIcon.svg";
+import { Box, Typography } from "@mui/material";
+import InputField from "./InputField";
 
 const BUTTON_STATES = {
   CANCEL_RECOVERY: "Cancel Recovery",
@@ -18,6 +20,10 @@ const TriggerAccountRecovery = () => {
   const [buttonState, setButtonState] = useState(BUTTON_STATES.CANCEL_RECOVERY);
 
   return (
+    <Box sx={{ marginX: 'auto', marginTop:'100px', marginBottom:'100px'  }}>
+    <Typography variant='h2' sx={{ paddingBottom: '15px'}}>Account Recovery Triggered </Typography>
+    <Typography variant='h6' sx={{paddingBottom: '40px'}}>Cancel or complete recovery to transfer to new wallet</Typography>
+
       <div
         style={{
           maxWidth: isMobile ? "100%" : "50%",
@@ -27,10 +33,11 @@ const TriggerAccountRecovery = () => {
           justifyContent: "center",
           alignItems: "flex-start",
           gap: "2rem",
+          margin:'auto',
         }}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          Connected wallet:
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign:'left'}}>
+          <Typography>Connected wallet:</Typography>
           <ConnectKitButton />
         </div>
         <div
@@ -39,9 +46,10 @@ const TriggerAccountRecovery = () => {
             flexDirection: "column",
             gap: "1rem",
             width: "100%",
+            textAlign:'left'
           }}
         >
-          Triggered Account Recoveries:
+          <Typography> Triggered Account Recoveries:</Typography>
           <div className="container">
             <div
               style={{
@@ -58,14 +66,14 @@ const TriggerAccountRecovery = () => {
                   display: "flex",
                   flexDirection: "column",
                   width: isMobile ? "90%" : "45%",
+                  textAlign:'left'
                 }}
               >
-                <p>Guardian's Email</p>
-                <input
-                  style={{ width: "100%" }}
+                <InputField
                   type="email"
                   value={guardianEmail}
                   onChange={(e) => setGuardianEmail(e.target.value)}
+                  label="Guardian's Email"
                 />
               </div>
               <div
@@ -73,14 +81,15 @@ const TriggerAccountRecovery = () => {
                   display: "flex",
                   flexDirection: "column",
                   width: isMobile ? "90%" : "45%",
+                  textAlign:'left'
                 }}
               >
-                <p>Safe Address</p>
-                <input
-                  style={{ width: "100%" }}
+                
+                <InputField
                   type="email"
                   value={guardianEmail}
                   onChange={(e) => setGuardianEmail(e.target.value)}
+                  label='Safe Address'
                 />
               </div>
               <div
@@ -88,14 +97,14 @@ const TriggerAccountRecovery = () => {
                   display: "flex",
                   flexDirection: "column",
                   width: isMobile ? "90%" : "45%",
+                   textAlign:'left'
                 }}
               >
-                <p>New Wallet Address</p>
-                <input
-                  style={{ width: "100%" }}
+                <InputField
                   type="email"
                   value={newWalletAddress}
                   onChange={(e) => setNewWalletAddress(e.target.value)}
+                  label='New Wallet Address'
                 />
               </div>
             </div>
@@ -103,6 +112,7 @@ const TriggerAccountRecovery = () => {
         </div>
         <div style={{ margin: "auto" }}>
           <Button
+          filled={true}
             endIcon={
               buttonState === BUTTON_STATES.CANCEL_RECOVERY ? (
                 <img src={cancelRecoveryIcon} />
@@ -118,6 +128,7 @@ const TriggerAccountRecovery = () => {
           </Button>
         </div>
       </div>
+      </Box>
   );
 };
 

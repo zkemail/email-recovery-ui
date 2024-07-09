@@ -8,6 +8,7 @@ import RequestedRecoveries from "../components/RequestedRecoveries";
 import TriggerAccountRecovery from "../components/TriggerAccountRecovery";
 import { STEPS } from "../constants";
 import { Web3Provider } from "../providers/Web3Provider";
+import NavBar from "../components/NavBar";
 
 export const FlowContext = createContext(null);
 
@@ -37,9 +38,23 @@ const SafeWalletFlow = () => {
   };
 
   return (
-    <Web3Provider>
-      <div className="app">{renderBody()}</div>
-    </Web3Provider>
+    <div>
+      <NavBar/>
+      <Web3Provider>
+        <div className="app">
+           {renderBody()} 
+
+          {/* <ConnectWallets/> */}
+          {/* need to add a loading screen to EnableSafeModule otherwise looks blank for 3 seconds*/}
+          {/* <EnableSafeModule/> */}
+          {/* <GuardianSetup/>  */}
+          {/* change height and padding bottom */}
+          {/* <RequestedRecoveries /> */}
+          {/* <TriggerAccountRecovery/> */}
+          
+        </div>
+      </Web3Provider>
+    </div>
   );
 };
 
