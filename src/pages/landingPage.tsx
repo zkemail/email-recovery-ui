@@ -97,7 +97,7 @@ const LandingPage = () => {
               lineHeight: "140%",
             }}
           >
-            3 assigned Guardians must reply back to an email to <br></br>
+            Assigned Guardians must reply back to an email to <br></br>
             enable wallet recovery to a new address.
           </Typography>
           <Toggle onFlowChange={handleFlowChange} />

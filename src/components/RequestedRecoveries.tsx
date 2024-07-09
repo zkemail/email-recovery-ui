@@ -99,7 +99,7 @@ const RequestedRecoveries = () => {
   const requestRecovery = useCallback(async () => {
     setLoading(true);
     toast(
-      "Please check Safe Website to complete transaction and check your email later",
+      "Please check your email and accept the email",
       {
         icon: <img src={infoIcon} />,
         style: {
