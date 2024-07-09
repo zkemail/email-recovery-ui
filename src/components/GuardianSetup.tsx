@@ -266,7 +266,7 @@ const GuardianSetup = () => {
               <TextField
                 type="number"
                 sx={{
-                  marginLeft:'10rem',
+                  marginLeft:'5rem',
                   marginRight: '1rem'
                 }}
                 value={recoveryDelay}
