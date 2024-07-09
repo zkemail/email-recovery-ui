@@ -22,7 +22,14 @@ import toast from "react-hot-toast";
 
 import InputField from "./InputField";
 import InputNumber from "./InputNumber";
-import { Box, Grid, MenuItem, Select, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Grid,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useTheme } from "@mui/material";
 import Loader from "./Loader";
 
@@ -80,6 +87,8 @@ const GuardianSetup = () => {
     TIME_UNITS.DAYS.value
   );
 
+  let interval;
+
   const isMobile = window.innerWidth < 768;
 
   const { data: safeOwnersData } = useReadContract({
@@ -105,16 +114,22 @@ const GuardianSetup = () => {
       args: [address],
     });
 
+    console.log(getGuardianConfig);
+
     // TODO: add polling for this
     if (getGuardianConfig?.initialized) {
       setIsAccountInitialized(getGuardianConfig?.initialized);
+      setLoading(false);
+      stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
     }
-    // stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
     setIsAccountInitializedLoading(false);
   };
 
   useEffect(() => {
     checkIfRecoveryIsConfigured();
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(interval);
   }, []);
 
   //logic to check if email input is a valid email
@@ -193,12 +208,13 @@ const GuardianSetup = () => {
 
       console.debug("accept req id", requestId);
 
-      // TODO: Use polling instead
-      stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
+      // Setting up interval for polling
+      interval = setInterval(() => {
+        checkIfRecoveryIsConfigured();
+      }, 5000); // Adjust the interval time (in milliseconds) as needed
     } catch (err) {
       console.log(err);
       toast.error(err.shortMessage);
-    } finally {
       setLoading(false);
     }
   }, [
@@ -266,8 +282,8 @@ const GuardianSetup = () => {
               <TextField
                 type="number"
                 sx={{
-                  marginLeft:'5rem',
-                  marginRight: '1rem'
+                  marginLeft: "5rem",
+                  marginRight: "1rem",
                 }}
                 value={recoveryDelay}
                 onChange={(e) =>
@@ -279,7 +295,7 @@ const GuardianSetup = () => {
                 title="Recovery Delay"
                 message="This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians."
               />
-              
+
               <Select
                 value={recoveryDelayUnit}
                 onChange={(e) => setRecoveryDelayUnit(e.target.value)}
