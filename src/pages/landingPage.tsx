@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/Button";
-import NavBar from "../components/NavBar";
-
+import NavBar from "../components/Navbar";
 import { useTheme, Grid, Typography, Box, TextField, Stack } from '@mui/material';
 import '../App.css';
 import DraftsOutlinedIcon from '@mui/icons-material/DraftsOutlined';

@@ -8,7 +8,7 @@ import RequestedRecoveries from "../components/RequestedRecoveries";
 import TriggerAccountRecovery from "../components/TriggerAccountRecovery";
 import { STEPS } from "../constants";
 import { Web3Provider } from "../providers/Web3Provider";
-import NavBar from "../components/NavBar";
+import NavBar from "../components/Navbar";
 
 export const FlowContext = createContext(null);
 

@@ -21,12 +21,10 @@ import { STEPS } from "../constants";
 import toast from "react-hot-toast";
 
 import InputField from "./InputField";
-import InputNumber from "./InputNumber"; 
-import { Box, Grid, Typography } from '@mui/material';
+import InputNumber from "./InputNumber";
+import { Box, Grid, MenuItem, Select, Typography } from "@mui/material";
 import { useTheme } from "@mui/material";
 import Loader from "./Loader";
-
-
 
 const TIME_UNITS = {
   SECS: {
@@ -51,13 +49,11 @@ const TIME_UNITS = {
   },
 };
 
-
 //logic for valid email address check for input
 const isValidEmail = (email) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(String(email).toLowerCase());
 };
-
 
 const GuardianSetup = () => {
   const theme = useTheme();
@@ -121,7 +117,6 @@ const GuardianSetup = () => {
     checkIfRecoveryIsConfigured();
   }, []);
 
-
   //logic to check if email input is a valid email
   useEffect(() => {
     if (!guardianEmail) {
@@ -132,7 +127,6 @@ const GuardianSetup = () => {
       setEmailError(false);
     }
   }, [guardianEmail]);
-    
 
   const configureRecoveryAndRequestGuardian = useCallback(async () => {
     if (!address) {
@@ -145,15 +139,6 @@ const GuardianSetup = () => {
 
     if (!firstSafeOwner) {
       throw new Error("safe owner not found");
-    }
-
-    if (recoveryExpiry - recoveryDelay < 48) {
-      toast.error(
-        "Differnece between recovery expiry and recovery delay can't be less than 48 hrs"
-      );
-      throw new Error(
-        "Differnece between recovery expiry and recovery delay can't be less than 48 hrs"
-      );
     }
 
     try {
@@ -191,7 +176,7 @@ const GuardianSetup = () => {
           [1n],
           [1n],
           recoveryDelay * TIME_UNITS[recoveryDelayUnit].multiplier,
-          recoveryExpiry * TIME_UNITS[recoveryExpiryUnit].multiplier,
+          recoveryExpiry * 60 * 60 * 24 * 30,
         ],
       });
 
@@ -229,40 +214,87 @@ const GuardianSetup = () => {
   ]);
 
   if (isAccountInitializedLoading) {
-    return <Loader/>;
+    return <Loader />;
   }
   console.log(
     recoveryDelay * TIME_UNITS[recoveryDelayUnit].multiplier,
-    recoveryExpiry * TIME_UNITS[recoveryExpiryUnit].multiplier,
+    recoveryExpiry * TIME_UNITS[recoveryExpiryUnit].multiplier
   );
   return (
-    <Box sx={{ marginX: 'auto', marginTop:'100px', marginBottom:'100px'  }}>
-      <Typography variant='h2' sx={{ paddingBottom: '20px'}}>Set Up Guardian Details </Typography>
-      <Typography variant='h6' sx={{paddingBottom: '80px'}}>Choose a Guardian you trust to be enable wallet recovery <br></br> via email. They'll receive an email request.</Typography>
+    <Box sx={{ marginX: "auto", marginTop: "100px", marginBottom: "100px" }}>
+      <Typography variant="h2" sx={{ paddingBottom: "20px" }}>
+        Set Up Guardian Details{" "}
+      </Typography>
+      <Typography variant="h6" sx={{ paddingBottom: "80px" }}>
+        Choose a Guardian you trust to be enable wallet recovery <br></br> via
+        email. They'll receive an email request.
+      </Typography>
 
-      <Grid container spacing={3} sx={{ maxWidth: isMobile ? "100%" : "60%", width: "100%", marginX: 'auto' }}>
-
-        <Grid item xs={6} sx={{ borderRight: '1px solid #EBEBEB', paddingRight: '30px' }}>
-          <Box display="flex" flexDirection="column" gap="1rem" sx={{ paddingRight: '5px' }}>
-
-            <Box display="flex" justifyContent="space-between" alignItems='center' sx={{marginRight:'35px'}}>
-                <Typography variant="body1" sx={{ marginRight: '25px', textAlign:'left' }}>Recovery Delay (seconds)</Typography>
-                <InputNumber
-                  type='number'
-                  value={recoveryDelay}
-                  onChange={(e) =>
-                    setRecoveryDelay(
-                      parseInt((e.target as HTMLInputElement).value)
-                    )
-                  }
-                  min={1}
-                  title='Recovery Delay'
-                  message='This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians.'
-                />
+      <Grid
+        container
+        spacing={3}
+        sx={{
+          maxWidth: isMobile ? "100%" : "60%",
+          width: "100%",
+          marginX: "auto",
+        }}
+      >
+        <Grid
+          item
+          xs={6}
+          sx={{ borderRight: "1px solid #EBEBEB", paddingRight: "30px" }}
+        >
+          <Box
+            display="flex"
+            flexDirection="column"
+            gap="1rem"
+            sx={{ paddingRight: "5px" }}
+          >
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              sx={{ marginRight: "35px" }}
+            >
+              <Typography
+                variant="body1"
+                sx={{ marginRight: "25px", textAlign: "left" }}
+              >
+                Timelock
+              </Typography>
+              <Select
+                value={recoveryDelayUnit}
+                onChange={(e) => setRecoveryDelayUnit(e.target.value)}
+              >
+                {Object.keys(TIME_UNITS).map((timeUnit) => {
+                  return (
+                    <MenuItem value={TIME_UNITS[timeUnit].value}>
+                      {TIME_UNITS[timeUnit].label}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+              {/* <InputNumber
+                type="number"
+                value={recoveryDelay}
+                onChange={(e) =>
+                  setRecoveryDelay(
+                    parseInt((e.target as HTMLInputElement).value)
+                  )
+                }
+                min={1}
+                title="Recovery Delay"
+                message="This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians."
+              /> */}
             </Box>
 
-            <Box display="flex" justifyContent="space-between" alignItems='center'  sx={{marginRight:'35px'}}>
-            <Typography variant="body1" sx={{ marginRight: '25px', textAlign:'left' }}>Recovery Expiry (hours)</Typography>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              sx={{ marginRight: "35px" }}
+            >
+              {/* <Typography variant="body1" sx={{ marginRight: '25px', textAlign:'left' }}>Recovery Expiry (hours)</Typography>
               <InputNumber
                 type="number"
                 min={1}
@@ -274,25 +306,33 @@ const GuardianSetup = () => {
                 }
                 title='Recovery Expiry (hours)'
                 message='This is the expiry delay that...'
-              />
+              /> */}
             </Box>
 
-
-            <Box display="flex" flexDirection="column" gap="1rem" sx={{ textAlign: 'left' }}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              gap="1rem"
+              sx={{ textAlign: "left" }}
+            >
               <Typography variant="body1">Connected Wallet:</Typography>
               <ConnectKitButton />
             </Box>
-            
           </Box>
         </Grid>
 
-        <Grid item xs={6} sx={{ textAlign: 'left' }}>
-          <Box sx={{ paddingLeft: '25px' }}>
-            <Typography variant="h5" sx={{ paddingBottom: '20px', fontWeight: 700 }}>Guardian Details:</Typography>
+        <Grid item xs={6} sx={{ textAlign: "left" }}>
+          <Box sx={{ paddingLeft: "25px" }}>
+            <Typography
+              variant="h5"
+              sx={{ paddingBottom: "20px", fontWeight: 700 }}
+            >
+              Guardian Details:
+            </Typography>
             <Box display="flex" flexDirection="column" gap="1rem">
               {[1].map((index) => (
                 <InputField
-                  placeholderText='guardian@prove.email'
+                  placeholderText="guardian@prove.email"
                   key={index}
                   type="email"
                   value={guardianEmail}
@@ -300,8 +340,10 @@ const GuardianSetup = () => {
                   label={`Guardian's Email`}
                   locked={false}
                   {...(guardianEmail && {
-                    status: emailError ? 'error' : 'okay',
-                    statusNote: emailError ? 'Please enter the correct email address' : 'Okay'
+                    status: emailError ? "error" : "okay",
+                    statusNote: emailError
+                      ? "Please enter the correct email address"
+                      : "Okay",
                   })}
                 />
               ))}
@@ -309,13 +351,15 @@ const GuardianSetup = () => {
           </Box>
         </Grid>
 
-        <Grid item sx={{marginX: 'auto'}}>
-          <Box  sx={{width:'330px', marginX: 'auto', marginTop:'30px'}}></Box>
+        <Grid item sx={{ marginX: "auto" }}>
+          <Box
+            sx={{ width: "330px", marginX: "auto", marginTop: "30px" }}
+          ></Box>
           <Button
-          disabled={!guardianEmail || isAccountInitialized}
-          loading={loading}
-          onClick={configureRecoveryAndRequestGuardian}
-          filled={true}
+            disabled={!guardianEmail || isAccountInitialized}
+            loading={loading}
+            onClick={configureRecoveryAndRequestGuardian}
+            filled={true}
           >
             Configure Recovery & Request Guardian
           </Button>
