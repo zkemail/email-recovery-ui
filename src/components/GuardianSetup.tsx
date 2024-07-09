@@ -22,7 +22,7 @@ import toast from "react-hot-toast";
 
 import InputField from "./InputField";
 import InputNumber from "./InputNumber";
-import { Box, Grid, MenuItem, Select, Typography } from "@mui/material";
+import { Box, Grid, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useTheme } from "@mui/material";
 import Loader from "./Loader";
 
@@ -262,6 +262,24 @@ const GuardianSetup = () => {
               >
                 Timelock
               </Typography>
+
+              <TextField
+                type="number"
+                sx={{
+                  marginLeft:'10rem',
+                  marginRight: '1rem'
+                }}
+                value={recoveryDelay}
+                onChange={(e) =>
+                  setRecoveryDelay(
+                    parseInt((e.target as HTMLInputElement).value)
+                  )
+                }
+                min={1}
+                title="Recovery Delay"
+                message="This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians."
+              />
+              
               <Select
                 value={recoveryDelayUnit}
                 onChange={(e) => setRecoveryDelayUnit(e.target.value)}
@@ -274,18 +292,6 @@ const GuardianSetup = () => {
                   );
                 })}
               </Select>
-              {/* <InputNumber
-                type="number"
-                value={recoveryDelay}
-                onChange={(e) =>
-                  setRecoveryDelay(
-                    parseInt((e.target as HTMLInputElement).value)
-                  )
-                }
-                min={1}
-                title="Recovery Delay"
-                message="This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians."
-              /> */}
             </Box>
 
             <Box
