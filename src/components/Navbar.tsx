@@ -36,7 +36,7 @@ const NavBar: React.FC = () => {
                         <Box sx={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: {xs:'left', md:'center'} }}>
                             <MailOutlineIcon style={{ fill: '#000000', marginRight: '10px' }} />
                             <Link to='/'>
-                                <Typography variant="h6" color="black">ZKEmail</Typography>
+                                <Typography variant="h6" color="black">ZKEmail Recovery</Typography>
                             </Link>
                         </Box>
                     </Grid>
@@ -67,7 +67,7 @@ const NavBar: React.FC = () => {
                                     ':active': {
                                         outline: 'none', // Remove outline on active
                                     }
-                                }}>Blog</Button>
+                                }}>Learn More</Button>
                             <Web3Provider>
                                 <ConnectKitButton />
                             </Web3Provider>
