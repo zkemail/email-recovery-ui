@@ -39,7 +39,6 @@ const SafeWalletFlow = () => {
 
   return (
     <div>
-      <NavBar/>
       <Web3Provider>
         <div className="app">
            {renderBody()} 

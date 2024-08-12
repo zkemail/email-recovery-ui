@@ -26,7 +26,6 @@ const RecoverWalletFlow = () => {
 
   return (
     <div>
-      <NavBar/>
       <Web3Provider>
         <div className="app">{renderBody()}</div>
       </Web3Provider>
