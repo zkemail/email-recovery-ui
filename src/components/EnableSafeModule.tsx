@@ -1,10 +1,6 @@
 import { ConnectKitButton } from "connectkit";
 import { Button } from "./Button";
-import {
-  useAccount,
-  useReadContract,
-  useWriteContract,
-} from "wagmi";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import { abi as safeAbi } from "../abi/Safe.json";
 import { useCallback, useContext, useEffect, useState } from "react";
@@ -13,16 +9,14 @@ import { STEPS } from "../constants";
 import Loader from "./Loader";
 import infoIcon from "../assets/infoIcon.svg";
 import toast from "react-hot-toast";
-import { Box, Typography } from "@mui/material";
-import CircleIcon from '@mui/icons-material/Circle';
+import { Box, Grid, Typography } from "@mui/material";
+import CircleIcon from "@mui/icons-material/Circle";
 
 const EnableSafeModule = () => {
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
   const stepsContext = useContext(StepsContext);
   const [isEnableModalLoading, setIsEnableModuleLoading] = useState(false);
-
-  console.log("Account address:", address);
 
   const { data: isModuleEnabled, isLoading: isCheckModuleEnabledLoading } =
     useReadContract({
@@ -31,9 +25,8 @@ const EnableSafeModule = () => {
       functionName: "isModuleEnabled",
       args: [safeEmailRecoveryModule],
     });
-    
+
   if (isModuleEnabled) {
-    console.log("Module is enabled");
     setIsEnableModuleLoading(false);
     stepsContext?.setStep(STEPS.REQUEST_GUARDIAN);
   }
@@ -47,9 +40,9 @@ const EnableSafeModule = () => {
     toast("Please check Safe Website to complete transaction", {
       icon: <img src={infoIcon} />,
       style: {
-        background: 'white'
-      }
-    })
+        background: "white",
+      },
+    });
 
     await writeContractAsync({
       abi: safeAbi,
@@ -64,28 +57,50 @@ const EnableSafeModule = () => {
   }
 
   return (
-    <Box sx={{ marginX: 'auto', marginTop: '150px' }}>
-      <Typography variant='h2' sx={{ paddingBottom: '10px' }}>Set Up Wallet Recovery</Typography>
-      <Typography variant='h6' sx={{ paddingBottom: '40px' }}>
-        Connect your wallet now to make your wallet<br />recoverable by guardian.
+    <Box sx={{ marginX: "auto", marginTop: { xs: "2rem", sm: "9.375rem" } }}>
+      <Typography variant="h2" sx={{ paddingBottom: "10px" }}>
+        Set Up Wallet Recovery
+      </Typography>
+      <Typography variant="h6" sx={{ paddingBottom: "40px" }}>
+        Connect your wallet now to make your wallet
+        <br />
+        recoverable by guardian.
       </Typography>
       <div style={{ display: "flex", gap: "2rem", flexDirection: "column" }}>
-        <Box borderRadius={3} sx={{ marginX: 'auto', backgroundColor: '#FCFCFC', border: '1px solid #E3E3E3', paddingY: '20px', paddingX: '25px' }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <CircleIcon 
-              sx={{ 
-                padding: '5px', 
-                color: address ? '#6DD88B' : '#FB3E3E', 
-                marginRight: '-10px',
-                transition: 'color 0.5s ease-in-out'
-              }} 
-            />
-            <Typography> Connected Wallet: </Typography><ConnectKitButton />
-          </div>
+        <Box
+          borderRadius={3}
+          sx={{
+            marginX: "auto",
+            backgroundColor: "#FCFCFC",
+            border: "1px solid #E3E3E3",
+            padding: {xs: 2, md: 1},
+          }}
+        >
+          <Grid
+            container
+            justifyContent={"center"}
+            alignItems={"center"}
+            gap={2}
+          >
+            <Grid item container xs="auto">
+                <CircleIcon
+                  sx={{
+                    color: address ? "#6DD88B" : "#FB3E3E",
+                    transition: "color 0.5s ease-in-out",
+                  }}
+                />
+              <Grid item>
+                <Typography> Connected Wallet: </Typography>
+              </Grid>
+            </Grid>
+            <Grid item>
+              <ConnectKitButton />
+            </Grid>
+          </Grid>
         </Box>
 
         {!isModuleEnabled ? (
-          <Box sx={{ marginX: 'auto', width: '300px' }}>
+          <Box sx={{ marginX: "auto", width: "18.75rem" }}>
             <Button
               filled={true}
               disabled={isEnableModalLoading}
