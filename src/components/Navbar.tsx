@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTheme } from "@mui/material/styles";
-import { AppBar, Grid } from "@mui/material/";
+import { AppBar, Grid, IconButton, Slide } from "@mui/material/";
 import Typography from "@mui/material/Typography";
 import { Button } from "./Button";
 import Box from "@mui/material/Box";
@@ -8,16 +8,176 @@ import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import { Web3Provider } from "../providers/Web3Provider";
 import { ConnectKitButton } from "connectkit";
 import { Link } from "react-router-dom";
+import MenuIcon from "@mui/icons-material/Menu";
+
+import { Dialog, Toolbar } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { TransitionProps } from "@mui/material/transitions";
+
+const NAV_LINKS = [
+  { link: "https://prove.email/blog", title: "Blog" },
+  { link: "https://zkemail.gitbook.io/zk-email", title: "Docs" },
+  { link: "https://prove.email/", title: "Demos" },
+  { link: "https://t.me/zkemail", title: "Contact" },
+];
+
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement;
+  },
+  ref: React.Ref<unknown>
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+const MobileNav = ({
+  open,
+  onClose,
+  pages,
+}: {
+  open: boolean;
+  onClose: () => void;
+  pages: Array<{ title: string; link: string }>;
+}) => {
+  const theme = useTheme();
+  return (
+    <Dialog
+      fullScreen
+      open={open}
+      onClose={onClose}
+      TransitionComponent={Transition}
+      PaperProps={{
+        sx: {
+          backgroundColor: "black",
+          position: "relative", // Ensure relative positioning
+          padding: "1rem",
+        },
+      }}
+    >
+      <AppBar sx={{ position: "relative", background: "black" }}>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
+          <IconButton
+            edge="start"
+            color="inherit"
+            href="/"
+            aria-label="home"
+          ></IconButton>
+
+          <IconButton
+            edge="end"
+            color="inherit"
+            onClick={onClose}
+            aria-label="close"
+          >
+            <CloseIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+
+      <Grid
+        container
+        direction="column"
+        spacing={1}
+        sx={{ padding: "1.5%", paddingTop: "40px" }}
+      >
+        {pages.map((page) => (
+          <Grid item key={page.title}>
+            <Typography
+              variant="h4"
+              component="a"
+              href={page.link}
+              sx={{
+                display: "inline-block", // Ensures the underline is as wide as the text
+                color: "white",
+                textDecoration: "none",
+                marginBottom: theme.spacing(3),
+                position: "relative",
+
+                "&:hover": {
+                  opacity: 0.8,
+                  "&::after": {
+                    transform: "scaleX(1)",
+                    height: "2px",
+                    backgroundColor: theme.palette.secondary.main, // Underline color
+                    transformOrigin: "bottom left",
+                    transition: "transform 0.3s ease-out",
+                  },
+                },
+
+                "&::after": {
+                  content: '""',
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "2px",
+                  backgroundColor: theme.palette.secondary.main, // Underline color
+                  transform: "scaleX(0)",
+                  transformOrigin: "bottom left",
+                  transition: "transform 0.3s ease-out",
+                },
+              }}
+            >
+              {page.title}
+            </Typography>
+          </Grid>
+        ))}
+      </Grid>
+      <Grid
+        item
+        container
+        gap={2}
+        alignItems={"center"}
+        direction={"column"}
+        style={{ marginTop: "auto", marginBottom: "2rem" }}
+      >
+        <Button
+          color="secondary"
+          variant="outlined"
+          href="https://prove.email/blog/recovery"
+          target="_blank"
+          sx={{
+            marginRight: theme.spacing(2),
+            textTransform: "none",
+            borderRadius: "26px",
+            ":hover": {
+              backgroundColor: "#E0F6FF", // Background color on hover
+            },
+            ":focus": {
+              outline: "none", // Remove outline on focus
+            },
+            ":active": {
+              outline: "none", // Remove outline on active
+            },
+          }}
+        >
+          Learn More
+        </Button>
+        <Web3Provider>
+          <ConnectKitButton />
+        </Web3Provider>
+      </Grid>
+    </Dialog>
+  );
+};
 
 const NavBar: React.FC = () => {
   const theme = useTheme();
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <>
       <AppBar
         position="static"
         sx={{
-          height: "60px",
           width: "100%",
           backgroundColor: "white",
           paddingY: "0px",
@@ -31,12 +191,22 @@ const NavBar: React.FC = () => {
           paddingX: { xs: "20px", sm: "5px", md: "0px" },
         }}
       >
-        <Grid container sx={{ justifyContent: "space-between", width: "100%" }}>
+        <Grid
+          container
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
           <Grid
             item
-            xs={4}
+            xs={8}
             sm={2}
-            sx={{ borderRight: "1px solid black", paddingY: "10px" }}
+            sx={{
+              borderRight: { md: "1px solid black" },
+              paddingY: "0.625rem",
+            }}
           >
             <Box
               sx={{
@@ -47,7 +217,7 @@ const NavBar: React.FC = () => {
               }}
             >
               <MailOutlineIcon
-                style={{ fill: "#000000", marginRight: "10px" }}
+                style={{ fill: "#000000", marginRight: "0.625rem" }}
               />
               <Link to="/">
                 <Typography variant="h6" color="black">
@@ -62,50 +232,52 @@ const NavBar: React.FC = () => {
             sx={{
               display: { xs: "none", sm: "flex" },
               borderRight: "0.5px solid black",
-              paddingLeft: "25px",
-              paddingY: "10px",
+              paddingLeft: "1.5625rem",
+              paddingY: "0.625rem",
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Button
-                color="primary"
-                href="https://prove.email/blog"
-                target="_blank"
-                sx={{ marginRight: theme.spacing(2), textTransform: "none" }}
-              >
-                Blog
-              </Button>
-              <Button
-                color="primary"
-                href="https://zkemail.gitbook.io/zk-email"
-                target="_blank"
-                sx={{ marginRight: theme.spacing(2), textTransform: "none" }}
-              >
-                Docs
-              </Button>
-              <Button
-                color="primary"
-                href="https://prove.email/"
-                target="_blank"
-                sx={{ marginRight: theme.spacing(2), textTransform: "none" }}
-              >
-                Demos
-              </Button>
-              <Button
-                color="primary"
-                href="https://t.me/zkemail"
-                target="_blank"
-                sx={{ marginRight: theme.spacing(2), textTransform: "none" }}
-              >
-                Contact
-              </Button>
+              {NAV_LINKS.map((navLink) => {
+                return (
+                  <Button
+                    color="primary"
+                    href={navLink.link}
+                    target="_blank"
+                    sx={{
+                      marginRight: theme.spacing(2),
+                      textTransform: "none",
+                    }}
+                  >
+                    {navLink.title}
+                  </Button>
+                );
+              })}
             </Box>
+          </Grid>
+          <Grid item>
+            <IconButton
+              sx={{
+                display: { xs: "flex", sm: "none" },
+                color: theme.palette.text.primary,
+                right: "auto",
+                width: "2.25rem",
+                height: "2.25rem",
+                borderRadius: "50%",
+              }}
+              onClick={handleClickOpen}
+            >
+              <MenuIcon fill="#454545" />
+            </IconButton>
           </Grid>
           <Grid
             item
             xs={4}
             sm={4}
-            sx={{ paddingY: "10px", display: "flex", justifyContent: "center" }}
+            sx={{
+              paddingY: "10px",
+              display: { xs: "none", sm: "flex" },
+              justifyContent: "center",
+            }}
           >
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Button
@@ -136,6 +308,7 @@ const NavBar: React.FC = () => {
             </Box>
           </Grid>
         </Grid>
+        <MobileNav open={open} onClose={handleClose} pages={NAV_LINKS} />
       </AppBar>
     </>
   );
