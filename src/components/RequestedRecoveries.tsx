@@ -232,7 +232,7 @@ const RequestedRecoveries = () => {
         </>
       ) : (
         <>
-          <Typography variant="h1" sx={{ paddingBottom: "1.25rem" }}>
+          <Typography variant="h2" sx={{ paddingBottom: "1.25rem" }}>
             Recover Your Wallet
           </Typography>
           <Typography variant="h6" sx={{ paddingBottom: "3.125rem" }}>
