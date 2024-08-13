@@ -1,16 +1,15 @@
-import { ConnectKitButton } from "connectkit";
 import { Button } from "./Button";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import { abi as safeAbi } from "../abi/Safe.json";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { StepsContext } from "../App";
 import { STEPS } from "../constants";
 import Loader from "./Loader";
 import infoIcon from "../assets/infoIcon.svg";
 import toast from "react-hot-toast";
-import { Box, Grid, Typography } from "@mui/material";
-import CircleIcon from "@mui/icons-material/Circle";
+import { Box, Typography } from "@mui/material";
+import ConnectedWalletCard from "./ConnectedWalletCard";
 
 const EnableSafeModule = () => {
   const { address } = useAccount();
@@ -67,38 +66,7 @@ const EnableSafeModule = () => {
         recoverable by guardian.
       </Typography>
       <div style={{ display: "flex", gap: "2rem", flexDirection: "column" }}>
-        <Box
-          borderRadius={3}
-          sx={{
-            marginX: "auto",
-            backgroundColor: "#FCFCFC",
-            border: "1px solid #E3E3E3",
-            padding: {xs: 2, md: 1},
-          }}
-        >
-          <Grid
-            container
-            justifyContent={"center"}
-            alignItems={"center"}
-            gap={2}
-          >
-            <Grid item container xs="auto">
-                <CircleIcon
-                  sx={{
-                    color: address ? "#6DD88B" : "#FB3E3E",
-                    transition: "color 0.5s ease-in-out",
-                  }}
-                />
-              <Grid item>
-                <Typography> Connected Wallet: </Typography>
-              </Grid>
-            </Grid>
-            <Grid item>
-              <ConnectKitButton />
-            </Grid>
-          </Grid>
-        </Box>
-
+        <ConnectedWalletCard address={address} />
         {!isModuleEnabled ? (
           <Box sx={{ marginX: "auto", width: "18.75rem" }}>
             <Button

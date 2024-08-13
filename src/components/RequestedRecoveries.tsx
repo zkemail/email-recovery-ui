@@ -3,17 +3,14 @@ import { ConnectKitButton } from "connectkit";
 import { Button } from "./Button";
 import cancelRecoveryIcon from "../assets/cancelRecoveryIcon.svg";
 import completeRecoveryIcon from "../assets/completeRecoveryIcon.svg";
-import recoveredIcon from "../assets/recoveredIcon.svg";
 import { useAppContext } from "../context/AppContextHook";
 import { useAccount, useReadContract } from "wagmi";
 import infoIcon from "../assets/infoIcon.svg";
 
 import { relayer } from "../services/relayer";
-import { abi as recoveryPluginAbi } from "../abi/SafeEmailRecoveryModule.json";
 import { getRequestsRecoverySubject, templateIdx } from "../utils/email";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import { StepsContext } from "../App";
-import { STEPS } from "../constants";
 import { FlowContext } from "./StepSelection";
 import toast from "react-hot-toast";
 import { readContract } from "wagmi/actions";
@@ -21,12 +18,13 @@ import { config } from "../providers/config";
 import { abi as safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule.json";
 import { abi as safeAbi } from "../abi/Safe.json";
 import { encodeFunctionData } from "viem";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 
 import CircleIcon from "@mui/icons-material/Circle";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import InputField from "./InputField";
 import { useNavigate } from "react-router-dom";
+import ConnectedWalletCard from "./ConnectedWalletCard";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -56,7 +54,7 @@ const RequestedRecoveries = () => {
   const [gurdianRequestId, setGuardianRequestId] = useState<number>();
   const [isButtonStateLoading, setIsButtonStateLoading] = useState(false);
 
-  let interval;
+  let interval: NodeJS.Timeout;
 
   const checkIfRecoveryCanBeCompleted = async () => {
     setIsButtonStateLoading(true);
@@ -216,24 +214,30 @@ const RequestedRecoveries = () => {
   };
 
   return (
-    <Box sx={{ marginX: "auto", marginTop: "100px", marginBottom: "100px" }}>
+    <Box
+      sx={{
+        marginX: "auto",
+        marginTop: { xs: "2rem", sm: "9.375rem" },
+        marginBottom: "6.25rem",
+      }}
+    >
       {buttonState === BUTTON_STATES.RECOVERY_COMPLETED ? (
         <>
-          <Typography variant="h2" sx={{ paddingBottom: "20px" }}>
+          <Typography variant="h2" sx={{ paddingBottom: "1.25rem" }}>
             Completed Wallet Transfer!
           </Typography>
-          <Typography variant="h6" sx={{ paddingBottom: "50px" }}>
+          <Typography variant="h6" sx={{ paddingBottom: "3.125rem" }}>
             Great job your old wallet has successfully transferred ownership
           </Typography>
         </>
       ) : (
         <>
-          <Typography variant="h2" sx={{ paddingBottom: "20px" }}>
+          <Typography variant="h1" sx={{ paddingBottom: "1.25rem" }}>
             Recover Your Wallet
           </Typography>
-          <Typography variant="h6" sx={{ paddingBottom: "50px" }}>
-            Enter your guardian email address and the new <br></br> wallet you
-            want to transfer to
+          <Typography variant="h6" sx={{ paddingBottom: "3.125rem" }}>
+            Enter your guardian email address and the new wallet you want to
+            transfer to
           </Typography>
         </>
       )}
@@ -275,35 +279,10 @@ const RequestedRecoveries = () => {
                 justifyItems="center"
                 borderRadius={3}
                 sx={{
-                  marginX: "auto",
-                  backgroundColor: "#FCFCFC",
-                  border: "1px solid #E3E3E3",
-                  paddingY: "20px",
-                  paddingX: "25px",
                   position: "relative",
                 }}
               >
-                <Box
-                  justifyContent="center"
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "1rem",
-                    marginX: "auto",
-                    marginTop: "10px",
-                  }}
-                >
-                  <CircleIcon
-                    sx={{
-                      padding: "5px",
-                      color: address ? "#6DD88B" : "#FB3E3E",
-                      marginRight: "-10px",
-                      transition: "color 0.5s ease-in-out",
-                    }}
-                  />
-                  <Typography> Connected Wallet: </Typography>
-                  <ConnectKitButton />
-                </Box>
+                <ConnectedWalletCard address={address} />
                 <div
                   style={{
                     display: "flex",
@@ -317,8 +296,8 @@ const RequestedRecoveries = () => {
                     justifyContent: "center",
                     alignItems: "center",
                     position: "absolute",
-                    top: "10px",
-                    right: "12px",
+                    top: "-10px",
+                    right: "-12px",
                   }}
                 >
                   <Typography
@@ -336,43 +315,7 @@ const RequestedRecoveries = () => {
                 </div>
               </Box>
             ) : (
-              <Box
-                width="100%"
-                height="70px"
-                alignContent="center"
-                justifyItems="center"
-                borderRadius={3}
-                sx={{
-                  marginX: "auto",
-                  backgroundColor: "#FCFCFC",
-                  border: "1px solid #E3E3E3",
-                  paddingY: "20px",
-                  paddingX: "25px",
-                  position: "relative",
-                }}
-              >
-                <Box
-                  justifyContent="center"
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "1rem",
-                    marginX: "auto",
-                    marginTop: "10px",
-                  }}
-                >
-                  <CircleIcon
-                    sx={{
-                      padding: "5px",
-                      color: address ? "#6DD88B" : "#FB3E3E",
-                      marginRight: "-10px",
-                      transition: "color 0.5s ease-in-out",
-                    }}
-                  />
-                  <Typography> Connected Wallet: </Typography>
-                  <ConnectKitButton />
-                </Box>
-              </Box>
+              <ConnectedWalletCard address={address} />
             )}
           </div>
         </div>
@@ -389,50 +332,25 @@ const RequestedRecoveries = () => {
             <Typography sx={{ fontWeight: 700 }}>
               Requested Recoveries:
             </Typography>
-            <div className="container">
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: isMobile ? "1rem" : "3rem",
-                  width: "100%",
-                  alignItems: "flex-end",
-                  flexWrap: "wrap",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: isMobile ? "90%" : "45%",
-                    textAlign: "left",
-                  }}
-                >
-                  <InputField
-                    type="email"
-                    value={guardianEmailAddress}
-                    onChange={(e) => setGuardianEmailAddress(e.target.value)}
-                    locked={guardianEmail ? true : false}
-                    label="Guardian's Email"
-                  />
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: isMobile ? "90%" : "45%",
-                    textAlign: "left",
-                  }}
-                >
-                  <InputField
-                    type="email"
-                    value={newOwner || ""}
-                    onChange={(e) => setNewOwner(e.target.value)}
-                    label="Requested New Wallet Address"
-                  />
-                </div>
-              </div>
-            </div>
+            <Grid container gap={3} justifyContent={"space-around"}>
+              <Grid item xs={12} sm={5.5}>
+                <InputField
+                  type="email"
+                  value={guardianEmailAddress}
+                  onChange={(e) => setGuardianEmailAddress(e.target.value)}
+                  locked={guardianEmail ? true : false}
+                  label="Guardian's Email"
+                />
+              </Grid>
+              <Grid item xs={12} sm={5.5}>
+                <InputField
+                  type="email"
+                  value={newOwner || ""}
+                  onChange={(e) => setNewOwner(e.target.value)}
+                  label="Requested New Wallet Address"
+                />
+              </Grid>
+            </Grid>
           </div>
         )}
         <div style={{ margin: "auto", minWidth: "300px" }}>
