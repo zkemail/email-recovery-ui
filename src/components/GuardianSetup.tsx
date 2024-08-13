@@ -21,7 +21,6 @@ import { STEPS } from "../constants";
 import toast from "react-hot-toast";
 
 import InputField from "./InputField";
-import InputNumber from "./InputNumber";
 import {
   Box,
   Grid,
@@ -57,14 +56,12 @@ const TIME_UNITS = {
 };
 
 //logic for valid email address check for input
-const isValidEmail = (email) => {
+const isValidEmail = (email: string) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(String(email).toLowerCase());
 };
 
 const GuardianSetup = () => {
-  const theme = useTheme();
-
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
 
@@ -87,7 +84,7 @@ const GuardianSetup = () => {
     TIME_UNITS.DAYS.value
   );
 
-  let interval;
+  let interval: NodeJS.Timeout;
 
   const isMobile = window.innerWidth < 768;
 
@@ -238,66 +235,60 @@ const GuardianSetup = () => {
   );
   return (
     <Box sx={{ marginX: "auto", marginTop: "100px", marginBottom: "100px" }}>
-      <Typography variant="h2" sx={{ paddingBottom: "20px" }}>
-        Set Up Guardian Details{" "}
+      <Typography variant="h1" sx={{ paddingBottom: "1.5rem" }}>
+        Set Up Guardian Details
       </Typography>
-      <Typography variant="h6" sx={{ paddingBottom: "80px" }}>
-        Choose a Guardian you trust to be enable wallet recovery <br></br> via
-        email. They'll receive an email request.
+      <Typography variant="h6" sx={{ paddingBottom: "5rem" }}>
+        Choose a Guardian you trust to be enable wallet recovery via email.
+        They'll receive an email request.
       </Typography>
 
       <Grid
         container
-        spacing={3}
+        gap={3}
+        justifyContent={"center"}
         sx={{
-          maxWidth: isMobile ? "100%" : "60%",
+          maxWidth: { xs: "100%", lg: "60%" },
           width: "100%",
           marginX: "auto",
         }}
       >
         <Grid
           item
-          xs={6}
-          sx={{ borderRight: "1px solid #EBEBEB", paddingRight: "30px" }}
+          container
+          md={5.5}
+          justifyContent={"space-around"}
+          xs={12}
+          sx={{ gap: { xs: 3, sm: 0 } }}
         >
-          <Box
-            display="flex"
-            flexDirection="column"
-            gap="1rem"
-            sx={{ paddingRight: "5px" }}
+          <Grid
+            item
+            container
+            direction={"row"}
+            justifyContent={"space-between"}
+            alignItems="center"
           >
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              sx={{ marginRight: "35px" }}
-            >
-              <Typography
-                variant="body1"
-                sx={{ marginRight: "25px", textAlign: "left" }}
-              >
-                Timelock
-              </Typography>
-
+            <Grid item>
+              <Typography variant="body1">Timelock</Typography>
+            </Grid>
+            <Grid item container xs={"auto"} gap={2}>
               <TextField
                 type="number"
-                sx={{
-                  marginLeft: "5rem",
-                  marginRight: "1rem",
-                }}
+                size="small"
+                sx={{ maxWidth: "6rem" }}
                 value={recoveryDelay}
                 onChange={(e) =>
                   setRecoveryDelay(
                     parseInt((e.target as HTMLInputElement).value)
                   )
                 }
-                min={1}
                 title="Recovery Delay"
-                message="This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians."
+                // helperText="This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians."
               />
 
               <Select
                 value={recoveryDelayUnit}
+                size="small"
                 onChange={(e) => setRecoveryDelayUnit(e.target.value)}
               >
                 {Object.keys(TIME_UNITS).map((timeUnit) => {
@@ -308,15 +299,16 @@ const GuardianSetup = () => {
                   );
                 })}
               </Select>
-            </Box>
+            </Grid>
+          </Grid>
 
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              sx={{ marginRight: "35px" }}
-            >
-              {/* <Typography variant="body1" sx={{ marginRight: '25px', textAlign:'left' }}>Recovery Expiry (hours)</Typography>
+          {/* <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ marginRight: "35px" }}
+          >
+            <Typography variant="body1" sx={{ marginRight: '25px', textAlign:'left' }}>Recovery Expiry (hours)</Typography>
               <InputNumber
                 type="number"
                 min={1}
@@ -328,23 +320,24 @@ const GuardianSetup = () => {
                 }
                 title='Recovery Expiry (hours)'
                 message='This is the expiry delay that...'
-              /> */}
-            </Box>
+              />
+          </Box> */}
 
-            <Box
-              display="flex"
-              flexDirection="column"
-              gap="1rem"
-              sx={{ textAlign: "left" }}
-            >
-              <Typography variant="body1">Connected Wallet:</Typography>
-              <ConnectKitButton />
-            </Box>
-          </Box>
+          <Grid
+            item
+            container
+            gap="1rem"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <Typography variant="body1">Connected Wallet:</Typography>
+            <ConnectKitButton />
+          </Grid>
         </Grid>
+        <Grid item sx={{ borderRight: { md: "1px solid #EBEBEB" } }} />
 
-        <Grid item xs={6} sx={{ textAlign: "left" }}>
-          <Box sx={{ paddingLeft: "25px" }}>
+        <Grid item md={5.5} xs={12} sx={{ textAlign: "left" }}>
+          <Box>
             <Typography
               variant="h5"
               sx={{ paddingBottom: "20px", fontWeight: 700 }}
