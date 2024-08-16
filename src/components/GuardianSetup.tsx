@@ -2,11 +2,9 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { Button } from "./Button";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { abi as safeAbi } from "../abi/Safe.json";
+import { safeAbi, safeEmailRecoveryModuleAbi } from "../abis"
 import infoIcon from "../assets/infoIcon.svg";
 import { useAppContext } from "../context/AppContextHook";
-
-import { abi as safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule.json";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import {
   genAccountCode,
@@ -104,18 +102,18 @@ const GuardianSetup = () => {
 
   const checkIfRecoveryIsConfigured = async () => {
     setIsAccountInitializedLoading(true);
-    const getGuardianConfig = await readContract(config, {
+    const isActivated = await readContract(config, {
       abi: safeEmailRecoveryModuleAbi,
       address: safeEmailRecoveryModule as `0x${string}`,
-      functionName: "getGuardianConfig",
-      args: [address],
+      functionName: "isActivated",
+      args: [address as `0x${string}`],
     });
 
-    console.log(getGuardianConfig);
+    console.log(isActivated);
 
     // TODO: add polling for this
-    if (getGuardianConfig?.initialized) {
-      setIsAccountInitialized(getGuardianConfig?.initialized);
+    if (isActivated) {
+      setIsAccountInitialized(isActivated);
       setLoading(false);
       stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
     }
@@ -186,9 +184,9 @@ const GuardianSetup = () => {
         args: [
           [guardianAddr],
           [1n],
-          [1n],
-          recoveryDelay * TIME_UNITS[recoveryDelayUnit].multiplier,
-          recoveryExpiry * 60 * 60 * 24 * 30,
+          1n,
+          BigInt(recoveryDelay * TIME_UNITS[recoveryDelayUnit].multiplier),
+          BigInt(recoveryExpiry * 60 * 60 * 24 * 30),
         ],
       });
 
@@ -283,7 +281,7 @@ const GuardianSetup = () => {
                   )
                 }
                 title="Recovery Delay"
-                // helperText="This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians."
+              // helperText="This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians."
               />
 
               <Select

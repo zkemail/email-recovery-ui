@@ -1,7 +1,7 @@
 import { Button } from "./Button";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
-import { abi as safeAbi } from "../abi/Safe.json";
+import { safeAbi, safeEmailRecoveryModuleAbi } from "../abis"
 import { useCallback, useContext, useState } from "react";
 import { StepsContext } from "../App";
 import { STEPS } from "../constants";

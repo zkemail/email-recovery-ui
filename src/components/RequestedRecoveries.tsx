@@ -15,9 +15,8 @@ import { FlowContext } from "./StepSelection";
 import toast from "react-hot-toast";
 import { readContract } from "wagmi/actions";
 import { config } from "../providers/config";
-import { abi as safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule.json";
-import { abi as safeAbi } from "../abi/Safe.json";
-import { encodeFunctionData } from "viem";
+import { safeEmailRecoveryModuleAbi, safeAbi } from "../abis";
+import { encodeAbiParameters, encodeFunctionData } from "viem";
 import { Box, Grid, Typography } from "@mui/material";
 
 import CircleIcon from "@mui/icons-material/Circle";
@@ -62,14 +61,14 @@ const RequestedRecoveries = () => {
       abi: safeEmailRecoveryModuleAbi,
       address: safeEmailRecoveryModule as `0x${string}`,
       functionName: "getRecoveryRequest",
-      args: [address],
+      args: [address as `0x${string}`],
     });
 
     const getGuardianConfig = await readContract(config, {
       abi: safeEmailRecoveryModuleAbi,
       address: safeEmailRecoveryModule as `0x${string}`,
       functionName: "getGuardianConfig",
-      args: [address],
+      args: [address as `0x${string}`],
     });
 
     console.log(getRecoveryRequest.currentWeight, getGuardianConfig.threshold);
@@ -153,8 +152,11 @@ const RequestedRecoveries = () => {
 
   const completeRecovery = useCallback(async () => {
     setLoading(true);
+    console.log(`newOwner: ${newOwner}`);
+    console.log(`safeWalletAddress: ${safeWalletAddress}`);
 
-    const callData = encodeFunctionData({
+
+    const swapOwnerCallData = encodeFunctionData({
       abi: safeAbi,
       functionName: "swapOwner",
       args: [
@@ -163,12 +165,22 @@ const RequestedRecoveries = () => {
         newOwner,
       ],
     });
+    const completeCalldata = encodeAbiParameters(
+      [
+        { type: "address" },
+        { type: "bytes" }
+      ],
+      [
+        safeWalletAddress,
+        swapOwnerCallData
+      ]
+    );
 
     try {
       const res = await relayer.completeRecovery(
         safeEmailRecoveryModule as string,
         safeWalletAddress as string,
-        callData
+        completeCalldata
       );
 
       console.debug("complete recovery res", res);

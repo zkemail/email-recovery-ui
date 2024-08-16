@@ -1,5 +1,4 @@
 import { buildPoseidon } from "circomlibjs";
-import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 
 export const templateIdx = 0;
 
@@ -57,4 +56,4 @@ export const getRequestsRecoverySubject = (
   newOwner: string
 ) =>
   // `Update owner to ${newOwner} on account ${acctAddr}`;
-  `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner} using recovery module ${safeEmailRecoveryModule}`;
+  `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner}`;

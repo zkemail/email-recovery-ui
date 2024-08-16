@@ -2,11 +2,11 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { Button } from "./Button";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { abi as safeAbi } from "../abi/Safe.json";
+import { abi as safeAbi } from "../abi/Safe";
 import infoIcon from "../assets/infoIcon.svg";
 import { useAppContext } from "../context/AppContextHook";
 
-import { abi as safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule.json";
+import { abi as safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import {
   genAccountCode,
@@ -21,7 +21,7 @@ import { STEPS } from "../constants";
 import toast from "react-hot-toast";
 
 import InputField from "./InputField";
-import InputNumber from "./InputNumber"; 
+import InputNumber from "./InputNumber";
 import { Box, Grid, Typography } from '@mui/material';
 import { useTheme } from "@mui/material";
 import Loader from "./Loader";
@@ -53,7 +53,7 @@ const TIME_UNITS = {
 
 
 //logic for valid email address check for input
-const isValidEmail = (email) => {
+const isValidEmail = (email: string) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(String(email).toLowerCase());
 };
@@ -132,7 +132,7 @@ const GuardianSetup = () => {
       setEmailError(false);
     }
   }, [guardianEmail]);
-    
+
 
   const configureRecoveryAndRequestGuardian = useCallback(async () => {
     if (!address) {
@@ -229,7 +229,7 @@ const GuardianSetup = () => {
   ]);
 
   if (isAccountInitializedLoading) {
-    return <Loader/>;
+    return <Loader />;
   }
   console.log(
     recoveryDelay * TIME_UNITS[recoveryDelayUnit].multiplier,

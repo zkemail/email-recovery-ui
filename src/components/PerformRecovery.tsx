@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { Button } from './Button'
 import { relayer } from '../services/relayer'
-import { abi as recoveryPluginAbi } from '../abi/safeEmailRecoveryModule.json'
+import { abi as recoveryPluginAbi } from '../abi/SafeEmailRecoveryModule'
 import { useReadContract, useAccount } from 'wagmi'
 import {
     getRequestsRecoverySubject,

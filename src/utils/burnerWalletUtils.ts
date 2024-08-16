@@ -21,7 +21,7 @@ import { walletClientToSmartAccountSigner } from "permissionless/utils";
 import { createPublicClient, http } from "viem";
 import { baseSepolia } from "viem/chains";
 import { installModule, erc7579Actions } from "permissionless/actions/erc7579";
-import { abi as safeAbi } from "../abi/Safe.json";
+import { abi as safeAbi } from "../abi/Safe";
 import { abi as safeEmailRecoveryModuleAbi } from "../abi/EmailRecoveryManager.json";
 import { readContract } from "wagmi/actions";
 import {
