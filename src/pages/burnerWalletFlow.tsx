@@ -11,21 +11,24 @@ import TriggerAccountRecovery from "../components/TriggerAccountRecovery";
 import Loader from "../components/Loader";
 import toast from "react-hot-toast";
 import { install, run } from "../utils/burnerWalletUtils";
+import ConnectWallet from "../components/burnerWallet/ConnectBurnerWallet";
 
 const BurnerWalletFlow = () => {
   const stepsContext = useContext(StepsContext);
   const [isBurnerWalletCreating, setIsBurnerWalletCreating] = useState(false);
   const [burnerWalletConfig, setBurnerWalletConfig] = useState();
 
-  useEffect(() => {
-    run();
-    install()
-  }, []);
+  // useEffect(() => {
+  //   run();
+  //   install()
+  // }, []);
+
+  console.log(stepsContext?.step, STEPS)
 
   const renderBody = () => {
     switch (stepsContext?.step) {
       case STEPS.CONNECT_WALLETS:
-        return <ConnectWallets />;
+        return <ConnectWallet />;
       case STEPS.SAFE_MODULE_RECOVERY:
         return <SafeModuleRecovery />;
       case STEPS.REQUEST_GUARDIAN:
@@ -35,7 +38,7 @@ const BurnerWalletFlow = () => {
       case STEPS.TRIGGER_ACCOUNT_RECOVERY:
         return <TriggerAccountRecovery />;
       default:
-        return <ConnectWallets />;
+        return <ConnectWallet />;
     }
   };
 
@@ -46,9 +49,9 @@ const BurnerWalletFlow = () => {
       </div>
     );
   }
-  if (!burnerWalletConfig) {
-    return <div className="app">Could not configure burner wallet</div>;
-  }
+  // if (!burnerWalletConfig) {
+  //   return <div className="app">Could not configure burner wallet</div>;
+  // }
 
   return (
     <BurnerWalletProvider config={burnerWalletConfig}>

@@ -10,6 +10,7 @@ import { ThemeProvider } from "@mui/material";
 import theme from "./theme"; // Import custom theme
 import RecoverWalletFlow from "./pages/recoverWalletFlow";
 import NavBar from "./components/Navbar";
+import BurnerWalletFlow from "./pages/burnerWalletFlow";
 
 export const StepsContext = createContext(null);
 
@@ -31,7 +32,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/safe-wallet" element={<SafeWalletFlow />} />
-                {/* <Route path="/burner-wallet" element={<BurnerWalletFlow />} /> */}
+                <Route path="/burner-wallet" element={<BurnerWalletFlow />} />
                 <Route
                   path="/wallet-recovery"
                   element={<RecoverWalletFlow />}
