@@ -118,9 +118,8 @@ const LandingPage = () => {
                 />
               }
               buttonText={"Burner Safe Flow (v1.4.1)"}
-              isButtonDisabled={true}
               handleButtonClick={() => handleClick("BURNER_WALLET")}
-              title={" Test Wallet"}
+              title={"Test Wallet"}
               description={"Connect to see the test wallet flow"}
               infoIconTitle={"Test Wallet Recovery Setup"}
               infoIconDescription={

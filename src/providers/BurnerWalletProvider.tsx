@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider } from "connectkit";
+import { config } from "./config";
 
 const connectKitOptions = {
   walletConnectName: "WalletConnect",
@@ -10,7 +11,7 @@ const connectKitOptions = {
 
 const queryClient = new QueryClient();
 
-export const BurnerWalletProvider = ({ children, config }: { children: ReactNode, config: any }) => {
+export const BurnerWalletProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <WagmiProvider config={config}>
