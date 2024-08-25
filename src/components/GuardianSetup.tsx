@@ -31,6 +31,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material";
 import Loader from "./Loader";
+import { useGetSafeAccountAddress } from "../utils/useGetSafeAccountAddress";
 
 const TIME_UNITS = {
   SECS: {
@@ -62,7 +63,7 @@ const isValidEmail = (email: string) => {
 };
 
 const GuardianSetup = () => {
-  const { address } = useAccount();
+  const address = useGetSafeAccountAddress()
   const { writeContractAsync } = useWriteContract();
 
   const { guardianEmail, setGuardianEmail, accountCode, setAccountCode } =
