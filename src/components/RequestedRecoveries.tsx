@@ -25,6 +25,7 @@ import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import InputField from "./InputField";
 import { useNavigate } from "react-router-dom";
 import ConnectedWalletCard from "./ConnectedWalletCard";
+import { useGetSafeAccountAddress } from "../utils/useGetSafeAccountAddress";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -36,7 +37,7 @@ const BUTTON_STATES = {
 const RequestedRecoveries = () => {
   // const theme = useTheme(); for some reason this was causing trigger recovery button to be skipped??
   const isMobile = window.innerWidth < 768;
-  const { address } = useAccount();
+  const address = useGetSafeAccountAddress()
   const { guardianEmail } = useAppContext();
   const stepsContext = useContext(StepsContext);
   const navigate = useNavigate();
