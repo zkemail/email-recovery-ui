@@ -1,25 +1,26 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { ConnectKitButton } from "connectkit";
-import { Button } from "./Button";
+import { Button } from "../Button";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { safeAbi } from "../abi/Safe";
-import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
-import infoIcon from "../assets/infoIcon.svg";
-import { useAppContext } from "../context/AppContextHook";
-import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
+import { abi as safeAbi } from "../../abi/Safe.json";
+import infoIcon from "../../assets/infoIcon.svg";
+import { useAppContext } from "../../context/AppContextHook";
+
+import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
+import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
 import {
   genAccountCode,
-  getRequestGuardianCommand,
+  getRequestGuardianSubject,
   templateIdx,
-} from "../utils/email";
+} from "../../utils/email";
 import { readContract } from "wagmi/actions";
-import { config } from "../providers/config";
-import { relayer } from "../services/relayer";
-import { StepsContext } from "../App";
-import { STEPS } from "../constants";
+import { config } from "../../providers/config";
+import { relayer } from "../../services/relayer";
+import { StepsContext } from "../../App";
+import { STEPS } from "../../constants";
 import toast from "react-hot-toast";
 
-import InputField from "./InputField";
+import InputField from "../InputField";
 import {
   Box,
   Grid,
@@ -29,7 +30,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material";
-import Loader from "./Loader";
+import Loader from "../Loader";
+import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
 
 const TIME_UNITS = {
   SECS: {
@@ -61,7 +63,7 @@ const isValidEmail = (email: string) => {
 };
 
 const GuardianSetup = () => {
-  const { address } = useAccount();
+  const address = useGetSafeAccountAddress();
   const { writeContractAsync } = useWriteContract();
 
   const { guardianEmail, setGuardianEmail, accountCode, setAccountCode } =
@@ -103,18 +105,18 @@ const GuardianSetup = () => {
 
   const checkIfRecoveryIsConfigured = async () => {
     setIsAccountInitializedLoading(true);
-    const isActivated = await readContract(config, {
-      abi: safeEmailRecoveryModuleAbi,
-      address: safeEmailRecoveryModule as `0x${string}`,
-      functionName: "isActivated",
-      args: [address as `0x${string}`],
+    const getGuardianConfig = await readContract(config, {
+      abi: universalEmailRecoveryModuleAbi,
+      address: universalEmailRecoveryModule as `0x${string}`,
+      functionName: "getGuardianConfig",
+      args: [address],
     });
 
-    console.log(isActivated);
+    console.log(getGuardianConfig);
 
     // TODO: add polling for this
-    if (isActivated) {
-      setIsAccountInitialized(isActivated);
+    if (getGuardianConfig?.initialized) {
+      setIsAccountInitialized(getGuardianConfig?.initialized);
       setLoading(false);
       stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
     }
@@ -172,34 +174,34 @@ const GuardianSetup = () => {
         guardianEmail
       );
       const guardianAddr = await readContract(config, {
-        abi: safeEmailRecoveryModuleAbi,
-        address: safeEmailRecoveryModule as `0x${string}`,
+        abi: universalEmailRecoveryModuleAbi,
+        address: universalEmailRecoveryModule as `0x${string}`,
         functionName: "computeEmailAuthAddress",
         args: [address, guardianSalt],
       });
 
-      await writeContractAsync({
-        abi: safeEmailRecoveryModuleAbi,
-        address: safeEmailRecoveryModule as `0x${string}`,
-        functionName: "configureSafeRecovery",
-        args: [
-          [guardianAddr],
-          [1n],
-          1n,
-          BigInt(recoveryDelay * TIME_UNITS[recoveryDelayUnit].multiplier),
-          BigInt(recoveryExpiry * 60 * 60 * 24 * 30),
-        ],
-      });
+      // await writeContractAsync({
+      //   abi: universalEmailRecoveryModuleAbi,
+      //   address: universalEmailRecoveryModule as `0x${string}`,
+      //   functionName: "configureRecovery",
+      //   args: [
+      //     [guardianAddr],
+      //     [1n],
+      //     1n,
+      //     recoveryDelay * TIME_UNITS[recoveryDelayUnit].multiplier,
+      //     recoveryExpiry * 60 * 60 * 24 * 30,
+      //   ],
+      // });
 
       console.debug("recovery configured");
 
-      const command = getRequestGuardianCommand(address);
+      const subject = getRequestGuardianSubject(address);
       const { requestId } = await relayer.acceptanceRequest(
-        safeEmailRecoveryModule as `0x${string}`,
+        universalEmailRecoveryModule as `0x${string}`,
         guardianEmail,
         acctCode,
         templateIdx,
-        command
+        subject
       );
 
       console.debug("accept req id", requestId);
@@ -282,7 +284,7 @@ const GuardianSetup = () => {
                   )
                 }
                 title="Recovery Delay"
-              // helperText="This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians."
+                // helperText="This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians."
               />
 
               <Select

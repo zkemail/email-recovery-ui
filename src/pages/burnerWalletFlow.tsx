@@ -4,7 +4,7 @@ import { createBurnerSafeConfig } from "../providers/burnerWalletConfig";
 import { StepsContext } from "../App";
 import { STEPS } from "../constants";
 import SafeModuleRecovery from "../components/burnerWallet/SafeModuleRecovery";
-import GuardianSetup from "../components/GuardianSetup";
+import GuardianSetup from "../components/burnerWallet/GuardianSetup";
 import RequestedRecoveries from "../components/RequestedRecoveries";
 import TriggerAccountRecovery from "../components/TriggerAccountRecovery";
 import Loader from "../components/Loader";
