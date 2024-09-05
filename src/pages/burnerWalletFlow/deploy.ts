@@ -124,7 +124,7 @@ export async function run() {
 
   const opHash = await smartAccountClient.installModule({
     type: "executor",
-    address: "0x50662de4Ef2A7fb4d162b3C7151217b7E79636dD", // universal email recovery module
+    address: "0xf5E6b2A863141E8a792Cef0387bE696a021B29DD", // universal email recovery module
     context: callData,
   });
 
