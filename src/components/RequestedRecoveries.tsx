@@ -185,7 +185,7 @@ const RequestedRecoveries = () => {
       case BUTTON_STATES.TRIGGER_RECOVERY:
         return (
           <Button loading={loading} onClick={requestRecovery}>
-            Trigger Recovery
+            { loading ? "Waiting for Email Confirmation" : "Trigger Recovery"}
           </Button>
         );
       case BUTTON_STATES.CANCEL_RECOVERY:

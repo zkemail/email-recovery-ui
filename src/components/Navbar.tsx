@@ -201,11 +201,12 @@ const NavBar: React.FC = () => {
         >
           <Grid
             item
-            xs={8}
-            sm={2}
+            xs={9}
+            sm={4}
+            md={3}
             sx={{
-              borderRight: { md: "1px solid black" },
-              paddingY: "0.625rem",
+              borderRight: { md: "0.5px solid black" },
+              paddingY: "1rem",
             }}
           >
             <Box
@@ -217,10 +218,10 @@ const NavBar: React.FC = () => {
               }}
             >
               <MailOutlineIcon
-                style={{ fill: "#000000", marginRight: "0.625rem" }}
+                style={{ fill: "#000000", marginLeft:'0.5rem', marginRight: "0.625rem" }}
               />
               <Link to="/">
-                <Typography variant="h6" color="black">
+                <Typography variant="h6" color="black" sx={{fontSize:{xs:'0.75rem', sm:'0.85rem'}}}>
                   ZKEmail Recovery
                 </Typography>
               </Link>
@@ -228,9 +229,10 @@ const NavBar: React.FC = () => {
           </Grid>
           <Grid
             item
-            sm={6}
+            sm={5}
+            md={6}
             sx={{
-              display: { xs: "none", sm: "flex" },
+              display: { xs: "none", sm:'none', md: "flex" },
               borderRight: "0.5px solid black",
               paddingLeft: "1.5625rem",
               paddingY: "0.625rem",
@@ -244,7 +246,7 @@ const NavBar: React.FC = () => {
                     href={navLink.link}
                     target="_blank"
                     sx={{
-                      marginRight: theme.spacing(2),
+                      marginRight: {sm:theme.spacing(1), md:theme.spacing(2)},
                       textTransform: "none",
                     }}
                   >
@@ -273,6 +275,7 @@ const NavBar: React.FC = () => {
             item
             xs={4}
             sm={4}
+            md={3}
             sx={{
               paddingY: "10px",
               display: { xs: "none", sm: "flex" },
