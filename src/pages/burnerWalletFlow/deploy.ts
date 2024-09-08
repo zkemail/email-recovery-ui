@@ -122,9 +122,12 @@ export async function run() {
 
   console.log("callData", callData);
 
+  // 0xf14deb1E1285b63De87a66CF62b6C4916505bd40 is universal email recovery module with safe recovery handler.
+  // acceptanceSubjectTemplates -> [["Accept", "guardian", "request", "for", "{ethAddr}"]]
+  // recoverySubjectTemplates -> [["Recover", "account", "{ethAddr}", "from", "old", "owner", "{ethAddr}", "to", "new", "owner", "{ethAddr}"]]
   const opHash = await smartAccountClient.installModule({
     type: "executor",
-    address: "0xf5E6b2A863141E8a792Cef0387bE696a021B29DD", // universal email recovery module
+    address: "0xf14deb1E1285b63De87a66CF62b6C4916505bd40", 
     context: callData,
   });
 
