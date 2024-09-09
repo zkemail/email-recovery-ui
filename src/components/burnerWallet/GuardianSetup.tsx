@@ -85,6 +85,9 @@ const GuardianSetup = () => {
     TIME_UNITS.DAYS.value
   );
 
+  console.log(accountCode, "accountCode");
+  const localStorageAccountCode = localStorage.getItem("accountCode");
+
   let interval: NodeJS.Timeout;
 
   const isMobile = window.innerWidth < 768;
@@ -112,11 +115,11 @@ const GuardianSetup = () => {
       args: [address],
     });
 
-    console.log(getGuardianConfig);
+    console.log(getGuardianConfig.acceptedWeight === getGuardianConfig.threshold);
 
     // TODO: add polling for this
-    if (getGuardianConfig?.initialized) {
-      setIsAccountInitialized(getGuardianConfig?.initialized);
+    if (getGuardianConfig.acceptedWeight === getGuardianConfig.threshold) {
+      // setIsAccountInitialized(getGuardianConfig?.initialized);
       setLoading(false);
       stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
     }
@@ -166,19 +169,16 @@ const GuardianSetup = () => {
         }
       );
 
-      const acctCode = await genAccountCode();
-      setAccountCode(accountCode);
-
-      const guardianSalt = await relayer.getAccountSalt(
-        acctCode,
-        guardianEmail
-      );
-      const guardianAddr = await readContract(config, {
-        abi: universalEmailRecoveryModuleAbi,
-        address: universalEmailRecoveryModule as `0x${string}`,
-        functionName: "computeEmailAuthAddress",
-        args: [address, guardianSalt],
-      });
+      // const guardianSalt = await relayer.getAccountSalt(
+      //   acctCode,
+      //   guardianEmail
+      // );
+      // const guardianAddr = await readContract(config, {
+      //   abi: universalEmailRecoveryModuleAbi,
+      //   address: universalEmailRecoveryModule as `0x${string}`,
+      //   functionName: "computeEmailAuthAddress",
+      //   args: [address, guardianSalt],
+      // });
 
       // await writeContractAsync({
       //   abi: universalEmailRecoveryModuleAbi,
@@ -199,7 +199,7 @@ const GuardianSetup = () => {
       const { requestId } = await relayer.acceptanceRequest(
         universalEmailRecoveryModule as `0x${string}`,
         guardianEmail,
-        acctCode,
+        localStorageAccountCode,
         templateIdx,
         subject
       );

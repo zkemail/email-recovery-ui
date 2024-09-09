@@ -1,4 +1,5 @@
 import { buildPoseidon } from "circomlibjs";
+import { safeEmailRecoveryModule, universalEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 
 export const templateIdx = 0;
 
@@ -56,4 +57,13 @@ export const getRequestsRecoveryCommand = (
   newOwner: string
 ) =>
   // `Update owner to ${newOwner} on account ${acctAddr}`;
-  `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner}`;
+  `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner} using recovery module ${safeEmailRecoveryModule}`;
+
+  export const getRequestsRecoverySubjectForBurnerWallet = (
+    userAccountAddr: string,
+    acctAddr: string,
+    newOwner: string
+  ) =>
+    // `Update owner to ${newOwner} on account ${acctAddr}`;
+    `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner}`;
+    
