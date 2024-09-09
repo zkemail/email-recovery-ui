@@ -15,9 +15,9 @@ import { FlowContext } from "../StepSelection";
 import toast from "react-hot-toast";
 import { readContract } from "wagmi/actions";
 import { config } from "../../providers/config";
-import { abi as safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule.json";
+import { abi as safeRecoverySubjectHandlerAbi } from "../../abi/SafeRecoverySubjectHandler.json";
 import { abi as safeAbi } from "../../abi/Safe.json";
-import { encodeFunctionData } from "viem";
+import { encodeAbiParameters, encodeFunctionData, keccak256, parseAbiParameters } from "viem";
 import { Box, Grid, Typography } from "@mui/material";
 
 import CircleIcon from "@mui/icons-material/Circle";
@@ -159,14 +159,63 @@ const RequestedRecoveries = () => {
   const completeRecovery = useCallback(async () => {
     setLoading(true);
 
-    const callData = encodeFunctionData({
-      abi: universalEmailRecoveryModuleAbi,
-      functionName: "completeRecovery",
-      args: [
-        safeOwnersData[0],
-        newOwner,
-      ],
+
+
+
+
+
+    const swapOwnerCalldata = encodeFunctionData({
+      abi: safeAbi,
+      functionName: "swapOwner",
+      // args: [
+      //   safeWalletAddress,
+      //   safeOwnersData[0],
+      //   newOwner,
+      // ],
+      args: ["0x0000000000000000000000000000000000000001",'0x4c02329244551fcc66d65817722ab5b1fc01df4a','0xe0387e390808cdba9f2f86c555e406fc84f38afc'],
     });
+
+    const callData = encodeAbiParameters(
+      parseAbiParameters(
+        "address, bytes"
+      ),
+      [
+        // safeWalletAddress, swapOwnerCalldata
+        "0x2212c89b224aa368467aae0057817b787f0bae2f", swapOwnerCalldata
+      ]
+    );
+  
+
+    const recoveryDataHash = keccak256(callData);
+
+    console.log("callData", callData, recoveryDataHash);
+
+
+
+
+
+
+
+
+
+    // const recoveryHashCallData = encodeFunctionData({
+    //   abi: safeRecoverySubjectHandlerAbi,
+    //   functionName: "parseRecoveryDataHash",
+    //   args: [
+    //     safeWalletAddress,
+    //     safeOwnersData[0],
+    //     newOwner,
+    //   ],
+    // });
+
+    // const callsData = encodeFunctionData({
+    //   abi: universalEmailRecoveryModuleAbi,
+    //   functionName: "completeRecovery",
+    //   args: [
+    //     safeOwnersData[0],
+    //     newOwner,
+    //   ],
+    // });
 
     try {
       const res = await relayer.completeRecovery(
