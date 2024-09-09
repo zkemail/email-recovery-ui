@@ -180,8 +180,9 @@ const RequestedRecoveries = () => {
         "address, bytes"
       ),
       [
-        // safeWalletAddress, swapOwnerCalldata
-        "0x2212c89b224aa368467aae0057817b787f0bae2f", swapOwnerCalldata
+        // a validator address, swapOwnerCalldata
+        // https://github.com/zkemail/email-recovery/blob/e2a1a435fba34a69e412d45779a10835ace774a8/test/integration/OwnableValidatorRecovery/UniversalEmailRecoveryModule/UniversalEmailRecoveryModuleBase.t.sol#L75
+        "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691", swapOwnerCalldata
       ]
     );
   
