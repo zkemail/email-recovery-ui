@@ -33,36 +33,20 @@ export const pimlicoBundlerClient = createPimlicoBundlerClient({
   entryPoint: ENTRYPOINT_ADDRESS_V07,
 });
 
-export async function run() {
+export async function run(client, safeAccount, guardianAddr) {
   const addresses = await window.ethereum.request({
     method: "eth_requestAccounts",
   }); // Cast the result to string[]
   const [address] = addresses;
   console.log("address", address);
 
-  const client = createWalletClient({
-    account: address, // Type assertion to match the expected format
-    chain: baseSepolia,
-    transport: custom(window.ethereum),
-  });
   console.log("client", client);
 
-  const safeAccount = await signerToSafeSmartAccount(publicClient, {
-    signer: walletClientToSmartAccountSigner(client),
-    safeVersion: "1.4.1",
-    entryPoint: ENTRYPOINT_ADDRESS_V07,
-    saltNonce: 10n,
-    safe4337ModuleAddress: "0x3Fdb5BC686e861480ef99A6E3FaAe03c0b9F32e2",
-    erc7569LaunchpadAddress: "0xEBe001b3D534B9B6E2500FB78E67a1A137f561CE",
-    validators: [
-      { address: "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691", context: "0x" },
-    ],
-  });
   console.log("safeAccount", safeAccount);
 
   const hash = await client.sendTransaction({
     to: safeAccount.address,
-    value: parseEther("0.03"),
+    value: parseEther("0.003"),
   });
   console.log("hash", hash);
 
@@ -95,7 +79,6 @@ export async function run() {
   const functionSelector = keccak256(
     new TextEncoder().encode("swapOwner(address,address,address)")
   ).slice(0, 10);
-  const guardianAddr = "0x769A39D8b2F96823Ca180e7C2D1E48aB6a8C1579";
   const guardians = [guardianAddr];
   const guardianWeights = [1];
   const threshold = 1;
@@ -120,14 +103,14 @@ export async function run() {
     ]
   );
 
-  console.log("callData", callData);
+  console.log("callData", callData, guardianAddr);
 
   // 0xf14deb1E1285b63De87a66CF62b6C4916505bd40 is universal email recovery module with safe recovery handler.
   // acceptanceSubjectTemplates -> [["Accept", "guardian", "request", "for", "{ethAddr}"]]
   // recoverySubjectTemplates -> [["Recover", "account", "{ethAddr}", "from", "old", "owner", "{ethAddr}", "to", "new", "owner", "{ethAddr}"]]
   const opHash = await smartAccountClient.installModule({
     type: "executor",
-    address: "0xf14deb1E1285b63De87a66CF62b6C4916505bd40", 
+    address: "0xf14deb1E1285b63De87a66CF62b6C4916505bd40", // universal email recovery module
     context: callData,
   });
 

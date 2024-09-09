@@ -5,7 +5,7 @@ import { StepsContext } from "../App";
 import { STEPS } from "../constants";
 import SafeModuleRecovery from "../components/burnerWallet/SafeModuleRecovery";
 import GuardianSetup from "../components/burnerWallet/GuardianSetup";
-import RequestedRecoveries from "../components/RequestedRecoveries";
+import RequestedRecoveries from "../components/burnerWallet/RequestedRecoveries";
 import TriggerAccountRecovery from "../components/TriggerAccountRecovery";
 import Loader from "../components/Loader";
 import toast from "react-hot-toast";
