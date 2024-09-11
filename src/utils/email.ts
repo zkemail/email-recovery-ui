@@ -59,11 +59,16 @@ export const getRequestsRecoveryCommand = (
   // `Update owner to ${newOwner} on account ${acctAddr}`;
   `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner} using recovery module ${safeEmailRecoveryModule}`;
 
-  export const getRequestsRecoverySubjectForBurnerWallet = (
-    userAccountAddr: string,
-    acctAddr: string,
-    newOwner: string
-  ) =>
-    // `Update owner to ${newOwner} on account ${acctAddr}`;
-    `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner}`;
-    
+export const getRequestsRecoverySubjectForBurnerWallet = (
+  userAccountAddr: string,
+  acctAddr: string,
+  newOwner: string
+) =>
+  // `Update owner to ${newOwner} on account ${acctAddr}`;
+  `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner}`;
+
+export const getRequestsRecoveryCommandForBurnerWallet = (
+  acctAddr: string,
+  recoveryData: string
+) =>
+  `Recover account ${acctAddr} using recovery hash ${recoveryData}`
