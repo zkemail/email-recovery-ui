@@ -47,10 +47,10 @@ export async function genAccountCode(): Promise<string> {
 //     return accountSalt;
 // }
 
-// TODO Update both with safe module accept subject
-export const getRequestGuardianSubject = (acctAddr: string) =>
+// TODO Update both with safe module accept command
+export const getRequestGuardianCommand = (acctAddr: string) =>
   `Accept guardian request for ${acctAddr}`;
-export const getRequestsRecoverySubject = (
+export const getRequestsRecoveryCommand = (
   userAccountAddr: string,
   acctAddr: string,
   newOwner: string

@@ -2,13 +2,14 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { Button } from "./Button";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { safeAbi, safeEmailRecoveryModuleAbi } from "../abis"
+import { safeAbi } from "../abi/Safe";
+import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
 import infoIcon from "../assets/infoIcon.svg";
 import { useAppContext } from "../context/AppContextHook";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import {
   genAccountCode,
-  getRequestGuardianSubject,
+  getRequestGuardianCommand,
   templateIdx,
 } from "../utils/email";
 import { readContract } from "wagmi/actions";
@@ -180,7 +181,7 @@ const GuardianSetup = () => {
       await writeContractAsync({
         abi: safeEmailRecoveryModuleAbi,
         address: safeEmailRecoveryModule as `0x${string}`,
-        functionName: "configureRecovery",
+        functionName: "configureSafeRecovery",
         args: [
           [guardianAddr],
           [1n],
@@ -192,13 +193,13 @@ const GuardianSetup = () => {
 
       console.debug("recovery configured");
 
-      const subject = getRequestGuardianSubject(address);
+      const command = getRequestGuardianCommand(address);
       const { requestId } = await relayer.acceptanceRequest(
         safeEmailRecoveryModule as `0x${string}`,
         guardianEmail,
         acctCode,
         templateIdx,
-        subject
+        command
       );
 
       console.debug("accept req id", requestId);

@@ -35,7 +35,7 @@ class Relayer {
 		guardianEmailAddr: string,
 		accountCode: string,
 		templateIdx: number,
-		subject: string
+		command: string
 	): Promise<{ requestId: number }> {
 		const { data } = await axios({
 			method: "POST",
@@ -45,7 +45,7 @@ class Relayer {
 				guardian_email_addr: guardianEmailAddr,
 				account_code: accountCode,
 				template_idx: templateIdx,
-				subject,
+				command,
 			}
 		})
 		const { request_id: requestId } = data;
@@ -56,7 +56,7 @@ class Relayer {
 		controllerEthAddr: string,
 		guardianEmailAddr: string,
 		templateIdx: number,
-		subject: string
+		command: string
 	) {
 		const { data } = await axios({
 			method: "POST",
@@ -65,7 +65,7 @@ class Relayer {
 				controller_eth_addr: controllerEthAddr,
 				guardian_email_addr: guardianEmailAddr,
 				template_idx: templateIdx,
-				subject,
+				command,
 			}
 		})
 		const { request_id: requestId } = data

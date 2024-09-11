@@ -8,14 +8,15 @@ import { useAccount, useReadContract } from "wagmi";
 import infoIcon from "../assets/infoIcon.svg";
 
 import { relayer } from "../services/relayer";
-import { getRequestsRecoverySubject, templateIdx } from "../utils/email";
+import { getRequestsRecoveryCommand, templateIdx } from "../utils/email";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import { StepsContext } from "../App";
 import { FlowContext } from "./StepSelection";
 import toast from "react-hot-toast";
 import { readContract } from "wagmi/actions";
 import { config } from "../providers/config";
-import { safeEmailRecoveryModuleAbi, safeAbi } from "../abis";
+import { safeAbi } from "../abi/Safe";
+import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
 import { encodeAbiParameters, encodeFunctionData } from "viem";
 import { Box, Grid, Typography } from "@mui/material";
 
@@ -121,7 +122,7 @@ const RequestedRecoveries = () => {
       );
     }
 
-    const subject = getRequestsRecoverySubject(
+    const command = getRequestsRecoveryCommand(
       safeOwnersData[0],
       safeWalletAddress,
       newOwner
@@ -132,7 +133,7 @@ const RequestedRecoveries = () => {
         safeEmailRecoveryModule as string,
         guardianEmailAddress,
         templateIdx,
-        subject
+        command
       );
       setGuardianRequestId(requestId);
 
