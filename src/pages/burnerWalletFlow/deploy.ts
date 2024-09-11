@@ -116,7 +116,7 @@ export async function run(client, safeAccount, guardianAddr) {
   console.log("callData", callData);
 
   // acceptanceSubjectTemplates -> [["Accept", "guardian", "request", "for", "{ethAddr}"]]
-  // recoverySubjectTemplates -> [["Recover", "account", "{ethAddr}", "from", "old", "owner", "{ethAddr}", "to", "new", "owner", "{ethAddr}"]]
+  // recoverySubjectTemplates -> [["Recover", "account", "{ethAddr}", "using", "recovery", "hash", "{string}"]]
   const opHash = await smartAccountClient.installModule({
     type: "executor",
     address: universalEmailRecoveryModuleAddress,
