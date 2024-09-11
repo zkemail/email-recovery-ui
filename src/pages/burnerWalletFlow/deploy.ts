@@ -34,15 +34,24 @@ export const pimlicoBundlerClient = createPimlicoBundlerClient({
 });
 
 export async function run(client, safeAccount, guardianAddr) {
+
+  const ownableValidatorAddress = "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691";
+  // Universal Email Recovery Module with
+  // ECDSAOwnedDKIMRegistry
+  // Verifier
+  // EmailAuth
+  // EmailRecoveryCommandHandler
+  const universalEmailRecoveryModule = "0xc0EFFe5d3D240d35450A43a3F9Ebd98091f2e6a7";
+
+  
   const addresses = await window.ethereum.request({
     method: "eth_requestAccounts",
   }); // Cast the result to string[]
   const [address] = addresses;
   console.log("address", address);
-
   console.log("client", client);
-
   console.log("safeAccount", safeAccount);
+  console.log("guardianAddr", guardianAddr);
 
   const hash = await client.sendTransaction({
     to: safeAccount.address,
@@ -62,7 +71,6 @@ export async function run(client, safeAccount, guardianAddr) {
         (await pimlicoBundlerClient.getUserOperationGasPrice()).fast, // if using pimlico bundler
     },
   }).extend(erc7579Actions({ entryPoint: ENTRYPOINT_ADDRESS_V07 }));
-  console.log("smartAccountClient", smartAccountClient);
 
   const txHash = await smartAccountClient.sendTransaction({
     to: address,
@@ -85,12 +93,14 @@ export async function run(client, safeAccount, guardianAddr) {
   const delay = 0; // seconds
   const expiry = 2 * 7 * 24 * 60 * 60; // 2 weeks in seconds
 
+  console.log("account", account);
+
   const callData = encodeAbiParameters(
     parseAbiParameters(
       "address, bytes, bytes4, address[], uint256[], uint256, uint256, uint256"
     ),
     [
-      "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691",
+      ownableValidatorAddress,
       isInstalledContext instanceof Uint8Array
         ? `0x${toHexString(isInstalledContext)}`
         : isInstalledContext, // Convert Uint8Array to hex string if necessary
@@ -103,17 +113,15 @@ export async function run(client, safeAccount, guardianAddr) {
     ]
   );
 
-  console.log("callData", callData, guardianAddr);
+  console.log("callData", callData);
 
-  // 0xf14deb1E1285b63De87a66CF62b6C4916505bd40 is universal email recovery module with safe recovery handler.
   // acceptanceSubjectTemplates -> [["Accept", "guardian", "request", "for", "{ethAddr}"]]
   // recoverySubjectTemplates -> [["Recover", "account", "{ethAddr}", "from", "old", "owner", "{ethAddr}", "to", "new", "owner", "{ethAddr}"]]
   const opHash = await smartAccountClient.installModule({
     type: "executor",
-    address: "0xf14deb1E1285b63De87a66CF62b6C4916505bd40", // universal email recovery module
+    address: universalEmailRecoveryModule, // universal email recovery module
     context: callData,
   });
-
   console.log("opHash", opHash);
 
   const receipt = await pimlicoBundlerClient.waitForUserOperationReceipt({
