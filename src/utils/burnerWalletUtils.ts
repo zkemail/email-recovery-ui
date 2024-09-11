@@ -21,12 +21,12 @@ import { walletClientToSmartAccountSigner } from "permissionless/utils";
 import { createPublicClient, http } from "viem";
 import { baseSepolia } from "viem/chains";
 import { installModule, erc7579Actions } from "permissionless/actions/erc7579";
-import { abi as safeAbi } from "../abi/Safe.json";
+import { abi as safeAbi } from "../abi/Safe";
 import { abi as safeEmailRecoveryModuleAbi } from "../abi/EmailRecoveryManager.json";
 import { readContract } from "wagmi/actions";
 import {
   genAccountCode,
-  getRequestGuardianSubject,
+  getRequestGuardianCommand,
   templateIdx,
 } from "../utils/email";
 import { relayer } from "../services/relayer";
@@ -135,8 +135,9 @@ export async function install() {
 
   const oneWeekInSeconds = 60n * 60n * 24n * 7n;
 
-  const functionSelector = toFunctionSelector('swapOwner(address,address,address)');
-
+  const functionSelector = toFunctionSelector(
+    "swapOwner(address,address,address)"
+  );
 
   const acctCode = await genAccountCode();
   //   setAccountCode(accountCode);

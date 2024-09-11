@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react'
 import { Button } from './Button'
 import { relayer } from '../services/relayer'
-import { abi as recoveryPluginAbi } from '../abi/safeEmailRecoveryModule.json'
+import { abi as recoveryPluginAbi } from '../abi/SafeEmailRecoveryModule'
 import { useReadContract, useAccount } from 'wagmi'
 import {
-    getRequestsRecoverySubject,
+    getRequestsRecoveryCommand,
     templateIdx
 } from '../utils/email'
 import { safeEmailRecoveryModule } from '../../contracts.base-sepolia.json'
@@ -48,13 +48,13 @@ export function PerformRecovery() {
             throw new Error('could not find recovery router for safe')
         }
 
-        const subject = getRequestsRecoverySubject(address, newOwner)
+        const command = getRequestsRecoveryCommand(address, newOwner)
 
         const { requestId } = await relayer.recoveryRequest(
             recoveryRouterAddr as string,
             guardianEmail,
             templateIdx,
-            subject,
+            command,
         )
         console.debug('recovery request id', requestId)
 

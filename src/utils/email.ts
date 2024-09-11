@@ -1,5 +1,4 @@
 import { buildPoseidon } from "circomlibjs";
-import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 
 export const templateIdx = 0;
 
@@ -48,13 +47,13 @@ export async function genAccountCode(): Promise<string> {
 //     return accountSalt;
 // }
 
-// TODO Update both with safe module accept subject
-export const getRequestGuardianSubject = (acctAddr: string) =>
+// TODO Update both with safe module accept command
+export const getRequestGuardianCommand = (acctAddr: string) =>
   `Accept guardian request for ${acctAddr}`;
-export const getRequestsRecoverySubject = (
+export const getRequestsRecoveryCommand = (
   userAccountAddr: string,
   acctAddr: string,
   newOwner: string
 ) =>
   // `Update owner to ${newOwner} on account ${acctAddr}`;
-  `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner} using recovery module ${safeEmailRecoveryModule}`;
+  `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner}`;

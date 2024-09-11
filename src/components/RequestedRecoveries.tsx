@@ -8,16 +8,16 @@ import { useAccount, useReadContract } from "wagmi";
 import infoIcon from "../assets/infoIcon.svg";
 
 import { relayer } from "../services/relayer";
-import { getRequestsRecoverySubject, templateIdx } from "../utils/email";
+import { getRequestsRecoveryCommand, templateIdx } from "../utils/email";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import { StepsContext } from "../App";
 import { FlowContext } from "./StepSelection";
 import toast from "react-hot-toast";
 import { readContract } from "wagmi/actions";
 import { config } from "../providers/config";
-import { abi as safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule.json";
-import { abi as safeAbi } from "../abi/Safe.json";
-import { encodeFunctionData } from "viem";
+import { safeAbi } from "../abi/Safe";
+import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
+import { encodeAbiParameters, encodeFunctionData } from "viem";
 import { Box, Grid, Typography } from "@mui/material";
 
 import CircleIcon from "@mui/icons-material/Circle";
@@ -62,14 +62,14 @@ const RequestedRecoveries = () => {
       abi: safeEmailRecoveryModuleAbi,
       address: safeEmailRecoveryModule as `0x${string}`,
       functionName: "getRecoveryRequest",
-      args: [address],
+      args: [address as `0x${string}`],
     });
 
     const getGuardianConfig = await readContract(config, {
       abi: safeEmailRecoveryModuleAbi,
       address: safeEmailRecoveryModule as `0x${string}`,
       functionName: "getGuardianConfig",
-      args: [address],
+      args: [address as `0x${string}`],
     });
 
     console.log(getRecoveryRequest.currentWeight, getGuardianConfig.threshold);
@@ -122,7 +122,7 @@ const RequestedRecoveries = () => {
       );
     }
 
-    const subject = getRequestsRecoverySubject(
+    const command = getRequestsRecoveryCommand(
       safeOwnersData[0],
       safeWalletAddress,
       newOwner
@@ -133,7 +133,7 @@ const RequestedRecoveries = () => {
         safeEmailRecoveryModule as string,
         guardianEmailAddress,
         templateIdx,
-        subject
+        command
       );
       setGuardianRequestId(requestId);
 
@@ -153,8 +153,11 @@ const RequestedRecoveries = () => {
 
   const completeRecovery = useCallback(async () => {
     setLoading(true);
+    console.log(`newOwner: ${newOwner}`);
+    console.log(`safeWalletAddress: ${safeWalletAddress}`);
 
-    const callData = encodeFunctionData({
+
+    const swapOwnerCallData = encodeFunctionData({
       abi: safeAbi,
       functionName: "swapOwner",
       args: [
@@ -163,12 +166,22 @@ const RequestedRecoveries = () => {
         newOwner,
       ],
     });
+    const completeCalldata = encodeAbiParameters(
+      [
+        { type: "address" },
+        { type: "bytes" }
+      ],
+      [
+        safeWalletAddress,
+        swapOwnerCallData
+      ]
+    );
 
     try {
       const res = await relayer.completeRecovery(
         safeEmailRecoveryModule as string,
         safeWalletAddress as string,
-        callData
+        completeCalldata
       );
 
       console.debug("complete recovery res", res);
