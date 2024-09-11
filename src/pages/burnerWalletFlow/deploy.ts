@@ -41,9 +41,9 @@ export async function run(client, safeAccount, guardianAddr) {
   // Verifier
   // EmailAuth
   // EmailRecoveryCommandHandler
-  const universalEmailRecoveryModule = "0xc0EFFe5d3D240d35450A43a3F9Ebd98091f2e6a7";
+  const universalEmailRecoveryModuleAddress = "0xc0EFFe5d3D240d35450A43a3F9Ebd98091f2e6a7";
 
-  
+
   const addresses = await window.ethereum.request({
     method: "eth_requestAccounts",
   }); // Cast the result to string[]
@@ -119,7 +119,7 @@ export async function run(client, safeAccount, guardianAddr) {
   // recoverySubjectTemplates -> [["Recover", "account", "{ethAddr}", "from", "old", "owner", "{ethAddr}", "to", "new", "owner", "{ethAddr}"]]
   const opHash = await smartAccountClient.installModule({
     type: "executor",
-    address: universalEmailRecoveryModule, // universal email recovery module
+    address: universalEmailRecoveryModuleAddress,
     context: callData,
   });
   console.log("opHash", opHash);
