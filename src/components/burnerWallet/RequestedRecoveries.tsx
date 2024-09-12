@@ -143,9 +143,12 @@ const RequestedRecoveries = () => {
 
     console.log("recoveryData", recoveryData)
 
+    const recoveryDataHash = keccak256(recoveryData);
+    console.log("recoveryDataHash", recoveryDataHash);
+
     const subject = getRequestsRecoveryCommandForBurnerWallet(
       safeWalletAddress,
-      recoveryData
+      recoveryDataHash
     );
     console.log("subject", subject);    
 

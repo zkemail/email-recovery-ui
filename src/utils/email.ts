@@ -69,6 +69,6 @@ export const getRequestsRecoverySubjectForBurnerWallet = (
 
 export const getRequestsRecoveryCommandForBurnerWallet = (
   acctAddr: string,
-  recoveryData: string
+  recoveryDataHash: string
 ) =>
-  `Recover account ${acctAddr} using recovery hash ${recoveryData}`
+  `Recover account ${acctAddr} using recovery hash ${recoveryDataHash}`
