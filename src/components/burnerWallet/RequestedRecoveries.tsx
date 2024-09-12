@@ -8,7 +8,7 @@ import { useAccount, useReadContract } from "wagmi";
 import infoIcon from "../../assets/infoIcon.svg";
 
 import { relayer } from "../../services/relayer";
-import { getRequestsRecoverySubject, getRequestsRecoverySubjectForBurnerWallet, templateIdx } from "../../utils/email";
+import { getRequestsRecoveryCommandForBurnerWallet, getRequestsRecoverySubject, getRequestsRecoverySubjectForBurnerWallet, templateIdx } from "../../utils/email";
 import { safeEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
 import { StepsContext } from "../../App";
 import { FlowContext } from "../StepSelection";
@@ -28,6 +28,7 @@ import ConnectedWalletCard from "../ConnectedWalletCard";
 import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
 import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
 import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
+import { getRecoveryCallData, getRecoveryData } from "../../utils/recoveryDataUtils";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -125,13 +126,28 @@ const RequestedRecoveries = () => {
       );
     }
 
-    const subject = getRequestsRecoverySubjectForBurnerWallet(
-      safeOwnersData[0],
-      safeWalletAddress,
+    const recoveryCallData = getRecoveryCallData(
+      "0x0000000000000000000000000000000000000001", // pre owner addrss -> 0x1
+      safeOwnersData[0], 
       newOwner
+    )
+    // console.log("safeOwnersData[0]", safeOwnersData[0])
+    console.log("safeWalletAddress", safeWalletAddress)
+    console.log("newOwner", newOwner)
+    console.log("recoveryCallData", recoveryCallData)
+
+    const recoveryData = getRecoveryData(
+      "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691",
+      recoveryCallData
+    )
+
+    console.log("recoveryData", recoveryData)
+
+    const subject = getRequestsRecoveryCommandForBurnerWallet(
+      safeWalletAddress,
+      recoveryData
     );
-    // const subject = "Recover account 0x417b8994451976C0c3a5F427ffb684769B34941B from old owner 0x9401296121FC9B78F84fc856B1F8dC88f4415B2e to new owner 0xA294cCa691e4C83B1fc0c8d63D9a3eeF0A196DE1"
-    
+    console.log("subject", subject);    
 
     try {
       const { requestId } = await relayer.recoveryRequest(
@@ -142,9 +158,9 @@ const RequestedRecoveries = () => {
       );
       setGuardianRequestId(requestId);
 
-      interval = setInterval(() => {
-        checkIfRecoveryCanBeCompleted();
-      }, 5000); // Adjust the interval time (in milliseconds) as needed
+      // interval = setInterval(() => {
+      //   checkIfRecoveryCanBeCompleted();
+      // }, 5000); // Adjust the interval time (in milliseconds) as needed
 
       // Clean up the interval on component unmount
 
@@ -158,11 +174,6 @@ const RequestedRecoveries = () => {
 
   const completeRecovery = useCallback(async () => {
     setLoading(true);
-
-
-
-
-
 
     const swapOwnerCalldata = encodeFunctionData({
       abi: safeAbi,
