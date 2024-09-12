@@ -178,31 +178,31 @@ const RequestedRecoveries = () => {
   const completeRecovery = useCallback(async () => {
     setLoading(true);
 
-    const swapOwnerCalldata = encodeFunctionData({
-      abi: safeAbi,
-      functionName: "swapOwner",
-      // args: [
-      //   safeWalletAddress,
-      //   safeOwnersData[0],
-      //   newOwner,
-      // ],
-      args: ["0x0000000000000000000000000000000000000001",'0x4c02329244551fcc66d65817722ab5b1fc01df4a','0xe0387e390808cdba9f2f86c555e406fc84f38afc'],
-    });
+    // const swapOwnerCalldata = encodeFunctionData({
+    //   abi: safeAbi,
+    //   functionName: "swapOwner",
+    //   // args: [
+    //   //   safeWalletAddress,
+    //   //   safeOwnersData[0],
+    //   //   newOwner,
+    //   // ],
+    //   args: ["0x0000000000000000000000000000000000000001",'0x4c02329244551fcc66d65817722ab5b1fc01df4a','0xe0387e390808cdba9f2f86c555e406fc84f38afc'],
+    // });
 
-    const callData = encodeAbiParameters(
-      parseAbiParameters(
-        "address, bytes"
-      ),
-      [
-        // safeWalletAddress, swapOwnerCalldata
-        "0x2212c89b224aa368467aae0057817b787f0bae2f", swapOwnerCalldata
-      ]
-    );
+    // const callData = encodeAbiParameters(
+    //   parseAbiParameters(
+    //     "address, bytes"
+    //   ),
+    //   [
+    //     // safeWalletAddress, swapOwnerCalldata
+    //     "0x2212c89b224aa368467aae0057817b787f0bae2f", swapOwnerCalldata
+    //   ]
+    // );
   
 
-    const recoveryDataHash = keccak256(callData);
+    // const recoveryDataHash = keccak256(callData);
 
-    console.log("callData", callData, recoveryDataHash);
+    // console.log("callData", callData, recoveryDataHash);
 
 
 
@@ -231,11 +231,48 @@ const RequestedRecoveries = () => {
     //   ],
     // });
 
+    // const recoveryCallData = getRecoveryCallData(
+    //   "0x0000000000000000000000000000000000000001", // pre owner addrss -> 0x1
+    //   safeOwnersData[0], 
+    //   "0xe2835b8cD5B16E1736Ff1bB27a390067948445d5" // new owner
+    // )
+
+    // // console.log("safeOwnersData[0]", safeOwnersData[0])
+    console.log("safeWalletAddress", safeWalletAddress)
+    // console.log("recoveryCallData", recoveryCallData)
+
+    // const recoveryData = getRecoveryData(
+    //   "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691",
+    //   recoveryCallData
+    // )
+
+    const recoveryCallData = getRecoveryCallData(
+      "0x0000000000000000000000000000000000000001", // pre owner addrss -> 0x1
+      safeOwnersData[0],
+      "0xe2835b8cD5B16E1736Ff1bB27a390067948445d5"
+    )
+    // console.log("safeOwnersData[0]", safeOwnersData[0])
+    // console.log("safeWalletAddress", safeWalletAddress)
+    // console.log("newOwner", newOwner)
+    console.log("recoveryCallData", recoveryCallData)
+
+    const recoveryData = getRecoveryData(
+      "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691",
+      recoveryCallData
+    )
+
+    console.log("recoveryData", recoveryData)
+    const recoveryDataHash = keccak256(recoveryData);
+    console.log("recoveryDataHash", recoveryDataHash);
+
+
+    // console.log("recoveryData", recoveryData)
+
     try {
       const res = await relayer.completeRecovery(
         universalEmailRecoveryModule as string,
         safeWalletAddress as string,
-        callData
+        recoveryData
       );
 
       console.debug("complete recovery res", res);
