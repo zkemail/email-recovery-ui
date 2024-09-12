@@ -126,12 +126,8 @@ const RequestedRecoveries = () => {
       );
     }
 
-    const recoveryCallData = getRecoveryCallData(
-      "0x0000000000000000000000000000000000000001", // pre owner addrss -> 0x1
-      safeOwnersData[0], 
-      newOwner
-    )
-    // console.log("safeOwnersData[0]", safeOwnersData[0])
+    const recoveryCallData = getRecoveryCallData(newOwner)
+
     console.log("safeWalletAddress", safeWalletAddress)
     console.log("newOwner", newOwner)
     console.log("recoveryCallData", recoveryCallData)
@@ -204,14 +200,6 @@ const RequestedRecoveries = () => {
 
     // console.log("callData", callData, recoveryDataHash);
 
-
-
-
-
-
-
-
-
     // const recoveryHashCallData = encodeFunctionData({
     //   abi: safeRecoverySubjectHandlerAbi,
     //   functionName: "parseRecoveryDataHash",
@@ -246,11 +234,7 @@ const RequestedRecoveries = () => {
     //   recoveryCallData
     // )
 
-    const recoveryCallData = getRecoveryCallData(
-      "0x0000000000000000000000000000000000000001", // pre owner addrss -> 0x1
-      safeOwnersData[0],
-      "0xe2835b8cD5B16E1736Ff1bB27a390067948445d5"
-    )
+    const recoveryCallData = getRecoveryCallData("0xe2835b8cD5B16E1736Ff1bB27a390067948445d5")
     // console.log("safeOwnersData[0]", safeOwnersData[0])
     // console.log("safeWalletAddress", safeWalletAddress)
     // console.log("newOwner", newOwner)

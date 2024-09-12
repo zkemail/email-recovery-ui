@@ -85,7 +85,7 @@ export async function run(client, safeAccount, guardianAddr) {
   const account = safeAccount.address;
   const isInstalledContext = new Uint8Array([0]);
   const functionSelector = keccak256(
-    new TextEncoder().encode("swapOwner(address,address,address)")
+    new TextEncoder().encode("changeOwner(address)")
   ).slice(0, 10);
   const guardians = [guardianAddr];
   const guardianWeights = [1];
