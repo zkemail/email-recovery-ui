@@ -45,7 +45,7 @@ class Relayer {
 				guardian_email_addr: guardianEmailAddr,
 				account_code: accountCode,
 				template_idx: templateIdx,
-				subject,
+				command: subject,
 			}
 		})
 		const { request_id: requestId } = data;
@@ -65,7 +65,7 @@ class Relayer {
 				controller_eth_addr: walletEthAddr,
 				guardian_email_addr: guardianEmailAddr,
 				template_idx: templateIdx,
-				subject,
+				command: subject,
 			}
 		})
 		const { request_id: requestId } = data

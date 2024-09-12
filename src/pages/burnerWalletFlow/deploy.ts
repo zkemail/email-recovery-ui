@@ -40,8 +40,8 @@ export async function run(client, safeAccount, guardianAddr) {
   // ECDSAOwnedDKIMRegistry
   // Verifier
   // EmailAuth
-  // EmailRecoverySubjectHandler
-  const universalEmailRecoveryModuleAddress = "0x447750dA4d010B63840289C17cF38907dD9823a3";
+  // EmailRecoveryCommandHandler
+  const universalEmailRecoveryModuleAddress = "0xc0EFFe5d3D240d35450A43a3F9Ebd98091f2e6a7";
 
 
   const addresses = await window.ethereum.request({
