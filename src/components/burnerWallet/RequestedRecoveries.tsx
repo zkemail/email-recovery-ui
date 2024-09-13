@@ -234,7 +234,7 @@ const RequestedRecoveries = () => {
     //   recoveryCallData
     // )
 
-    const recoveryCallData = getRecoveryCallData("0xe2835b8cD5B16E1736Ff1bB27a390067948445d5")
+    const recoveryCallData = getRecoveryCallData(newOwner)
     // console.log("safeOwnersData[0]", safeOwnersData[0])
     // console.log("safeWalletAddress", safeWalletAddress)
     // console.log("newOwner", newOwner)
