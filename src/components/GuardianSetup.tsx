@@ -28,7 +28,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useTheme } from "@mui/material";
 import Loader from "./Loader";
 
 const TIME_UNITS = {
@@ -84,8 +83,6 @@ const GuardianSetup = () => {
   );
 
   let interval: NodeJS.Timeout;
-
-  const isMobile = window.innerWidth < 768;
 
   const { data: safeOwnersData } = useReadContract({
     address,
@@ -282,7 +279,6 @@ const GuardianSetup = () => {
                   )
                 }
                 title="Recovery Delay"
-              // helperText="This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians."
               />
 
               <Select
@@ -300,28 +296,6 @@ const GuardianSetup = () => {
               </Select>
             </Grid>
           </Grid>
-
-          {/* <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            sx={{ marginRight: "35px" }}
-          >
-            <Typography variant="body1" sx={{ marginRight: '25px', textAlign:'left' }}>Recovery Expiry (hours)</Typography>
-              <InputNumber
-                type="number"
-                min={1}
-                value={recoveryExpiry}
-                onChange={(e) =>
-                  setRecoveryExpiry(
-                    parseInt((e.target as HTMLInputElement).value)
-                  )
-                }
-                title='Recovery Expiry (hours)'
-                message='This is the expiry delay that...'
-              />
-          </Box> */}
-
           <Grid
             item
             container

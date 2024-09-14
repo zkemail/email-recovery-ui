@@ -1,6 +1,4 @@
-import React from 'react';
-import { Box, IconButton, TextField, Typography } from '@mui/material';
-import { ArrowDropUp, ArrowDropDown } from '@mui/icons-material';
+import { Box, IconButton, TextField } from '@mui/material';
 import MoreInfoDialog from "./MoreInfoDialog";
 import ArrowUpwardRoundedIcon from '@mui/icons-material/ArrowUpwardRounded';
 import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';

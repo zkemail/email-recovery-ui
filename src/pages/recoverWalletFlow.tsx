@@ -1,17 +1,12 @@
 import { useContext, useState } from "react";
-import ConnectWallets from "../components/ConnectWallets";
 import RequestedRecoveries from "../components/RequestedRecoveries";
 import TriggerAccountRecovery from "../components/TriggerAccountRecovery";
 import { STEPS } from "../constants";
 import { StepsContext } from "../App";
 import { Web3Provider } from "../providers/Web3Provider";
-import NavBar from "../components/Navbar";
 
 const RecoverWalletFlow = () => {
   const stepsContext = useContext(StepsContext);
-  const [selectedFlow, setSelectedFlow] = useState<actionType | null>();
-  const [isBurnerWalletCreating, setIsBurnerWalletCreating] = useState(false);
-  const [burnerWalletConfig, setBurnerWalletConfig] = useState();
 
   const renderBody = () => {
     switch (stepsContext?.step) {

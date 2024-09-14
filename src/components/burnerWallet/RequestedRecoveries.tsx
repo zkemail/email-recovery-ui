@@ -1,30 +1,23 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { ConnectKitButton } from "connectkit";
 import { Button } from "../Button";
 import cancelRecoveryIcon from "../../assets/cancelRecoveryIcon.svg";
 import completeRecoveryIcon from "../../assets/completeRecoveryIcon.svg";
 import { useAppContext } from "../../context/AppContextHook";
-import { useAccount, useReadContract } from "wagmi";
+import { useReadContract } from "wagmi";
 import infoIcon from "../../assets/infoIcon.svg";
 
 import { relayer } from "../../services/relayer";
-import { getRequestsRecoveryCommandForBurnerWallet, getRequestsRecoverySubject, getRequestsRecoverySubjectForBurnerWallet, templateIdx } from "../../utils/email";
-import { safeEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
+import { getRequestsRecoveryCommandForBurnerWallet, templateIdx } from "../../utils/email";
 import { StepsContext } from "../../App";
-import { FlowContext } from "../StepSelection";
 import toast from "react-hot-toast";
 import { readContract } from "wagmi/actions";
 import { config } from "../../providers/config";
-import { abi as safeRecoverySubjectHandlerAbi } from "../../abi/SafeRecoverySubjectHandler.json";
 import { abi as safeAbi } from "../../abi/Safe.json";
-import { encodeAbiParameters, encodeFunctionData, keccak256, parseAbiParameters } from "viem";
+import { keccak256 } from "viem";
 import { Box, Grid, Typography } from "@mui/material";
 
-import CircleIcon from "@mui/icons-material/Circle";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import InputField from "../InputField";
 import { useNavigate } from "react-router-dom";
-import ConnectedWalletCard from "../ConnectedWalletCard";
 import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
 import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
 import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
@@ -52,7 +45,6 @@ const RequestedRecoveries = () => {
   const [buttonState, setButtonState] = useState(
     BUTTON_STATES.TRIGGER_RECOVERY
   );
-  const flowContext = useContext(FlowContext);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [gurdianRequestId, setGuardianRequestId] = useState<number>();
