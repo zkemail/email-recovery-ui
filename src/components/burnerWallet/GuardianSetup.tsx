@@ -179,15 +179,11 @@ const GuardianSetup = () => {
         ],
       });
 
-      console.log(safeAccount, "safeAccount");
-
       const acctCode = await genAccountCode();
 
-      if (localStorage.getItem("accountCode")) {
-        return;
-      }
-
-      console.log(acctCode, "acctCode");
+      // if (localStorage.getItem("accountCode")) {
+      //   return;
+      // }
 
       localStorage.setItem("accountCode", acctCode);
       await setAccountCode(accountCode);
@@ -204,15 +200,7 @@ const GuardianSetup = () => {
         args: [safeAccount.address, guardianSalt],
       });
 
-      console.log(
-        guardianAddr,
-        safeAccount.address,
-        guardianSalt,
-        "computedGuardianAddr"
-      );
-
       const burnerWalletAddress = await run(client, safeAccount, guardianAddr);
-      console.log(burnerWalletAddress, "account");
       setAccount(burnerWalletAddress);
       localStorage.setItem(
         "burnerWalletConfig",
@@ -221,6 +209,7 @@ const GuardianSetup = () => {
       setIsWalletPresent(true);
     } catch (error) {
       console.log(error);
+      toast.error(`Something went wrong. Err: ${error.shortMessage}`);
       setAccountCreationError(error);
     } finally {
       setIsBurnerWalletCreating(false);
@@ -317,7 +306,9 @@ const GuardianSetup = () => {
       }, 5000); // Adjust the interval time (in milliseconds) as needed
     } catch (err) {
       console.log(err);
-      toast.error(err?.shortMessage ?? "Something went wrong, please try again.");
+      toast.error(
+        err?.shortMessage ?? "Something went wrong, please try again."
+      );
       setLoading(false);
     }
   }, [

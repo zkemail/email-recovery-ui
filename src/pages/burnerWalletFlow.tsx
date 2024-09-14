@@ -1,5 +1,4 @@
 import { useContext } from "react";
-import { BurnerWalletProvider } from "../providers/BurnerWalletProvider";
 import { StepsContext } from "../App";
 import { STEPS } from "../constants";
 import GuardianSetup from "../components/burnerWallet/GuardianSetup";
