@@ -20,6 +20,19 @@ import { StepsContext } from "../../App";
 import { STEPS } from "../../constants";
 import toast from "react-hot-toast";
 
+import { run } from "./deploy";
+import { signerToSafeSmartAccount } from "permissionless/accounts";
+import {
+  ENTRYPOINT_ADDRESS_V07,
+  walletClientToSmartAccountSigner,
+} from "permissionless";
+import { createPublicClient, createWalletClient, custom, http } from "viem";
+import { baseSepolia } from "viem/chains";
+
+export const publicClient = createPublicClient({
+  transport: http("https://sepolia.base.org"),
+});
+
 import InputField from "../InputField";
 import {
   Box,
@@ -65,6 +78,8 @@ const isValidEmail = (email: string) => {
 const GuardianSetup = () => {
   const address = useGetSafeAccountAddress();
   const { writeContractAsync } = useWriteContract();
+  const [account, setAccount] = useState<string>(null);
+  const [accountCreationError, setAccountCreationError] = useState(false);
 
   const { guardianEmail, setGuardianEmail, accountCode, setAccountCode } =
     useAppContext();
@@ -77,6 +92,7 @@ const GuardianSetup = () => {
   // 0 = 2 week default delay, don't do for demo
   const [recoveryDelay, setRecoveryDelay] = useState(1);
   const [recoveryExpiry, setRecoveryExpiry] = useState(7);
+  const [isWalletPresent, setIsWalletPresent] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [recoveryDelayUnit, setRecoveryDelayUnit] = useState(
     TIME_UNITS.SECS.value
@@ -84,6 +100,7 @@ const GuardianSetup = () => {
   const [recoveryExpiryUnit, setRecoveryExpiryUnit] = useState(
     TIME_UNITS.DAYS.value
   );
+  const [isBurnerWalletCreating, setIsBurnerWalletCreating] = useState(false);
 
   console.log(accountCode, "accountCode");
   const localStorageAccountCode = localStorage.getItem("accountCode");
@@ -107,6 +124,10 @@ const GuardianSetup = () => {
   }, [safeOwnersData]);
 
   const checkIfRecoveryIsConfigured = async () => {
+    if (!address) {
+      toast.error("Please connect wallet");
+      return;
+    }
     setIsAccountInitializedLoading(true);
     const getGuardianConfig = await readContract(config, {
       abi: universalEmailRecoveryModuleAbi,
@@ -115,10 +136,13 @@ const GuardianSetup = () => {
       args: [address],
     });
 
-    console.log(getGuardianConfig.acceptedWeight === getGuardianConfig.threshold);
+    console.log(getGuardianConfig);
 
     // TODO: add polling for this
-    if (getGuardianConfig.acceptedWeight === getGuardianConfig.threshold) {
+    if (
+      getGuardianConfig.acceptedWeight === getGuardianConfig.threshold &&
+      getGuardianConfig.threshold !== 0n
+    ) {
       // setIsAccountInitialized(getGuardianConfig?.initialized);
       setLoading(false);
       stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
@@ -126,8 +150,90 @@ const GuardianSetup = () => {
     setIsAccountInitializedLoading(false);
   };
 
+  const connectWallet = async () => {
+    setIsBurnerWalletCreating(true);
+    // Assuming install function sets the account
+    const addresses = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    }); // Cast the result to string[]
+    const [address] = addresses;
+
+    try {
+      const client = createWalletClient({
+        account: address, // Type assertion to match the expected format
+        chain: baseSepolia,
+        transport: custom(window.ethereum),
+      });
+
+      const safeAccount = await signerToSafeSmartAccount(publicClient, {
+        signer: walletClientToSmartAccountSigner(client),
+        safeVersion: "1.4.1",
+        entryPoint: ENTRYPOINT_ADDRESS_V07,
+        saltNonce: 10n,
+        safe4337ModuleAddress: "0x3Fdb5BC686e861480ef99A6E3FaAe03c0b9F32e2",
+        erc7569LaunchpadAddress: "0xEBe001b3D534B9B6E2500FB78E67a1A137f561CE",
+        validators: [
+          {
+            address: "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691",
+            context: "0x",
+          },
+        ],
+      });
+
+      console.log(safeAccount, "safeAccount");
+
+      const acctCode = await genAccountCode();
+
+      if (localStorage.getItem("accountCode")) {
+        return;
+      }
+
+      console.log(acctCode, "acctCode");
+
+      localStorage.setItem("accountCode", acctCode);
+      await setAccountCode(accountCode);
+
+      const guardianSalt = await relayer.getAccountSalt(
+        acctCode,
+        guardianEmail
+      );
+
+      const guardianAddr = await readContract(config, {
+        abi: universalEmailRecoveryModuleAbi,
+        address: universalEmailRecoveryModule as `0x${string}`,
+        functionName: "computeEmailAuthAddress",
+        args: [safeAccount.address, guardianSalt],
+      });
+
+      console.log(
+        guardianAddr,
+        safeAccount.address,
+        guardianSalt,
+        "computedGuardianAddr"
+      );
+
+      const burnerWalletAddress = await run(client, safeAccount, guardianAddr);
+      console.log(burnerWalletAddress, "account");
+      setAccount(burnerWalletAddress);
+      localStorage.setItem(
+        "burnerWalletConfig",
+        JSON.stringify({ burnerWalletAddress })
+      );
+      setIsWalletPresent(true);
+    } catch (error) {
+      console.log(error);
+      setAccountCreationError(error);
+    } finally {
+      setIsBurnerWalletCreating(false);
+    }
+  };
+
   useEffect(() => {
     checkIfRecoveryIsConfigured();
+    const burnerWalletConfig = localStorage.getItem("burnerWalletConfig");
+    if (burnerWalletConfig && burnerWalletConfig != undefined) {
+      setIsWalletPresent(true);
+    }
 
     // Clean up the interval on component unmount
     return () => clearInterval(interval);
@@ -371,14 +477,25 @@ const GuardianSetup = () => {
           <Box
             sx={{ width: "330px", marginX: "auto", marginTop: "30px" }}
           ></Box>
-          <Button
-            disabled={!guardianEmail || isAccountInitialized}
-            loading={loading}
-            onClick={configureRecoveryAndRequestGuardian}
-            filled={true}
-          >
-            Configure Recovery & Request Guardian
-          </Button>
+          {isWalletPresent ? (
+            <Button
+              disabled={!guardianEmail || isAccountInitialized}
+              loading={loading}
+              onClick={configureRecoveryAndRequestGuardian}
+              filled={true}
+            >
+              Configure Recovery & Request Guardian
+            </Button>
+          ) : (
+            <Button
+              disabled={!guardianEmail || isAccountInitialized}
+              loading={isBurnerWalletCreating}
+              onClick={connectWallet}
+              filled={true}
+            >
+              Create burner wallet
+            </Button>
+          )}{" "}
         </Grid>
       </Grid>
     </Box>

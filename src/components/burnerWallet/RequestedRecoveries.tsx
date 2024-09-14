@@ -157,9 +157,9 @@ const RequestedRecoveries = () => {
       );
       setGuardianRequestId(requestId);
 
-      // interval = setInterval(() => {
-      //   checkIfRecoveryCanBeCompleted();
-      // }, 5000); // Adjust the interval time (in milliseconds) as needed
+      interval = setInterval(() => {
+        checkIfRecoveryCanBeCompleted();
+      }, 5000); // Adjust the interval time (in milliseconds) as needed
 
       // Clean up the interval on component unmount
 

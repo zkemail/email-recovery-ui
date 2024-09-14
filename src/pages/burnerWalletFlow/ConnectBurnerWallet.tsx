@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { STEPS } from "../../constants";
 import { StepsContext } from "../../App";
-import { run } from "./deploy";
+import { run } from "../../components/burnerWallet/deploy";
 import { genAccountCode } from "../../utils/email";
 import { useAppContext } from "../../context/AppContextHook";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
