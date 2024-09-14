@@ -22,12 +22,12 @@ const BurnerWalletFlow = () => {
   //   install()
   // }, []);
 
-  console.log(stepsContext?.step, STEPS)
+  console.log(stepsContext?.step, STEPS);
 
   const renderBody = () => {
     switch (stepsContext?.step) {
-      case STEPS.CONNECT_WALLETS:
-        return <ConnectBurnerWallet />;
+      // case STEPS.CONNECT_WALLETS:
+      //   return <ConnectBurnerWallet />;
       case STEPS.REQUEST_GUARDIAN:
         return <GuardianSetup />;
       case STEPS.REQUESTED_RECOVERIES:
@@ -35,7 +35,7 @@ const BurnerWalletFlow = () => {
       case STEPS.TRIGGER_ACCOUNT_RECOVERY:
         return <TriggerAccountRecovery />;
       default:
-        return <ConnectBurnerWallet />;
+        return <GuardianSetup />;
     }
   };
 
