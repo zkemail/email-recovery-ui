@@ -234,7 +234,7 @@ const GuardianSetup = () => {
   );
   return (
     <Box sx={{ marginX: "auto", marginTop: "100px", marginBottom: "100px" }}>
-      <Typography variant="h1" sx={{ paddingBottom: "1.5rem" }}>
+      <Typography variant="h2" sx={{ paddingBottom: "1.5rem" }}>
         Set Up Guardian Details
       </Typography>
       <Typography variant="h6" sx={{ paddingBottom: "5rem" }}>

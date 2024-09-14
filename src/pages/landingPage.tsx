@@ -29,6 +29,8 @@ const LandingPage = () => {
       case "SAFE_WALLET":
         return navigate("/safe-wallet");
       case "BURNER_WALLET":
+        await localStorage.removeItem('accountCode')
+        await localStorage.removeItem('burnerWalletConfig')
         return navigate("/burner-wallet");
       case "WALLET_RECOVERY":
         return navigate("/wallet-recovery");

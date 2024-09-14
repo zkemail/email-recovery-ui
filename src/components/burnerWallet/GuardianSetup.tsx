@@ -125,7 +125,6 @@ const GuardianSetup = () => {
 
   const checkIfRecoveryIsConfigured = async () => {
     if (!address) {
-      toast.error("Please connect wallet");
       return;
     }
     setIsAccountInitializedLoading(true);
@@ -318,7 +317,7 @@ const GuardianSetup = () => {
       }, 5000); // Adjust the interval time (in milliseconds) as needed
     } catch (err) {
       console.log(err);
-      toast.error(err.shortMessage);
+      toast.error(err?.shortMessage ?? "Something went wrong, please try again.");
       setLoading(false);
     }
   }, [
@@ -333,16 +332,9 @@ const GuardianSetup = () => {
     stepsContext,
   ]);
 
-  if (isAccountInitializedLoading) {
-    return <Loader />;
-  }
-  console.log(
-    recoveryDelay * TIME_UNITS[recoveryDelayUnit].multiplier,
-    recoveryExpiry * TIME_UNITS[recoveryExpiryUnit].multiplier
-  );
   return (
     <Box sx={{ marginX: "auto", marginTop: "100px", marginBottom: "100px" }}>
-      <Typography variant="h1" sx={{ paddingBottom: "1.5rem" }}>
+      <Typography variant="h2" sx={{ paddingBottom: "1.5rem" }}>
         Set Up Guardian Details
       </Typography>
       <Typography variant="h6" sx={{ paddingBottom: "5rem" }}>
@@ -430,7 +422,7 @@ const GuardianSetup = () => {
               />
           </Box> */}
 
-          <Grid
+          {/* <Grid
             item
             container
             gap="1rem"
@@ -439,7 +431,7 @@ const GuardianSetup = () => {
           >
             <Typography variant="body1">Connected Wallet:</Typography>
             <ConnectKitButton />
-          </Grid>
+          </Grid> */}
         </Grid>
         <Grid item sx={{ borderRight: { md: "1px solid #EBEBEB" } }} />
 
