@@ -12,7 +12,6 @@ import { StepsContext } from "../../App";
 import toast from "react-hot-toast";
 import { readContract } from "wagmi/actions";
 import { config } from "../../providers/config";
-import { abi as safeAbi } from "../../abi/Safe.json";
 import { keccak256 } from "viem";
 import { Box, Grid, Typography } from "@mui/material";
 
@@ -84,14 +83,6 @@ const RequestedRecoveries = () => {
     checkIfRecoveryCanBeCompleted();
   }, []);
 
-  const { data: safeOwnersData } = useReadContract({
-    address,
-    abi: safeAbi,
-    functionName: "getOwners",
-  });
-
-  console.log(safeOwnersData);
-
   const requestRecovery = useCallback(async () => {
     setLoading(true);
     toast("Please check your email and accept the email", {
@@ -110,12 +101,6 @@ const RequestedRecoveries = () => {
 
     if (!newOwner) {
       throw new Error("new owner not set");
-    }
-
-    if (!safeOwnersData[0]) {
-      toast.error(
-        "Could not find safe owner. Please check if safe is configured correctly."
-      );
     }
 
     const recoveryCallData = getRecoveryCallData(newOwner)

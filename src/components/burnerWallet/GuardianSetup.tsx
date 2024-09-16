@@ -2,7 +2,6 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { Button } from "../Button";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { abi as safeAbi } from "../../abi/Safe.json";
 import infoIcon from "../../assets/infoIcon.svg";
 import { useAppContext } from "../../context/AppContextHook";
 
@@ -10,7 +9,7 @@ import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmail
 import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
 import {
   genAccountCode,
-  getRequestGuardianSubject,
+  getRequestGuardianCommand,
   templateIdx,
 } from "../../utils/email";
 import { readContract } from "wagmi/actions";
@@ -108,20 +107,6 @@ const GuardianSetup = () => {
   let interval: NodeJS.Timeout;
 
   const isMobile = window.innerWidth < 768;
-
-  const { data: safeOwnersData } = useReadContract({
-    address,
-    abi: safeAbi,
-    functionName: "getOwners",
-  });
-  console.log(safeOwnersData);
-  const firstSafeOwner = useMemo(() => {
-    const safeOwners = safeOwnersData as string[];
-    if (!safeOwners?.length) {
-      return;
-    }
-    return safeOwners[0];
-  }, [safeOwnersData]);
 
   const checkIfRecoveryIsConfigured = async () => {
     if (!address) {
@@ -247,14 +232,10 @@ const GuardianSetup = () => {
       throw new Error("guardian email not set");
     }
 
-    if (!firstSafeOwner) {
-      throw new Error("safe owner not found");
-    }
-
     try {
       setLoading(true);
       toast(
-        "Please check Safe Website to complete transaction and check your email later",
+        "Please check your email",
         {
           icon: <img src={infoIcon} />,
           style: {
@@ -289,7 +270,7 @@ const GuardianSetup = () => {
 
       console.debug("recovery configured");
 
-      const subject = getRequestGuardianSubject(address);
+      const subject = getRequestGuardianCommand(address);
       const { requestId } = await relayer.acceptanceRequest(
         universalEmailRecoveryModule as `0x${string}`,
         guardianEmail,
@@ -314,7 +295,6 @@ const GuardianSetup = () => {
   }, [
     address,
     guardianEmail,
-    firstSafeOwner,
     setAccountCode,
     accountCode,
     writeContractAsync,

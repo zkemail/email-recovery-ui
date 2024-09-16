@@ -1,5 +1,8 @@
 import { buildPoseidon } from "circomlibjs";
-import { safeEmailRecoveryModule, universalEmailRecoveryModule } from "../../contracts.base-sepolia.json";
+import {
+  safeEmailRecoveryModule,
+  universalEmailRecoveryModule,
+} from "../../contracts.base-sepolia.json";
 
 export const templateIdx = 0;
 
@@ -70,5 +73,4 @@ export const getRequestsRecoverySubjectForBurnerWallet = (
 export const getRequestsRecoveryCommandForBurnerWallet = (
   acctAddr: string,
   recoveryDataHash: string
-) =>
-  `Recover account ${acctAddr} using recovery hash ${recoveryDataHash}`
+) => `Recover account ${acctAddr} using recovery hash ${recoveryDataHash}`;
