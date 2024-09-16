@@ -68,8 +68,8 @@ export const getRequestsRecoveryCommand = (
   acctAddr: string,
   newOwner: string
 ) =>
-  // TODO: Retrieve the command from the recovery module contract
-  `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner} using recovery module ${safeEmailRecoveryModule}`;
+  // `Update owner to ${newOwner} on account ${acctAddr}`;
+  `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner}`;
 
 export const getRequestsRecoverySubjectForBurnerWallet = (
   userAccountAddr: string,

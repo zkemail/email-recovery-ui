@@ -71,13 +71,13 @@ const RequestedRecoveries = () => {
 
     console.log(getRecoveryRequest.currentWeight, getGuardianConfig.threshold);
 
-    if (getRecoveryRequest.currentWeight < getGuardianConfig.threshold && getGuardianConfig.threshold!==0n) {
-      setButtonState(BUTTON_STATES.TRIGGER_RECOVERY);
-    } else {
-      setButtonState(BUTTON_STATES.COMPLETE_RECOVERY);
-      setLoading(false);
-      clearInterval(interval);
-    }
+    // if (getRecoveryRequest.currentWeight < getGuardianConfig.threshold && getGuardianConfig.threshold!==0n) {
+    //   setButtonState(BUTTON_STATES.TRIGGER_RECOVERY);
+    // } else {
+    //   setButtonState(BUTTON_STATES.COMPLETE_RECOVERY);
+    //   setLoading(false);
+    //   clearInterval(interval);
+    // }
     setIsButtonStateLoading(false);
   };
 
