@@ -190,13 +190,23 @@ const GuardianSetup = () => {
 
       console.debug("recovery configured");
 
-      const command = getRequestGuardianCommand(address);
+      // const command = getRequestGuardianCommand(address);
+
+      const command = await readContract(config, {
+        abi: safeEmailRecoveryModuleAbi,
+        address: safeEmailRecoveryModule as `0x${string}`,
+        functionName: "acceptanceCommandTemplates",
+        args: [],
+      });
+
+      console.log(command[0].join().replace(',', ' ').replace('{ethAddr}', address), "command")
+
       const { requestId } = await relayer.acceptanceRequest(
         safeEmailRecoveryModule as `0x${string}`,
         guardianEmail,
         acctCode,
         templateIdx,
-        command
+        command[0].join()?.replaceAll(',', ' ').replaceAll('{ethAddr}', address)
       );
 
       console.debug("accept req id", requestId);
