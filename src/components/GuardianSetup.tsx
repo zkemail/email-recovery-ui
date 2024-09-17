@@ -9,7 +9,6 @@ import { useAppContext } from "../context/AppContextHook";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import {
   genAccountCode,
-  getRequestGuardianCommand,
   templateIdx,
 } from "../utils/email";
 import { readContract } from "wagmi/actions";
@@ -189,8 +188,6 @@ const GuardianSetup = () => {
       });
 
       console.debug("recovery configured");
-
-      // const command = getRequestGuardianCommand(address);
 
       const command = await readContract(config, {
         abi: safeEmailRecoveryModuleAbi,

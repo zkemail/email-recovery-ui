@@ -1,14 +1,12 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "../Button";
 import cancelRecoveryIcon from "../../assets/cancelRecoveryIcon.svg";
 import completeRecoveryIcon from "../../assets/completeRecoveryIcon.svg";
 import { useAppContext } from "../../context/AppContextHook";
-import { useReadContract } from "wagmi";
 import infoIcon from "../../assets/infoIcon.svg";
 
 import { relayer } from "../../services/relayer";
-import { getRequestsRecoveryCommandForBurnerWallet, templateIdx } from "../../utils/email";
-import { StepsContext } from "../../App";
+import { templateIdx } from "../../utils/email";
 import toast from "react-hot-toast";
 import { readContract } from "wagmi/actions";
 import { config } from "../../providers/config";
@@ -20,7 +18,10 @@ import { useNavigate } from "react-router-dom";
 import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
 import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
 import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
-import { getRecoveryCallData, getRecoveryData } from "../../utils/recoveryDataUtils";
+import {
+  getRecoveryCallData,
+  getRecoveryData,
+} from "../../utils/recoveryDataUtils";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -30,15 +31,13 @@ const BUTTON_STATES = {
 };
 
 const RequestedRecoveries = () => {
-  // const theme = useTheme(); for some reason this was causing trigger recovery button to be skipped??
   const isMobile = window.innerWidth < 768;
-  const address = useGetSafeAccountAddress()
+  const address = useGetSafeAccountAddress();
   const { guardianEmail } = useAppContext();
-  const stepsContext = useContext(StepsContext);
   const navigate = useNavigate();
 
-  const [newOwner, setNewOwner] = useState<string>();
-  const [safeWalletAddress, setSafeWalletAddress] = useState(address);
+  const [newOwner, setNewOwner] = useState<`0x${string}`>();
+  const safeWalletAddress = address;
   const [guardianEmailAddress, setGuardianEmailAddress] =
     useState(guardianEmail);
   const [buttonState, setButtonState] = useState(
@@ -47,12 +46,10 @@ const RequestedRecoveries = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [gurdianRequestId, setGuardianRequestId] = useState<number>();
-  const [isButtonStateLoading, setIsButtonStateLoading] = useState(false);
 
   let interval: NodeJS.Timeout;
 
   const checkIfRecoveryCanBeCompleted = async () => {
-    setIsButtonStateLoading(true);
     const getRecoveryRequest = await readContract(config, {
       abi: universalEmailRecoveryModuleAbi,
       address: universalEmailRecoveryModule as `0x${string}`,
@@ -67,8 +64,6 @@ const RequestedRecoveries = () => {
       args: [address],
     });
 
-    console.log(getRecoveryRequest.currentWeight, getGuardianConfig.threshold);
-
     if (getRecoveryRequest.currentWeight < getGuardianConfig.threshold) {
       setButtonState(BUTTON_STATES.TRIGGER_RECOVERY);
     } else {
@@ -76,7 +71,6 @@ const RequestedRecoveries = () => {
       setLoading(false);
       clearInterval(interval);
     }
-    setIsButtonStateLoading(false);
   };
 
   useEffect(() => {
@@ -103,44 +97,40 @@ const RequestedRecoveries = () => {
       throw new Error("new owner not set");
     }
 
-    const recoveryCallData = getRecoveryCallData(newOwner)
-
-    console.log("safeWalletAddress", safeWalletAddress)
-    console.log("newOwner", newOwner)
-    console.log("recoveryCallData", recoveryCallData)
+    const recoveryCallData = getRecoveryCallData(newOwner);
 
     const recoveryData = getRecoveryData(
-      "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691",
+      "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691", // validator's address
       recoveryCallData
-    )
-
-    console.log("recoveryData", recoveryData)
+    ) as `0x${string}`;
 
     const recoveryDataHash = keccak256(recoveryData);
-    console.log("recoveryDataHash", recoveryDataHash);
 
-    const subject = getRequestsRecoveryCommandForBurnerWallet(
-      safeWalletAddress,
-      recoveryDataHash
-    );
-    console.log("subject", subject);    
+    // subject = ['Recover', 'account', '{ethAddr}', 'using', 'recovery', 'hash', '{string}']
+    const subject = await readContract(config, {
+      abi: universalEmailRecoveryModuleAbi,
+      address: universalEmailRecoveryModule as `0x${string}`,
+      functionName: "recoveryCommandTemplates",
+      args: [],
+    }) as [][];
 
     try {
       const { requestId } = await relayer.recoveryRequest(
         universalEmailRecoveryModule as string,
         guardianEmailAddress,
         templateIdx,
-        subject
+        subject[0]
+          .join()
+          ?.replaceAll(",", " ")
+          .replace("{ethAddr}", safeWalletAddress)
+          .replace("{string}", recoveryDataHash)
       );
       setGuardianRequestId(requestId);
 
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       interval = setInterval(() => {
         checkIfRecoveryCanBeCompleted();
-      }, 5000); // Adjust the interval time (in milliseconds) as needed
-
-      // Clean up the interval on component unmount
-
-      // setButtonState(BUTTON_STATES.COMPLETE_RECOVERY);
+      }, 5000);
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong while requesting recovery");
@@ -151,99 +141,27 @@ const RequestedRecoveries = () => {
   const completeRecovery = useCallback(async () => {
     setLoading(true);
 
-    // const swapOwnerCalldata = encodeFunctionData({
-    //   abi: safeAbi,
-    //   functionName: "swapOwner",
-    //   // args: [
-    //   //   safeWalletAddress,
-    //   //   safeOwnersData[0],
-    //   //   newOwner,
-    //   // ],
-    //   args: ["0x0000000000000000000000000000000000000001",'0x4c02329244551fcc66d65817722ab5b1fc01df4a','0xe0387e390808cdba9f2f86c555e406fc84f38afc'],
-    // });
-
-    // const callData = encodeAbiParameters(
-    //   parseAbiParameters(
-    //     "address, bytes"
-    //   ),
-    //   [
-    //     // safeWalletAddress, swapOwnerCalldata
-    //     "0x2212c89b224aa368467aae0057817b787f0bae2f", swapOwnerCalldata
-    //   ]
-    // );
-  
-
-    // const recoveryDataHash = keccak256(callData);
-
-    // console.log("callData", callData, recoveryDataHash);
-
-    // const recoveryHashCallData = encodeFunctionData({
-    //   abi: safeRecoverySubjectHandlerAbi,
-    //   functionName: "parseRecoveryDataHash",
-    //   args: [
-    //     safeWalletAddress,
-    //     safeOwnersData[0],
-    //     newOwner,
-    //   ],
-    // });
-
-    // const callsData = encodeFunctionData({
-    //   abi: universalEmailRecoveryModuleAbi,
-    //   functionName: "completeRecovery",
-    //   args: [
-    //     safeOwnersData[0],
-    //     newOwner,
-    //   ],
-    // });
-
-    // const recoveryCallData = getRecoveryCallData(
-    //   "0x0000000000000000000000000000000000000001", // pre owner addrss -> 0x1
-    //   safeOwnersData[0], 
-    //   "0xe2835b8cD5B16E1736Ff1bB27a390067948445d5" // new owner
-    // )
-
-    // // console.log("safeOwnersData[0]", safeOwnersData[0])
-    console.log("safeWalletAddress", safeWalletAddress)
-    // console.log("recoveryCallData", recoveryCallData)
-
-    // const recoveryData = getRecoveryData(
-    //   "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691",
-    //   recoveryCallData
-    // )
-
-    const recoveryCallData = getRecoveryCallData(newOwner)
-    // console.log("safeOwnersData[0]", safeOwnersData[0])
-    // console.log("safeWalletAddress", safeWalletAddress)
-    // console.log("newOwner", newOwner)
-    console.log("recoveryCallData", recoveryCallData)
+    const recoveryCallData = getRecoveryCallData(newOwner!);
 
     const recoveryData = getRecoveryData(
-      "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691",
+      "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691", // validator address
       recoveryCallData
-    )
-
-    console.log("recoveryData", recoveryData)
-    const recoveryDataHash = keccak256(recoveryData);
-    console.log("recoveryDataHash", recoveryDataHash);
-
-
-    // console.log("recoveryData", recoveryData)
+    );
 
     try {
-      const res = await relayer.completeRecovery(
+      await relayer.completeRecovery(
         universalEmailRecoveryModule as string,
         safeWalletAddress as string,
         recoveryData
       );
 
-      console.debug("complete recovery res", res);
       setButtonState(BUTTON_STATES.RECOVERY_COMPLETED);
     } catch (err) {
       toast.error("Something went wrong while completing recovery process");
     } finally {
       setLoading(false);
     }
-  }, [newOwner]);
+  }, [newOwner, safeWalletAddress]);
 
   const getButtonComponent = () => {
     switch (buttonState) {
@@ -263,6 +181,7 @@ const RequestedRecoveries = () => {
         return (
           <Button
             loading={loading}
+            disabled={!newOwner}
             onClick={completeRecovery}
             endIcon={<img src={completeRecoveryIcon} />}
           >

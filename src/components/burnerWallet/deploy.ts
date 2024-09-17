@@ -1,23 +1,19 @@
 import "viem/window";
 import {
-  createWalletClient,
-  custom,
   parseEther,
   parseAbiParameters,
   keccak256,
   encodeAbiParameters,
-  getAddress,
+  WalletClient,
 } from "viem";
 import {
   ENTRYPOINT_ADDRESS_V07,
   createSmartAccountClient,
 } from "permissionless";
-import { signerToSafeSmartAccount } from "permissionless/accounts";
 import {
   createPimlicoBundlerClient,
   //   createPimlicoPaymasterClient,
 } from "permissionless/clients/pimlico";
-import { walletClientToSmartAccountSigner } from "permissionless/utils";
 import { createPublicClient, http } from "viem";
 import { baseSepolia } from "viem/chains";
 import { erc7579Actions } from "permissionless/actions/erc7579";
@@ -33,7 +29,7 @@ export const pimlicoBundlerClient = createPimlicoBundlerClient({
   entryPoint: ENTRYPOINT_ADDRESS_V07,
 });
 
-export async function run(client, safeAccount, guardianAddr) {
+export async function run(client: WalletClient, safeAccount, guardianAddr: string) {
 
   const ownableValidatorAddress = "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691";
   // Universal Email Recovery Module with
@@ -48,16 +44,11 @@ export async function run(client, safeAccount, guardianAddr) {
     method: "eth_requestAccounts",
   }); // Cast the result to string[]
   const [address] = addresses;
-  console.log("address", address);
-  console.log("client", client);
-  console.log("safeAccount", safeAccount);
-  console.log("guardianAddr", guardianAddr);
 
   const hash = await client.sendTransaction({
     to: safeAccount.address,
     value: parseEther("0.003"),
   });
-  console.log("hash", hash);
 
   const smartAccountClient = createSmartAccountClient({
     account: safeAccount,
@@ -76,7 +67,6 @@ export async function run(client, safeAccount, guardianAddr) {
     to: address,
     value: parseEther("0.00001"),
   });
-  console.log("txHash", txHash);
 
   // Convert Uint8Array to hex string without using Buffer
   const toHexString = (bytes) =>
@@ -92,8 +82,6 @@ export async function run(client, safeAccount, guardianAddr) {
   const threshold = 1;
   const delay = 0; // seconds
   const expiry = 2 * 7 * 24 * 60 * 60; // 2 weeks in seconds
-
-  console.log("account", account);
 
   const callData = encodeAbiParameters(
     parseAbiParameters(
@@ -113,8 +101,6 @@ export async function run(client, safeAccount, guardianAddr) {
     ]
   );
 
-  console.log("callData", callData);
-
   // acceptanceSubjectTemplates -> [["Accept", "guardian", "request", "for", "{ethAddr}"]]
   // recoverySubjectTemplates -> [["Recover", "account", "{ethAddr}", "using", "recovery", "hash", "{string}"]]
   const opHash = await smartAccountClient.installModule({
@@ -127,8 +113,6 @@ export async function run(client, safeAccount, guardianAddr) {
   const receipt = await pimlicoBundlerClient.waitForUserOperationReceipt({
     hash: opHash,
   });
-
-  console.log("receipt", receipt);
 
   return account;
 }

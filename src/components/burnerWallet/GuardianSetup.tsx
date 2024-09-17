@@ -1,17 +1,12 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { ConnectKitButton } from "connectkit";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Button } from "../Button";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { useWriteContract } from "wagmi";
 import infoIcon from "../../assets/infoIcon.svg";
 import { useAppContext } from "../../context/AppContextHook";
 
 import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
 import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
-import {
-  genAccountCode,
-  getRequestGuardianCommand,
-  templateIdx,
-} from "../../utils/email";
+import { genAccountCode, templateIdx } from "../../utils/email";
 import { readContract } from "wagmi/actions";
 import { config } from "../../providers/config";
 import { relayer } from "../../services/relayer";
@@ -25,7 +20,7 @@ import {
   ENTRYPOINT_ADDRESS_V07,
   walletClientToSmartAccountSigner,
 } from "permissionless";
-import { createPublicClient, createWalletClient, custom, http } from "viem";
+import { createPublicClient, createWalletClient, custom, http, WalletClient } from "viem";
 import { baseSepolia } from "viem/chains";
 
 export const publicClient = createPublicClient({
@@ -41,8 +36,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useTheme } from "@mui/material";
-import Loader from "../Loader";
 import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
 
 const TIME_UNITS = {
@@ -77,14 +70,11 @@ const isValidEmail = (email: string) => {
 const GuardianSetup = () => {
   const address = useGetSafeAccountAddress();
   const { writeContractAsync } = useWriteContract();
-  const [account, setAccount] = useState<string>(null);
-  const [accountCreationError, setAccountCreationError] = useState(false);
 
   const { guardianEmail, setGuardianEmail, accountCode, setAccountCode } =
     useAppContext();
   const stepsContext = useContext(StepsContext);
 
-  const [isAccountInitialized, setIsAccountInitialized] = useState(false);
   const [isAccountInitializedLoading, setIsAccountInitializedLoading] =
     useState(false);
   const [loading, setLoading] = useState(false);
@@ -109,8 +99,6 @@ const GuardianSetup = () => {
 
   let interval: NodeJS.Timeout;
 
-  const isMobile = window.innerWidth < 768;
-
   const checkIfRecoveryIsConfigured = async () => {
     if (!address) {
       return;
@@ -125,7 +113,6 @@ const GuardianSetup = () => {
 
     console.log(getGuardianConfig);
 
-    // TODO: add polling for this
     if (
       getGuardianConfig.acceptedWeight === getGuardianConfig.threshold &&
       getGuardianConfig.threshold !== 0n
@@ -146,7 +133,7 @@ const GuardianSetup = () => {
     const [address] = addresses;
 
     try {
-      const client = createWalletClient({
+      const client: WalletClient = createWalletClient({
         account: address, // Type assertion to match the expected format
         chain: baseSepolia,
         transport: custom(window.ethereum),
@@ -173,10 +160,6 @@ const GuardianSetup = () => {
 
       const acctCode = await genAccountCode();
 
-      // if (localStorage.getItem("accountCode")) {
-      //   return;
-      // }
-
       localStorage.setItem("accountCode", acctCode);
       await setAccountCode(accountCode);
 
@@ -190,10 +173,9 @@ const GuardianSetup = () => {
         address: universalEmailRecoveryModule as `0x${string}`,
         functionName: "computeEmailAuthAddress",
         args: [safeAccount.address, guardianSalt],
-      });
+      }) as string;
 
       const burnerWalletAddress = await run(client, safeAccount, guardianAddr);
-      setAccount(burnerWalletAddress);
       localStorage.setItem(
         "burnerWalletConfig",
         JSON.stringify({ burnerWalletAddress })
@@ -202,7 +184,6 @@ const GuardianSetup = () => {
     } catch (error) {
       console.log(error);
       toast.error(`Something went wrong. Err: ${error.shortMessage}`);
-      setAccountCreationError(error);
     } finally {
       setIsBurnerWalletCreating(false);
     }
@@ -239,25 +220,34 @@ const GuardianSetup = () => {
       throw new Error("guardian email not set");
     }
 
+    if(!localStorageAccountCode) {
+      toast.error("Seomthing went wrong, please restart the flow")
+      console.error("Invalid account code")
+    }
+
     try {
       setLoading(true);
-      toast(
-        "Please check your email",
-        {
-          icon: <img src={infoIcon} />,
-          style: {
-            background: "white",
-          },
-        }
-      );
+      toast("Please check your email", {
+        icon: <img src={infoIcon} />,
+        style: {
+          background: "white",
+        },
+      });
 
-      const subject = getRequestGuardianCommand(address);
+      const subject = await readContract(config, {
+        abi: universalEmailRecoveryModuleAbi,
+        address: universalEmailRecoveryModule as `0x${string}`,
+        functionName: "acceptanceCommandTemplates",
+        args: [],
+      });
+      console.log(subject, "command");
+
       const { requestId } = await relayer.acceptanceRequest(
         universalEmailRecoveryModule as `0x${string}`,
         guardianEmail,
         localStorageAccountCode,
         templateIdx,
-        subject
+        subject[0].join().replaceAll(",", " ").replace("{ethAddr}", address)
       );
 
       // Setting up interval for polling
@@ -265,7 +255,7 @@ const GuardianSetup = () => {
         checkIfRecoveryIsConfigured();
       }, 5000); // Adjust the interval time (in milliseconds) as needed
     } catch (err) {
-      console.log(err);
+      console.error(err);
       toast.error(
         err?.shortMessage ?? "Something went wrong, please try again."
       );
@@ -350,38 +340,6 @@ const GuardianSetup = () => {
               </Select>
             </Grid>
           </Grid>
-
-          {/* <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            sx={{ marginRight: "35px" }}
-          >
-            <Typography variant="body1" sx={{ marginRight: '25px', textAlign:'left' }}>Recovery Expiry (hours)</Typography>
-              <InputNumber
-                type="number"
-                min={1}
-                value={recoveryExpiry}
-                onChange={(e) =>
-                  setRecoveryExpiry(
-                    parseInt((e.target as HTMLInputElement).value)
-                  )
-                }
-                title='Recovery Expiry (hours)'
-                message='This is the expiry delay that...'
-              />
-          </Box> */}
-
-          {/* <Grid
-            item
-            container
-            gap="1rem"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Typography variant="body1">Connected Wallet:</Typography>
-            <ConnectKitButton />
-          </Grid> */}
         </Grid>
         <Grid item sx={{ borderRight: { md: "1px solid #EBEBEB" } }} />
 
@@ -421,7 +379,7 @@ const GuardianSetup = () => {
           ></Box>
           {isWalletPresent ? (
             <Button
-              disabled={!guardianEmail || isAccountInitialized}
+              disabled={!guardianEmail || loading}
               loading={loading}
               onClick={configureRecoveryAndRequestGuardian}
               filled={true}
@@ -430,7 +388,7 @@ const GuardianSetup = () => {
             </Button>
           ) : (
             <Button
-              disabled={!guardianEmail || isAccountInitialized}
+              disabled={!guardianEmail || isBurnerWalletCreating}
               loading={isBurnerWalletCreating}
               onClick={connectWallet}
               filled={true}
