@@ -104,6 +104,9 @@ const GuardianSetup = () => {
   console.log(accountCode, "accountCode");
   const localStorageAccountCode = localStorage.getItem("accountCode");
 
+  const initialSaltNonce = BigInt(localStorage.getItem("saltNonce") || "0");
+  const [saltNonce, setSaltNonce] = useState<bigint>(initialSaltNonce);
+
   let interval: NodeJS.Timeout;
 
   const isMobile = window.innerWidth < 768;
@@ -153,6 +156,7 @@ const GuardianSetup = () => {
         signer: walletClientToSmartAccountSigner(client),
         safeVersion: "1.4.1",
         entryPoint: ENTRYPOINT_ADDRESS_V07,
+        saltNonce: saltNonce,
         safe4337ModuleAddress: "0x3Fdb5BC686e861480ef99A6E3FaAe03c0b9F32e2",
         erc7569LaunchpadAddress: "0xEBe001b3D534B9B6E2500FB78E67a1A137f561CE",
         validators: [
@@ -162,6 +166,10 @@ const GuardianSetup = () => {
           },
         ],
       });
+
+      const newSaltNonce = saltNonce + 1n;
+      setSaltNonce(newSaltNonce);
+      localStorage.setItem("saltNonce", newSaltNonce.toString());
 
       const acctCode = await genAccountCode();
 
