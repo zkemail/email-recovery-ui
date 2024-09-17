@@ -54,12 +54,21 @@ export async function genAccountCode(): Promise<string> {
 // TODO Update both with safe module accept command
 export const getRequestGuardianCommand = (acctAddr: string) =>
   `Accept guardian request for ${acctAddr}`;
+
+export const getRequestsRecoveryCommandForSafe13 = (
+  userAccountAddr: string,
+  acctAddr: string,
+  newOwner: string
+) =>
+  `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner}`;
+
+
 export const getRequestsRecoveryCommand = (
   userAccountAddr: string,
   acctAddr: string,
   newOwner: string
 ) =>
-  // `Update owner to ${newOwner} on account ${acctAddr}`;
+  // TODO: Retrieve the command from the recovery module contract
   `Recover account ${acctAddr} from old owner ${userAccountAddr} to new owner ${newOwner} using recovery module ${safeEmailRecoveryModule}`;
 
 export const getRequestsRecoverySubjectForBurnerWallet = (

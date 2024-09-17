@@ -7,7 +7,7 @@ import { useReadContract } from "wagmi";
 import infoIcon from "../assets/infoIcon.svg";
 
 import { relayer } from "../services/relayer";
-import { getRequestsRecoveryCommand, templateIdx } from "../utils/email";
+import { getRequestsRecoveryCommand, getRequestsRecoveryCommandForSafe13, templateIdx } from "../utils/email";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import { StepsContext } from "../App";
 import toast from "react-hot-toast";
@@ -119,7 +119,7 @@ const RequestedRecoveries = () => {
       );
     }
 
-    const command = getRequestsRecoveryCommand(
+    const command = getRequestsRecoveryCommandForSafe13(
       safeOwnersData[0],
       safeWalletAddress,
       newOwner
