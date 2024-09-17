@@ -251,32 +251,6 @@ const GuardianSetup = () => {
         }
       );
 
-      // const guardianSalt = await relayer.getAccountSalt(
-      //   acctCode,
-      //   guardianEmail
-      // );
-      // const guardianAddr = await readContract(config, {
-      //   abi: universalEmailRecoveryModuleAbi,
-      //   address: universalEmailRecoveryModule as `0x${string}`,
-      //   functionName: "computeEmailAuthAddress",
-      //   args: [address, guardianSalt],
-      // });
-
-      // await writeContractAsync({
-      //   abi: universalEmailRecoveryModuleAbi,
-      //   address: universalEmailRecoveryModule as `0x${string}`,
-      //   functionName: "configureRecovery",
-      //   args: [
-      //     [guardianAddr],
-      //     [1n],
-      //     1n,
-      //     recoveryDelay * TIME_UNITS[recoveryDelayUnit].multiplier,
-      //     recoveryExpiry * 60 * 60 * 24 * 30,
-      //   ],
-      // });
-
-      console.debug("recovery configured");
-
       const subject = getRequestGuardianCommand(address);
       const { requestId } = await relayer.acceptanceRequest(
         universalEmailRecoveryModule as `0x${string}`,
@@ -285,8 +259,6 @@ const GuardianSetup = () => {
         templateIdx,
         subject
       );
-
-      console.debug("accept req id", requestId);
 
       // Setting up interval for polling
       interval = setInterval(() => {
