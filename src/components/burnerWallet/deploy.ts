@@ -24,28 +24,32 @@ export const publicClient = createPublicClient({
 
 export const pimlicoBundlerClient = createPimlicoBundlerClient({
   transport: http(
-    `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`
+    `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`,
   ),
   entryPoint: ENTRYPOINT_ADDRESS_V07,
 });
 
-export async function run(client: WalletClient, safeAccount, guardianAddr: string) {
-
+export async function run(
+  client: WalletClient,
+  safeAccount,
+  guardianAddr: string,
+) {
   const ownableValidatorAddress = "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691";
   // Universal Email Recovery Module with
   // ECDSAOwnedDKIMRegistry
   // Verifier
   // EmailAuth
   // EmailRecoveryCommandHandler
-  const universalEmailRecoveryModuleAddress = "0xc0EFFe5d3D240d35450A43a3F9Ebd98091f2e6a7";
-
+  const universalEmailRecoveryModuleAddress =
+    "0xc0EFFe5d3D240d35450A43a3F9Ebd98091f2e6a7";
 
   const addresses = await window.ethereum.request({
     method: "eth_requestAccounts",
   }); // Cast the result to string[]
   const [address] = addresses;
 
-  const hash = await client.sendTransaction({
+  // generate hash
+  await client.sendTransaction({
     to: safeAccount.address,
     value: parseEther("0.003"),
   });
@@ -55,7 +59,7 @@ export async function run(client: WalletClient, safeAccount, guardianAddr: strin
     entryPoint: ENTRYPOINT_ADDRESS_V07,
     chain: baseSepolia,
     bundlerTransport: http(
-      `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`
+      `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`,
     ),
     middleware: {
       gasPrice: async () =>
@@ -63,7 +67,8 @@ export async function run(client: WalletClient, safeAccount, guardianAddr: strin
     },
   }).extend(erc7579Actions({ entryPoint: ENTRYPOINT_ADDRESS_V07 }));
 
-  const txHash = await smartAccountClient.sendTransaction({
+  // txHash
+  await smartAccountClient.sendTransaction({
     to: address,
     value: parseEther("0.00001"),
   });
@@ -75,7 +80,7 @@ export async function run(client: WalletClient, safeAccount, guardianAddr: strin
   const account = safeAccount.address;
   const isInstalledContext = new Uint8Array([0]);
   const functionSelector = keccak256(
-    new TextEncoder().encode("changeOwner(address)")
+    new TextEncoder().encode("changeOwner(address)"),
   ).slice(0, 10);
   const guardians = [guardianAddr];
   const guardianWeights = [1];
@@ -85,7 +90,7 @@ export async function run(client: WalletClient, safeAccount, guardianAddr: strin
 
   const callData = encodeAbiParameters(
     parseAbiParameters(
-      "address, bytes, bytes4, address[], uint256[], uint256, uint256, uint256"
+      "address, bytes, bytes4, address[], uint256[], uint256, uint256, uint256",
     ),
     [
       ownableValidatorAddress,
@@ -98,7 +103,7 @@ export async function run(client: WalletClient, safeAccount, guardianAddr: strin
       threshold.toString(),
       delay.toString(),
       expiry.toString(),
-    ]
+    ],
   );
 
   // acceptanceSubjectTemplates -> [["Accept", "guardian", "request", "for", "{ethAddr}"]]
@@ -110,7 +115,8 @@ export async function run(client: WalletClient, safeAccount, guardianAddr: strin
   });
   console.log("opHash", opHash);
 
-  const receipt = await pimlicoBundlerClient.waitForUserOperationReceipt({
+  // receipt
+  await pimlicoBundlerClient.waitForUserOperationReceipt({
     hash: opHash,
   });
 

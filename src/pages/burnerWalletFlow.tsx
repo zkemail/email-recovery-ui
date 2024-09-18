@@ -3,7 +3,6 @@ import { StepsContext } from "../App";
 import { STEPS } from "../constants";
 import GuardianSetup from "../components/burnerWallet/GuardianSetup";
 import RequestedRecoveries from "../components/burnerWallet/RequestedRecoveries";
-import TriggerAccountRecovery from "../components/TriggerAccountRecovery";
 import { Web3Provider } from "../providers/Web3Provider";
 
 const BurnerWalletFlow = () => {
@@ -15,8 +14,6 @@ const BurnerWalletFlow = () => {
         return <GuardianSetup />;
       case STEPS.REQUESTED_RECOVERIES:
         return <RequestedRecoveries />;
-      case STEPS.TRIGGER_ACCOUNT_RECOVERY:
-        return <TriggerAccountRecovery />;
       default:
         return <GuardianSetup />;
     }

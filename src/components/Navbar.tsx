@@ -25,7 +25,7 @@ const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement;
   },
-  ref: React.Ref<unknown>
+  ref: React.Ref<unknown>,
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -218,10 +218,18 @@ const NavBar: React.FC = () => {
               }}
             >
               <MailOutlineIcon
-                style={{ fill: "#000000", marginLeft:'0.5rem', marginRight: "0.625rem" }}
+                style={{
+                  fill: "#000000",
+                  marginLeft: "0.5rem",
+                  marginRight: "0.625rem",
+                }}
               />
               <Link to="/">
-                <Typography variant="h6" color="black" sx={{fontSize:{xs:'0.75rem', sm:'0.85rem'}}}>
+                <Typography
+                  variant="h6"
+                  color="black"
+                  sx={{ fontSize: { xs: "0.75rem", sm: "0.85rem" } }}
+                >
                   ZKEmail Recovery
                 </Typography>
               </Link>
@@ -232,7 +240,7 @@ const NavBar: React.FC = () => {
             sm={5}
             md={6}
             sx={{
-              display: { xs: "none", sm:'none', md: "flex" },
+              display: { xs: "none", sm: "none", md: "flex" },
               borderRight: "0.5px solid black",
               paddingLeft: "1.5625rem",
               paddingY: "0.625rem",
@@ -246,7 +254,10 @@ const NavBar: React.FC = () => {
                     href={navLink.link}
                     target="_blank"
                     sx={{
-                      marginRight: {sm:theme.spacing(1), md:theme.spacing(2)},
+                      marginRight: {
+                        sm: theme.spacing(1),
+                        md: theme.spacing(2),
+                      },
                       textTransform: "none",
                     }}
                   >

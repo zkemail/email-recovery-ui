@@ -12,6 +12,7 @@ import { useContext, useState } from "react";
 import FlowInfoCard from "../components/FlowsInfoCard";
 import { STEPS } from "../constants";
 import { StepsContext } from "../App";
+import toast from "react-hot-toast";
 
 type actionType = "SAFE_WALLET" | "BURNER_WALLET" | "WALLET_RECOVERY";
 type FlowType = "setup" | "recover";
@@ -29,14 +30,15 @@ const LandingPage = () => {
 
   const handleClick = async (action: actionType) => {
     await stepsContext?.setStep(STEPS.CONNECT_WALLETS);
-    await localStorage.removeItem('accountCode')
-    await localStorage.removeItem('burnerWalletConfig')
-
+    await localStorage.removeItem("accountCode");
+    await localStorage.removeItem("burnerWalletConfig");
 
     switch (action) {
       case "SAFE_WALLET":
+        toast("Please disconnect previously created wallet");
         return navigate("/safe-wallet");
       case "BURNER_WALLET":
+        toast("Please disconnect previously created wallet");
         return navigate("/burner-wallet");
       case "WALLET_RECOVERY":
         return navigate("/wallet-recovery");

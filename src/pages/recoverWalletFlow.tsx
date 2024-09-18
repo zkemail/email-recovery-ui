@@ -1,6 +1,5 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import RequestedRecoveries from "../components/RequestedRecoveries";
-import TriggerAccountRecovery from "../components/TriggerAccountRecovery";
 import { STEPS } from "../constants";
 import { StepsContext } from "../App";
 import { Web3Provider } from "../providers/Web3Provider";
@@ -12,8 +11,6 @@ const RecoverWalletFlow = () => {
     switch (stepsContext?.step) {
       case STEPS.REQUESTED_RECOVERIES:
         return <RequestedRecoveries />;
-      case STEPS.TRIGGER_ACCOUNT_RECOVERY:
-        return <TriggerAccountRecovery />;
       default:
         return <RequestedRecoveries />;
     }

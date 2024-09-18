@@ -20,7 +20,13 @@ import {
   ENTRYPOINT_ADDRESS_V07,
   walletClientToSmartAccountSigner,
 } from "permissionless";
-import { createPublicClient, createWalletClient, custom, http, WalletClient } from "viem";
+import {
+  createPublicClient,
+  createWalletClient,
+  custom,
+  http,
+  WalletClient,
+} from "viem";
 import { baseSepolia } from "viem/chains";
 
 export const publicClient = createPublicClient({
@@ -77,18 +83,18 @@ const GuardianSetup = () => {
 
   const [isAccountInitializedLoading, setIsAccountInitializedLoading] =
     useState(false);
+  console.log(isAccountInitializedLoading);
   const [loading, setLoading] = useState(false);
   // 0 = 2 week default delay, don't do for demo
   const [recoveryDelay, setRecoveryDelay] = useState(1);
-  const [recoveryExpiry, setRecoveryExpiry] = useState(7);
   const [isWalletPresent, setIsWalletPresent] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [recoveryDelayUnit, setRecoveryDelayUnit] = useState(
-    TIME_UNITS.SECS.value
+    TIME_UNITS.SECS.value,
   );
-  const [recoveryExpiryUnit, setRecoveryExpiryUnit] = useState(
-    TIME_UNITS.DAYS.value
-  );
+  // const [recoveryExpiryUnit, setRecoveryExpiryUnit] = useState(
+  //   TIME_UNITS.DAYS.value,
+  // );
   const [isBurnerWalletCreating, setIsBurnerWalletCreating] = useState(false);
 
   console.log(accountCode, "accountCode");
@@ -165,20 +171,20 @@ const GuardianSetup = () => {
 
       const guardianSalt = await relayer.getAccountSalt(
         acctCode,
-        guardianEmail
+        guardianEmail,
       );
 
-      const guardianAddr = await readContract(config, {
+      const guardianAddr = (await readContract(config, {
         abi: universalEmailRecoveryModuleAbi,
         address: universalEmailRecoveryModule as `0x${string}`,
         functionName: "computeEmailAuthAddress",
         args: [safeAccount.address, guardianSalt],
-      }) as string;
+      })) as string;
 
       const burnerWalletAddress = await run(client, safeAccount, guardianAddr);
       localStorage.setItem(
         "burnerWalletConfig",
-        JSON.stringify({ burnerWalletAddress })
+        JSON.stringify({ burnerWalletAddress }),
       );
       setIsWalletPresent(true);
     } catch (error) {
@@ -220,9 +226,9 @@ const GuardianSetup = () => {
       throw new Error("guardian email not set");
     }
 
-    if(!localStorageAccountCode) {
-      toast.error("Seomthing went wrong, please restart the flow")
-      console.error("Invalid account code")
+    if (!localStorageAccountCode) {
+      toast.error("Seomthing went wrong, please restart the flow");
+      console.error("Invalid account code");
     }
 
     try {
@@ -242,12 +248,13 @@ const GuardianSetup = () => {
       });
       console.log(subject, "command");
 
-      const { requestId } = await relayer.acceptanceRequest(
+      // requestId
+      await relayer.acceptanceRequest(
         universalEmailRecoveryModule as `0x${string}`,
         guardianEmail,
         localStorageAccountCode,
         templateIdx,
-        subject[0].join().replaceAll(",", " ").replace("{ethAddr}", address)
+        subject[0].join().replaceAll(",", " ").replace("{ethAddr}", address),
       );
 
       // Setting up interval for polling
@@ -257,7 +264,7 @@ const GuardianSetup = () => {
     } catch (err) {
       console.error(err);
       toast.error(
-        err?.shortMessage ?? "Something went wrong, please try again."
+        err?.shortMessage ?? "Something went wrong, please try again.",
       );
       setLoading(false);
     }
@@ -268,7 +275,6 @@ const GuardianSetup = () => {
     accountCode,
     writeContractAsync,
     recoveryDelay,
-    recoveryExpiry,
     stepsContext,
   ]);
 
@@ -318,7 +324,7 @@ const GuardianSetup = () => {
                 value={recoveryDelay}
                 onChange={(e) =>
                   setRecoveryDelay(
-                    parseInt((e.target as HTMLInputElement).value)
+                    parseInt((e.target as HTMLInputElement).value),
                   )
                 }
                 title="Recovery Delay"

@@ -1,31 +1,31 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import * as React from "react";
+import { styled } from "@mui/material/styles";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
-const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
-  '&.MuiToggleButtonGroup-root': {
-    backgroundColor: '#F6F6F6',
-    borderRadius: '20px',
-    padding: '4px',
+const StyledToggleButtonGroup = styled(ToggleButtonGroup)(() => ({
+  "&.MuiToggleButtonGroup-root": {
+    backgroundColor: "#F6F6F6",
+    borderRadius: "20px",
+    padding: "4px",
   },
-  '& .MuiToggleButton-root': {
-    border: 'none',
-    color: '#757575',
-    borderRadius: '20px',
-    '&.Mui-selected': {
-      backgroundColor: 'white',
-      color: 'black',
+  "& .MuiToggleButton-root": {
+    border: "none",
+    color: "#757575",
+    borderRadius: "20px",
+    "&.Mui-selected": {
+      backgroundColor: "white",
+      color: "black",
     },
-    '&:focus': {
-      outline: 'none',
-      boxShadow: 'none',
+    "&:focus": {
+      outline: "none",
+      boxShadow: "none",
     },
   },
 }));
 
 export default function CustomizedToggleButton({ onFlowChange }) {
-  const [alignment, setAlignment] = React.useState('setup');
+  const [alignment, setAlignment] = React.useState("setup");
 
   const handleAlignment = (
     event: React.MouseEvent<HTMLElement>,
@@ -43,12 +43,27 @@ export default function CustomizedToggleButton({ onFlowChange }) {
       exclusive
       onChange={handleAlignment}
       aria-label="toggle button"
-      sx={{marginY:'25px', paddingX:'30px', height:'40px',  width:'250px', justifyContent:'center', gap:'10px' }}
+      sx={{
+        marginY: "25px",
+        paddingX: "30px",
+        height: "40px",
+        width: "250px",
+        justifyContent: "center",
+        gap: "10px",
+      }}
     >
-      <ToggleButton value="setup" aria-label="set up" sx={{textTransform:'none',  paddingY: '3px', paddingX:'30px'}}>
+      <ToggleButton
+        value="setup"
+        aria-label="set up"
+        sx={{ textTransform: "none", paddingY: "3px", paddingX: "30px" }}
+      >
         Set Up
       </ToggleButton>
-      <ToggleButton value="recover" aria-label="recover" sx={{textTransform:'none',  paddingY: '3px', paddingX:'30px'}}>
+      <ToggleButton
+        value="recover"
+        aria-label="recover"
+        sx={{ textTransform: "none", paddingY: "3px", paddingX: "30px" }}
+      >
         Recover
       </ToggleButton>
     </StyledToggleButtonGroup>

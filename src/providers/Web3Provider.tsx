@@ -5,19 +5,19 @@ import { ConnectKitProvider } from "connectkit";
 import { config } from "./config";
 
 const connectKitOptions = {
-    walletConnectName: 'WalletConnect',
-    hideNoWalletCTA: true,
+  walletConnectName: "WalletConnect",
+  hideNoWalletCTA: true,
 };
 
 const queryClient = new QueryClient();
 
 export const Web3Provider = ({ children }: { children: ReactNode }) => {
-  console.log(config, 'config')
+  console.log(config, "config");
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <ConnectKitProvider options={connectKitOptions}>
-            {children}
+          {children}
         </ConnectKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

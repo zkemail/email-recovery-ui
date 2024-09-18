@@ -1,5 +1,5 @@
-import React from 'react';
-import { SvgIcon, SvgIconProps } from '@mui/material';
+import React from "react";
+import { SvgIcon, SvgIconProps } from "@mui/material";
 
 interface SvgImageWrapperProps extends SvgIconProps {
   src: string;

@@ -7,10 +7,7 @@ import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
 import infoIcon from "../assets/infoIcon.svg";
 import { useAppContext } from "../context/AppContextHook";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
-import {
-  genAccountCode,
-  templateIdx,
-} from "../utils/email";
+import { genAccountCode, templateIdx } from "../utils/email";
 import { readContract } from "wagmi/actions";
 import { config } from "../providers/config";
 import { relayer } from "../services/relayer";
@@ -72,14 +69,12 @@ const GuardianSetup = () => {
   const [loading, setLoading] = useState(false);
   // 0 = 2 week default delay, don't do for demo
   const [recoveryDelay, setRecoveryDelay] = useState(1);
-  const [recoveryExpiry, setRecoveryExpiry] = useState(7);
+  const recoveryExpiry = 7;
   const [emailError, setEmailError] = useState(false);
   const [recoveryDelayUnit, setRecoveryDelayUnit] = useState(
-    TIME_UNITS.SECS.value
+    TIME_UNITS.SECS.value,
   );
-  const [recoveryExpiryUnit, setRecoveryExpiryUnit] = useState(
-    TIME_UNITS.DAYS.value
-  );
+  const recoveryExpiryUnit = TIME_UNITS.DAYS.value;
 
   let interval: NodeJS.Timeout;
 
@@ -157,7 +152,7 @@ const GuardianSetup = () => {
           style: {
             background: "white",
           },
-        }
+        },
       );
 
       const acctCode = await genAccountCode();
@@ -165,7 +160,7 @@ const GuardianSetup = () => {
 
       const guardianSalt = await relayer.getAccountSalt(
         acctCode,
-        guardianEmail
+        guardianEmail,
       );
       const guardianAddr = await readContract(config, {
         abi: safeEmailRecoveryModuleAbi,
@@ -196,14 +191,20 @@ const GuardianSetup = () => {
         args: [],
       });
 
-      console.log(command[0].join().replace(',', ' ').replace('{ethAddr}', address), "command")
+      console.log(
+        command[0].join().replace(",", " ").replace("{ethAddr}", address),
+        "command",
+      );
 
       const { requestId } = await relayer.acceptanceRequest(
         safeEmailRecoveryModule as `0x${string}`,
         guardianEmail,
         acctCode,
         templateIdx,
-        command[0].join()?.replaceAll(',', ' ').replaceAll('{ethAddr}', address)
+        command[0]
+          .join()
+          ?.replaceAll(",", " ")
+          .replaceAll("{ethAddr}", address),
       );
 
       console.debug("accept req id", requestId);
@@ -225,7 +226,6 @@ const GuardianSetup = () => {
     accountCode,
     writeContractAsync,
     recoveryDelay,
-    recoveryExpiry,
     stepsContext,
   ]);
 
@@ -234,7 +234,7 @@ const GuardianSetup = () => {
   }
   console.log(
     recoveryDelay * TIME_UNITS[recoveryDelayUnit].multiplier,
-    recoveryExpiry * TIME_UNITS[recoveryExpiryUnit].multiplier
+    recoveryExpiry * TIME_UNITS[recoveryExpiryUnit].multiplier,
   );
   return (
     <Box sx={{ marginX: "auto", marginTop: "100px", marginBottom: "100px" }}>
@@ -282,7 +282,7 @@ const GuardianSetup = () => {
                 value={recoveryDelay}
                 onChange={(e) =>
                   setRecoveryDelay(
-                    parseInt((e.target as HTMLInputElement).value)
+                    parseInt((e.target as HTMLInputElement).value),
                   )
                 }
                 title="Recovery Delay"

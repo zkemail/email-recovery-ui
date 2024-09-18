@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "./Button";
 import cancelRecoveryIcon from "../assets/cancelRecoveryIcon.svg";
 import completeRecoveryIcon from "../assets/completeRecoveryIcon.svg";
@@ -9,7 +9,6 @@ import infoIcon from "../assets/infoIcon.svg";
 import { relayer } from "../services/relayer";
 import { templateIdx } from "../utils/email";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
-import { StepsContext } from "../App";
 import toast from "react-hot-toast";
 import { readContract } from "wagmi/actions";
 import { config } from "../providers/config";
@@ -34,22 +33,21 @@ const BUTTON_STATES = {
 const RequestedRecoveries = () => {
   // const theme = useTheme(); for some reason this was causing trigger recovery button to be skipped??
   const isMobile = window.innerWidth < 768;
-  const address = useGetSafeAccountAddress()
+  const address = useGetSafeAccountAddress();
   const { guardianEmail } = useAppContext();
-  const stepsContext = useContext(StepsContext);
   const navigate = useNavigate();
 
   const [newOwner, setNewOwner] = useState<string>();
-  const [safeWalletAddress, setSafeWalletAddress] = useState(address);
+  const safeWalletAddress = address;
   const [guardianEmailAddress, setGuardianEmailAddress] =
     useState(guardianEmail);
   const [buttonState, setButtonState] = useState(
-    BUTTON_STATES.TRIGGER_RECOVERY
+    BUTTON_STATES.TRIGGER_RECOVERY,
   );
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [gurdianRequestId, setGuardianRequestId] = useState<number>();
   const [isButtonStateLoading, setIsButtonStateLoading] = useState(false);
+  console.log(isButtonStateLoading);
 
   let interval: NodeJS.Timeout;
 
@@ -115,7 +113,7 @@ const RequestedRecoveries = () => {
 
     if (!safeOwnersData[0]) {
       toast.error(
-        "Could not find safe owner. Please check if safe is configured correctly."
+        "Could not find safe owner. Please check if safe is configured correctly.",
       );
     }
 
@@ -127,13 +125,18 @@ const RequestedRecoveries = () => {
     });
 
     try {
-      const { requestId } = await relayer.recoveryRequest(
+      // requestId
+      await relayer.recoveryRequest(
         safeEmailRecoveryModule as string,
         guardianEmailAddress,
         templateIdx,
-        command[0].join()?.replaceAll(',', ' ').replace('{ethAddr}', safeWalletAddress).replace('{ethAddr}', safeOwnersData[0]).replace('{ethAddr}', newOwner)
+        command[0]
+          .join()
+          ?.replaceAll(",", " ")
+          .replace("{ethAddr}", safeWalletAddress)
+          .replace("{ethAddr}", safeOwnersData[0])
+          .replace("{ethAddr}", newOwner),
       );
-      setGuardianRequestId(requestId);
 
       interval = setInterval(() => {
         checkIfRecoveryCanBeCompleted();
@@ -154,7 +157,6 @@ const RequestedRecoveries = () => {
     console.log(`newOwner: ${newOwner}`);
     console.log(`safeWalletAddress: ${safeWalletAddress}`);
 
-
     const swapOwnerCallData = encodeFunctionData({
       abi: safeAbi,
       functionName: "swapOwner",
@@ -165,21 +167,15 @@ const RequestedRecoveries = () => {
       ],
     });
     const completeCalldata = encodeAbiParameters(
-      [
-        { type: "address" },
-        { type: "bytes" }
-      ],
-      [
-        safeWalletAddress,
-        swapOwnerCallData
-      ]
+      [{ type: "address" }, { type: "bytes" }],
+      [safeWalletAddress, swapOwnerCallData],
     );
 
     try {
       const res = await relayer.completeRecovery(
         safeEmailRecoveryModule as string,
         safeWalletAddress as string,
-        completeCalldata
+        completeCalldata,
       );
 
       console.debug("complete recovery res", res);
@@ -196,7 +192,7 @@ const RequestedRecoveries = () => {
       case BUTTON_STATES.TRIGGER_RECOVERY:
         return (
           <Button loading={loading} onClick={requestRecovery}>
-            { loading ? "Waiting for Email Confirmation" : "Trigger Recovery"}
+            {loading ? "Waiting for Email Confirmation" : "Trigger Recovery"}
           </Button>
         );
       case BUTTON_STATES.CANCEL_RECOVERY:

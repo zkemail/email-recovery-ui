@@ -41,11 +41,10 @@ const RequestedRecoveries = () => {
   const [guardianEmailAddress, setGuardianEmailAddress] =
     useState(guardianEmail);
   const [buttonState, setButtonState] = useState(
-    BUTTON_STATES.TRIGGER_RECOVERY
+    BUTTON_STATES.TRIGGER_RECOVERY,
   );
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [gurdianRequestId, setGuardianRequestId] = useState<number>();
 
   let interval: NodeJS.Timeout;
 
@@ -101,21 +100,22 @@ const RequestedRecoveries = () => {
 
     const recoveryData = getRecoveryData(
       "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691", // validator's address
-      recoveryCallData
+      recoveryCallData,
     ) as `0x${string}`;
 
     const recoveryDataHash = keccak256(recoveryData);
 
     // subject = ['Recover', 'account', '{ethAddr}', 'using', 'recovery', 'hash', '{string}']
-    const subject = await readContract(config, {
+    const subject = (await readContract(config, {
       abi: universalEmailRecoveryModuleAbi,
       address: universalEmailRecoveryModule as `0x${string}`,
       functionName: "recoveryCommandTemplates",
       args: [],
-    }) as [][];
+    })) as [][];
 
     try {
-      const { requestId } = await relayer.recoveryRequest(
+      // requestId
+      await relayer.recoveryRequest(
         universalEmailRecoveryModule as string,
         guardianEmailAddress,
         templateIdx,
@@ -123,9 +123,8 @@ const RequestedRecoveries = () => {
           .join()
           ?.replaceAll(",", " ")
           .replace("{ethAddr}", safeWalletAddress)
-          .replace("{string}", recoveryDataHash)
+          .replace("{string}", recoveryDataHash),
       );
-      setGuardianRequestId(requestId);
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
       interval = setInterval(() => {
@@ -145,14 +144,14 @@ const RequestedRecoveries = () => {
 
     const recoveryData = getRecoveryData(
       "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691", // validator address
-      recoveryCallData
+      recoveryCallData,
     );
 
     try {
       await relayer.completeRecovery(
         universalEmailRecoveryModule as string,
         safeWalletAddress as string,
-        recoveryData
+        recoveryData,
       );
 
       setButtonState(BUTTON_STATES.RECOVERY_COMPLETED);
