@@ -29,9 +29,19 @@ export const pimlicoBundlerClient = createPimlicoBundlerClient({
   entryPoint: ENTRYPOINT_ADDRESS_V07,
 });
 
+/**
+ * Executes a series of operations to configure a smart account, including transferring Ether, 
+ * setting up recovery modules, and installing modules using a smart account client.
+ * 
+ * @async
+ * @param {WalletClient} client - The wallet client used for transactions and interactions.
+ * @param {object} safeAccount - The smart account object containing the address of the account.
+ * @param {string} guardianAddr - The address of the guardian used in the recovery module.
+ * @returns {Promise<string>} The address of the configured smart account.
+ */
 export async function run(
   client: WalletClient,
-  safeAccount,
+  safeAccount: object,
   guardianAddr: string,
 ) {
   const ownableValidatorAddress = "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691";
