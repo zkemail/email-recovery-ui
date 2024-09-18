@@ -1,21 +1,3 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { ConnectKitButton } from "connectkit";
-import { Button } from "./Button";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { safeAbi } from "../abi/Safe";
-import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
-import infoIcon from "../assets/infoIcon.svg";
-import { useAppContext } from "../context/AppContextHook";
-import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
-import { genAccountCode, templateIdx } from "../utils/email";
-import { readContract } from "wagmi/actions";
-import { config } from "../providers/config";
-import { relayer } from "../services/relayer";
-import { StepsContext } from "../App";
-import { STEPS } from "../constants";
-import toast from "react-hot-toast";
-
-import InputField from "./InputField";
 import {
   Box,
   Grid,
@@ -24,7 +6,31 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { ConnectKitButton } from "connectkit";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import toast from "react-hot-toast";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { readContract } from "wagmi/actions";
+import { Button } from "./Button";
+import InputField from "./InputField";
 import Loader from "./Loader";
+import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
+import { safeAbi } from "../abi/Safe";
+import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
+import { StepsContext } from "../App";
+import infoIcon from "../assets/infoIcon.svg";
+import { STEPS } from "../constants";
+import { useAppContext } from "../context/AppContextHook";
+import { config } from "../providers/config";
+import { relayer } from "../services/relayer";
+import { genAccountCode, templateIdx } from "../utils/email";
 
 const TIME_UNITS = {
   SECS: {
@@ -74,9 +80,9 @@ const GuardianSetup = () => {
   const [recoveryDelayUnit, setRecoveryDelayUnit] = useState(
     TIME_UNITS.SECS.value,
   );
-  const recoveryExpiryUnit = TIME_UNITS.DAYS.value;
+  // const recoveryExpiryUnit = TIME_UNITS.DAYS.value;
 
-  let interval: NodeJS.Timeout;
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const { data: safeOwnersData } = useReadContract({
     address,
@@ -92,7 +98,7 @@ const GuardianSetup = () => {
     return safeOwners[0];
   }, [safeOwnersData]);
 
-  const checkIfRecoveryIsConfigured = async () => {
+  const checkIfRecoveryIsConfigured = useCallback(async () => {
     setIsAccountInitializedLoading(true);
     const isActivated = await readContract(config, {
       abi: safeEmailRecoveryModuleAbi,
@@ -101,23 +107,24 @@ const GuardianSetup = () => {
       args: [address as `0x${string}`],
     });
 
-    console.log(isActivated);
-
-    // TODO: add polling for this
     if (isActivated) {
       setIsAccountInitialized(isActivated);
       setLoading(false);
       stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
     }
     setIsAccountInitializedLoading(false);
-  };
+  }, [address, stepsContext]);
 
   useEffect(() => {
     checkIfRecoveryIsConfigured();
 
     // Clean up the interval on component unmount
-    return () => clearInterval(interval);
-  }, []);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [checkIfRecoveryIsConfigured]);
 
   //logic to check if email input is a valid email
   useEffect(() => {
@@ -191,12 +198,8 @@ const GuardianSetup = () => {
         args: [],
       });
 
-      console.log(
-        command[0].join().replace(",", " ").replace("{ethAddr}", address),
-        "command",
-      );
-
-      const { requestId } = await relayer.acceptanceRequest(
+      // requestId
+      await relayer.acceptanceRequest(
         safeEmailRecoveryModule as `0x${string}`,
         guardianEmail,
         acctCode,
@@ -207,10 +210,8 @@ const GuardianSetup = () => {
           .replaceAll("{ethAddr}", address),
       );
 
-      console.debug("accept req id", requestId);
-
       // Setting up interval for polling
-      interval = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         checkIfRecoveryIsConfigured();
       }, 5000); // Adjust the interval time (in milliseconds) as needed
     } catch (err) {
@@ -226,16 +227,14 @@ const GuardianSetup = () => {
     accountCode,
     writeContractAsync,
     recoveryDelay,
-    stepsContext,
+    recoveryDelayUnit,
+    checkIfRecoveryIsConfigured,
   ]);
 
   if (isAccountInitializedLoading) {
     return <Loader />;
   }
-  console.log(
-    recoveryDelay * TIME_UNITS[recoveryDelayUnit].multiplier,
-    recoveryExpiry * TIME_UNITS[recoveryExpiryUnit].multiplier,
-  );
+
   return (
     <Box sx={{ marginX: "auto", marginTop: "100px", marginBottom: "100px" }}>
       <Typography variant="h2" sx={{ paddingBottom: "1.5rem" }}>

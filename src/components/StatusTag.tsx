@@ -1,7 +1,7 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
-import SecurityIcon from "@mui/icons-material/Security";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import SecurityIcon from "@mui/icons-material/Security";
+import { Box, Typography } from "@mui/material";
+import React from "react";
 
 type StatusTagProps = {
   status: "Guarded" | "Recovered";

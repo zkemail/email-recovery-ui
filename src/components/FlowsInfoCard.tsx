@@ -1,8 +1,8 @@
+import { Box, Grid, Tooltip, Typography } from "@mui/material";
+import React from "react";
 import { Button } from "../components/Button";
-import { Grid, Typography, Box, Tooltip } from "@mui/material";
 import "../App.css";
 import MoreInfoDialog from "../components/MoreInfoDialog";
-import React from "react";
 
 type FlowInfoCardProps = {
   icon: React.ReactNode;

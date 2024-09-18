@@ -1,7 +1,7 @@
 import { useContext } from "react";
+import { StepsContext } from "../App";
 import RequestedRecoveries from "../components/RequestedRecoveries";
 import { STEPS } from "../constants";
-import { StepsContext } from "../App";
 import { Web3Provider } from "../providers/Web3Provider";
 
 const RecoverWalletFlow = () => {

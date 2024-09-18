@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import {
   Dialog,
-  DialogTitle,
   DialogContent,
   DialogContentText,
+  DialogTitle,
   IconButton,
 } from "@mui/material";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import React, { useState } from "react";
 
 interface MoreInfoDialogProps {
   title: string;

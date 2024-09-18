@@ -1,39 +1,3 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { Button } from "../Button";
-import { useWriteContract } from "wagmi";
-import infoIcon from "../../assets/infoIcon.svg";
-import { useAppContext } from "../../context/AppContextHook";
-
-import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
-import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
-import { genAccountCode, templateIdx } from "../../utils/email";
-import { readContract } from "wagmi/actions";
-import { config } from "../../providers/config";
-import { relayer } from "../../services/relayer";
-import { StepsContext } from "../../App";
-import { STEPS } from "../../constants";
-import toast from "react-hot-toast";
-
-import { run } from "./deploy";
-import { signerToSafeSmartAccount } from "permissionless/accounts";
-import {
-  ENTRYPOINT_ADDRESS_V07,
-  walletClientToSmartAccountSigner,
-} from "permissionless";
-import {
-  createPublicClient,
-  createWalletClient,
-  custom,
-  http,
-  WalletClient,
-} from "viem";
-import { baseSepolia } from "viem/chains";
-
-export const publicClient = createPublicClient({
-  transport: http("https://sepolia.base.org"),
-});
-
-import InputField from "../InputField";
 import {
   Box,
   Grid,
@@ -42,7 +6,29 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import {
+  ENTRYPOINT_ADDRESS_V07,
+  walletClientToSmartAccountSigner,
+} from "permissionless";
+import { signerToSafeSmartAccount } from "permissionless/accounts";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { createWalletClient, custom, WalletClient } from "viem";
+import { baseSepolia } from "viem/chains";
+import { readContract } from "wagmi/actions";
+import { publicClient, run } from "./deploy";
+import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
+import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
+import { StepsContext } from "../../App";
+import infoIcon from "../../assets/infoIcon.svg";
+import { STEPS } from "../../constants";
+import { useAppContext } from "../../context/AppContextHook";
+import { config } from "../../providers/config";
+import { relayer } from "../../services/relayer";
+import { genAccountCode, templateIdx } from "../../utils/email";
 import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
+import { Button } from "../Button";
+import InputField from "../InputField";
 
 const TIME_UNITS = {
   SECS: {
@@ -75,7 +61,6 @@ const isValidEmail = (email: string) => {
 
 const GuardianSetup = () => {
   const address = useGetSafeAccountAddress();
-  const { writeContractAsync } = useWriteContract();
 
   const { guardianEmail, setGuardianEmail, accountCode, setAccountCode } =
     useAppContext();
@@ -103,9 +88,9 @@ const GuardianSetup = () => {
   const initialSaltNonce = BigInt(localStorage.getItem("saltNonce") || "0");
   const [saltNonce, setSaltNonce] = useState<bigint>(initialSaltNonce);
 
-  let interval: NodeJS.Timeout;
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const checkIfRecoveryIsConfigured = async () => {
+  const checkIfRecoveryIsConfigured = useCallback(async () => {
     if (!address) {
       return;
     }
@@ -128,7 +113,7 @@ const GuardianSetup = () => {
       stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
     }
     setIsAccountInitializedLoading(false);
-  };
+  }, [address, stepsContext]);
 
   const connectWallet = async () => {
     setIsBurnerWalletCreating(true);
@@ -203,8 +188,12 @@ const GuardianSetup = () => {
     }
 
     // Clean up the interval on component unmount
-    return () => clearInterval(interval);
-  }, []);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [checkIfRecoveryIsConfigured]);
 
   //logic to check if email input is a valid email
   useEffect(() => {
@@ -258,7 +247,7 @@ const GuardianSetup = () => {
       );
 
       // Setting up interval for polling
-      interval = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         checkIfRecoveryIsConfigured();
       }, 5000); // Adjust the interval time (in milliseconds) as needed
     } catch (err) {
@@ -271,11 +260,8 @@ const GuardianSetup = () => {
   }, [
     address,
     guardianEmail,
-    setAccountCode,
-    accountCode,
-    writeContractAsync,
-    recoveryDelay,
-    stepsContext,
+    localStorageAccountCode,
+    checkIfRecoveryIsConfigured,
   ]);
 
   return (

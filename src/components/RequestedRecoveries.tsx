@@ -1,26 +1,26 @@
-import { useCallback, useEffect, useState } from "react";
-import { Button } from "./Button";
-import cancelRecoveryIcon from "../assets/cancelRecoveryIcon.svg";
-import completeRecoveryIcon from "../assets/completeRecoveryIcon.svg";
-import { useAppContext } from "../context/AppContextHook";
-import { useReadContract } from "wagmi";
-import infoIcon from "../assets/infoIcon.svg";
-
-import { relayer } from "../services/relayer";
-import { templateIdx } from "../utils/email";
-import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import { Box, Grid, Typography } from "@mui/material";
+import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { encodeAbiParameters, encodeFunctionData } from "viem";
+import { useReadContract } from "wagmi";
 import { readContract } from "wagmi/actions";
-import { config } from "../providers/config";
+import { Button } from "./Button";
+import ConnectedWalletCard from "./ConnectedWalletCard";
+import InputField from "./InputField";
+import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import { safeAbi } from "../abi/Safe";
 import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
-import { encodeAbiParameters, encodeFunctionData } from "viem";
-import { Box, Grid, Typography } from "@mui/material";
+import cancelRecoveryIcon from "../assets/cancelRecoveryIcon.svg";
+import completeRecoveryIcon from "../assets/completeRecoveryIcon.svg";
+import infoIcon from "../assets/infoIcon.svg";
+import { useAppContext } from "../context/AppContextHook";
 
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import InputField from "./InputField";
-import { useNavigate } from "react-router-dom";
-import ConnectedWalletCard from "./ConnectedWalletCard";
+import { config } from "../providers/config";
+import { relayer } from "../services/relayer";
+import { templateIdx } from "../utils/email";
+
 import { useGetSafeAccountAddress } from "../utils/useGetSafeAccountAddress";
 
 const BUTTON_STATES = {
@@ -49,9 +49,9 @@ const RequestedRecoveries = () => {
   const [isButtonStateLoading, setIsButtonStateLoading] = useState(false);
   console.log(isButtonStateLoading);
 
-  let interval: NodeJS.Timeout;
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const checkIfRecoveryCanBeCompleted = async () => {
+  const checkIfRecoveryCanBeCompleted = useCallback(async () => {
     setIsButtonStateLoading(true);
     const getRecoveryRequest = await readContract(config, {
       abi: safeEmailRecoveryModuleAbi,
@@ -74,14 +74,14 @@ const RequestedRecoveries = () => {
     } else {
       setButtonState(BUTTON_STATES.COMPLETE_RECOVERY);
       setLoading(false);
-      clearInterval(interval);
+      clearInterval(intervalRef.current);
     }
     setIsButtonStateLoading(false);
-  };
+  }, [address, intervalRef]);
 
   useEffect(() => {
     checkIfRecoveryCanBeCompleted();
-  }, []);
+  }, [checkIfRecoveryCanBeCompleted]);
 
   const { data: safeOwnersData } = useReadContract({
     address,
@@ -138,7 +138,7 @@ const RequestedRecoveries = () => {
           .replace("{ethAddr}", newOwner),
       );
 
-      interval = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         checkIfRecoveryCanBeCompleted();
       }, 5000); // Adjust the interval time (in milliseconds) as needed
 
@@ -150,7 +150,13 @@ const RequestedRecoveries = () => {
       toast.error("Something went wrong while requesting recovery");
       setLoading(false);
     }
-  }, [safeWalletAddress, guardianEmailAddress, newOwner]);
+  }, [
+    safeWalletAddress,
+    guardianEmailAddress,
+    newOwner,
+    checkIfRecoveryCanBeCompleted,
+    safeOwnersData,
+  ]);
 
   const completeRecovery = useCallback(async () => {
     setLoading(true);
@@ -185,7 +191,7 @@ const RequestedRecoveries = () => {
     } finally {
       setLoading(false);
     }
-  }, [newOwner]);
+  }, [newOwner, safeOwnersData, safeWalletAddress]);
 
   const getButtonComponent = () => {
     switch (buttonState) {

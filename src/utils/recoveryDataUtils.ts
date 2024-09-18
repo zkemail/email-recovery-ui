@@ -1,6 +1,6 @@
+import { AbiCoder } from "ethers";
 import { encodeFunctionData } from "viem";
 import { abi as ownableValidatorAbi } from "../abi/OwnableValidator.json";
-import { AbiCoder } from "ethers";
 
 export const getRecoveryData = (
   validator: string,

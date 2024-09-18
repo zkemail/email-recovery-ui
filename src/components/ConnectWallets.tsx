@@ -1,11 +1,11 @@
-import { Button } from "./Button";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
+import { Box, Typography } from "@mui/material";
 import { ConnectKitButton } from "connectkit";
-import { useAccount } from "wagmi";
 import { useContext } from "react";
+import { useAccount } from "wagmi";
+import { Button } from "./Button";
 import { StepsContext } from "../App";
 import { STEPS } from "../constants";
-import { Typography, Box } from "@mui/material";
 
 const ConnectWallets = () => {
   const { address } = useAccount();

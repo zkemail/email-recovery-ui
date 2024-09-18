@@ -1,5 +1,5 @@
+import { CircularProgress, Button as MuiButton, useTheme } from "@mui/material";
 import React, { ReactNode } from "react";
-import { Button as MuiButton, CircularProgress, useTheme } from "@mui/material";
 
 type CustomButtonProps = {
   endIcon?: ReactNode;

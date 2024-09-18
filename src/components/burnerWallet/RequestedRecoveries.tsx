@@ -1,27 +1,27 @@
-import { useCallback, useEffect, useState } from "react";
-import { Button } from "../Button";
+import { Box, Grid, Typography } from "@mui/material";
+import { useCallback, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { keccak256 } from "viem";
+import { readContract } from "wagmi/actions";
+import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
+import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
 import cancelRecoveryIcon from "../../assets/cancelRecoveryIcon.svg";
 import completeRecoveryIcon from "../../assets/completeRecoveryIcon.svg";
-import { useAppContext } from "../../context/AppContextHook";
 import infoIcon from "../../assets/infoIcon.svg";
+import { useAppContext } from "../../context/AppContextHook";
 
+import { config } from "../../providers/config";
 import { relayer } from "../../services/relayer";
 import { templateIdx } from "../../utils/email";
-import toast from "react-hot-toast";
-import { readContract } from "wagmi/actions";
-import { config } from "../../providers/config";
-import { keccak256 } from "viem";
-import { Box, Grid, Typography } from "@mui/material";
 
-import InputField from "../InputField";
-import { useNavigate } from "react-router-dom";
-import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
-import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
-import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
 import {
   getRecoveryCallData,
   getRecoveryData,
 } from "../../utils/recoveryDataUtils";
+import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
+import { Button } from "../Button";
+import InputField from "../InputField";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -46,9 +46,9 @@ const RequestedRecoveries = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  let interval: NodeJS.Timeout;
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const checkIfRecoveryCanBeCompleted = async () => {
+  const checkIfRecoveryCanBeCompleted = useCallback(async () => {
     const getRecoveryRequest = await readContract(config, {
       abi: universalEmailRecoveryModuleAbi,
       address: universalEmailRecoveryModule as `0x${string}`,
@@ -68,13 +68,13 @@ const RequestedRecoveries = () => {
     } else {
       setButtonState(BUTTON_STATES.COMPLETE_RECOVERY);
       setLoading(false);
-      clearInterval(interval);
+      clearInterval(intervalRef.current);
     }
-  };
+  }, [address, intervalRef]);
 
   useEffect(() => {
     checkIfRecoveryCanBeCompleted();
-  }, []);
+  }, [checkIfRecoveryCanBeCompleted]);
 
   const requestRecovery = useCallback(async () => {
     setLoading(true);
@@ -127,7 +127,7 @@ const RequestedRecoveries = () => {
       );
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      interval = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         checkIfRecoveryCanBeCompleted();
       }, 5000);
     } catch (error) {
@@ -135,7 +135,12 @@ const RequestedRecoveries = () => {
       toast.error("Something went wrong while requesting recovery");
       setLoading(false);
     }
-  }, [safeWalletAddress, guardianEmailAddress, newOwner]);
+  }, [
+    safeWalletAddress,
+    guardianEmailAddress,
+    newOwner,
+    checkIfRecoveryCanBeCompleted,
+  ]);
 
   const completeRecovery = useCallback(async () => {
     setLoading(true);

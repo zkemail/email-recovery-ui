@@ -1,18 +1,17 @@
-import React, { useState } from "react";
-import { useTheme } from "@mui/material/styles";
-import { AppBar, Grid, IconButton, Slide } from "@mui/material/";
-import Typography from "@mui/material/Typography";
-import { Button } from "./Button";
-import Box from "@mui/material/Box";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
-import { Web3Provider } from "../providers/Web3Provider";
-import { ConnectKitButton } from "connectkit";
-import { Link } from "react-router-dom";
-import MenuIcon from "@mui/icons-material/Menu";
-
-import { Dialog, Toolbar } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import MenuIcon from "@mui/icons-material/Menu";
+import { Dialog, Toolbar } from "@mui/material";
+import { AppBar, Grid, IconButton, Slide } from "@mui/material/";
+import Box from "@mui/material/Box";
+import { useTheme } from "@mui/material/styles";
 import { TransitionProps } from "@mui/material/transitions";
+import Typography from "@mui/material/Typography";
+import { ConnectKitButton } from "connectkit";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "./Button";
+import { Web3Provider } from "../providers/Web3Provider";
 
 const NAV_LINKS = [
   { link: "https://prove.email/blog", title: "Blog" },

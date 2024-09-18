@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { StepsContext } from "../App";
-import { STEPS } from "../constants";
 import GuardianSetup from "../components/burnerWallet/GuardianSetup";
 import RequestedRecoveries from "../components/burnerWallet/RequestedRecoveries";
+import { STEPS } from "../constants";
 import { Web3Provider } from "../providers/Web3Provider";
 
 const BurnerWalletFlow = () => {
