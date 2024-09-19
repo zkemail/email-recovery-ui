@@ -21,7 +21,7 @@ ENV NODE_OPTIONS="--max-old-space-size=2048"
 RUN yarn build
 
 # Use a smaller image to serve the application
-FROM nginx:alpine
+FROM node:18-alpine
 
 # Copy the built application from the build stage
 COPY --from=build /app/dist ./build
