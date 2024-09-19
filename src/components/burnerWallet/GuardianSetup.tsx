@@ -152,6 +152,7 @@ const GuardianSetup = () => {
         transport: custom(window.ethereum),
       });
 
+      // https://docs.rhinestone.wtf/overview/address-book
       const safeAccount = await signerToSafeSmartAccount(publicClient, {
         signer: walletClientToSmartAccountSigner(client),
         safeVersion: "1.4.1",
