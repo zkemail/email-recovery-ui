@@ -157,8 +157,8 @@ const GuardianSetup = () => {
         safeVersion: "1.4.1",
         entryPoint: ENTRYPOINT_ADDRESS_V07,
         saltNonce: saltNonce,
-        safe4337ModuleAddress: "0x3Fdb5BC686e861480ef99A6E3FaAe03c0b9F32e2",
-        erc7569LaunchpadAddress: "0xEBe001b3D534B9B6E2500FB78E67a1A137f561CE",
+        safe4337ModuleAddress: "0x7579F9feedf32331C645828139aFF78d517d0001",
+        erc7569LaunchpadAddress: "0x7579011aB74c46090561ea277Ba79D510c6C00ff",
         validators: [
           {
             address: "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691",
