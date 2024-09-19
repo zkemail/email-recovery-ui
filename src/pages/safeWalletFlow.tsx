@@ -12,14 +12,22 @@ const SafeWalletFlow = () => {
 
   const renderBody = () => {
     switch (stepsContext?.step) {
+      // Step to connect the safe wallet using WalletConnect
       case STEPS.CONNECT_WALLETS:
         return <ConnectWallets />;
+
+      // Step to enable the safe module in the connected safe
       case STEPS.SAFE_MODULE_RECOVERY:
         return <EnableSafeModule />;
+
+      // Step to set up the guardian email
       case STEPS.REQUEST_GUARDIAN:
         return <GuardianSetup />;
+
+      // Step to add the new owner's address and trigger/complete the recovery process
       case STEPS.REQUESTED_RECOVERIES:
         return <RequestedRecoveries />;
+
       default:
         return <ConnectWallets />;
     }

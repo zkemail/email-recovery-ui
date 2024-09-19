@@ -17,6 +17,10 @@ import {
 } from "viem";
 import { createPublicClient, http } from "viem";
 import { baseSepolia } from "viem/chains";
+import {
+  universalEmailRecoveryModule,
+  validatorsAddress,
+} from "../../../contracts.base-sepolia.json";
 
 export const publicClient = createPublicClient({
   transport: http("https://sepolia.base.org"),
@@ -24,15 +28,15 @@ export const publicClient = createPublicClient({
 
 export const pimlicoBundlerClient = createPimlicoBundlerClient({
   transport: http(
-    `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`,
+    `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`
   ),
   entryPoint: ENTRYPOINT_ADDRESS_V07,
 });
 
 /**
- * Executes a series of operations to configure a smart account, including transferring Ether, 
+ * Executes a series of operations to configure a smart account, including transferring Ether,
  * setting up recovery modules, and installing modules using a smart account client.
- * 
+ *
  * @async
  * @param {WalletClient} client - The wallet client used for transactions and interactions.
  * @param {object} safeAccount - The smart account object containing the address of the account.
@@ -42,16 +46,16 @@ export const pimlicoBundlerClient = createPimlicoBundlerClient({
 export async function run(
   client: WalletClient,
   safeAccount: object,
-  guardianAddr: string,
+  guardianAddr: string
 ) {
-  const ownableValidatorAddress = "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691";
+  const ownableValidatorAddress = validatorsAddress;
   // Universal Email Recovery Module with
   // ECDSAOwnedDKIMRegistry
   // Verifier
   // EmailAuth
   // EmailRecoveryCommandHandler
-  const universalEmailRecoveryModuleAddress =
-    "0xc0EFFe5d3D240d35450A43a3F9Ebd98091f2e6a7";
+  const universalEmailRecoveryModuleAddress: `0x${string}` =
+    universalEmailRecoveryModule as `0x${string}`;
 
   const addresses = await window.ethereum.request({
     method: "eth_requestAccounts",
@@ -69,7 +73,7 @@ export async function run(
     entryPoint: ENTRYPOINT_ADDRESS_V07,
     chain: baseSepolia,
     bundlerTransport: http(
-      `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`,
+      `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`
     ),
     middleware: {
       gasPrice: async () =>
@@ -87,10 +91,10 @@ export async function run(
   const toHexString = (bytes) =>
     bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, "0"), "");
 
-  const account = safeAccount.address;
+  const account: `0x${string}` = safeAccount.address as `0x${string}`;
   const isInstalledContext = new Uint8Array([0]);
   const functionSelector = keccak256(
-    new TextEncoder().encode("changeOwner(address)"),
+    new TextEncoder().encode("changeOwner(address)")
   ).slice(0, 10);
   const guardians = [guardianAddr];
   const guardianWeights = [1];
@@ -100,20 +104,20 @@ export async function run(
 
   const callData = encodeAbiParameters(
     parseAbiParameters(
-      "address, bytes, bytes4, address[], uint256[], uint256, uint256, uint256",
+      "address, bytes, bytes4, address[], uint256[], uint256, uint256, uint256"
     ),
     [
-      ownableValidatorAddress,
+      ownableValidatorAddress as `0x${string}`,
       isInstalledContext instanceof Uint8Array
         ? `0x${toHexString(isInstalledContext)}`
         : isInstalledContext, // Convert Uint8Array to hex string if necessary
-      functionSelector, // Assuming `functionSelector` is already a string
-      guardians, // Ensure each `guardian` address is a string
+      functionSelector as `0x${string}`, // Assuming `functionSelector` is already a string
+      guardians as `0x${string}`[], // Ensure each `guardian` address is a string
       guardianWeights, // Convert `guardianWeights` to strings
       threshold.toString(),
       delay.toString(),
       expiry.toString(),
-    ],
+    ]
   );
 
   // acceptanceSubjectTemplates -> [["Accept", "guardian", "request", "for", "{ethAddr}"]]

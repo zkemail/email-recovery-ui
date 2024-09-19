@@ -1,7 +1,7 @@
 // server.js
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 const PORT = process.env.PORT || 80;
@@ -11,16 +11,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Serve the React app's static files
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, "build")));
 
 // Define the /api/ping endpoint
-app.get('/api/ping', (req, res) => {
-  res.status(200).send('Hello world');
+app.get("/api/ping", (req, res) => {
+  res.status(200).send("Hello world");
 });
 
 // Handle any other routes and serve the React app
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 // Start the server

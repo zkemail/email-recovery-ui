@@ -17,6 +17,7 @@ const EnableSafeModule = () => {
   const stepsContext = useContext(StepsContext);
   const [isEnableModalLoading, setIsEnableModuleLoading] = useState(false);
 
+  // Check if the module is already installed in the wallet.
   const { data: isModuleEnabled, isLoading: isCheckModuleEnabledLoading } =
     useReadContract({
       address,
@@ -43,6 +44,7 @@ const EnableSafeModule = () => {
       },
     });
 
+    // This section enables the recovery module in the safe wallet.
     await writeContractAsync({
       abi: safeAbi,
       address,

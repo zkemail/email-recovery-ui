@@ -4,7 +4,10 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { keccak256 } from "viem";
 import { readContract } from "wagmi/actions";
-import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
+import {
+  universalEmailRecoveryModule,
+  validatorsAddress,
+} from "../../../contracts.base-sepolia.json";
 import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
 import cancelRecoveryIcon from "../../assets/cancelRecoveryIcon.svg";
 import completeRecoveryIcon from "../../assets/completeRecoveryIcon.svg";
@@ -41,7 +44,7 @@ const RequestedRecoveries = () => {
   const [guardianEmailAddress, setGuardianEmailAddress] =
     useState(guardianEmail);
   const [buttonState, setButtonState] = useState(
-    BUTTON_STATES.TRIGGER_RECOVERY,
+    BUTTON_STATES.TRIGGER_RECOVERY
   );
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -63,6 +66,7 @@ const RequestedRecoveries = () => {
       args: [address],
     });
 
+    // Update the button state based on the condition. The current weight represents the number of users who have confirmed the email, and the threshold indicates the number of confirmations required before the complete recovery can be called
     if (getRecoveryRequest.currentWeight < getGuardianConfig.threshold) {
       setButtonState(BUTTON_STATES.TRIGGER_RECOVERY);
     } else {
@@ -99,13 +103,13 @@ const RequestedRecoveries = () => {
     const recoveryCallData = getRecoveryCallData(newOwner);
 
     const recoveryData = getRecoveryData(
-      "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691", // validator's address
-      recoveryCallData,
+      validatorsAddress,
+      recoveryCallData
     ) as `0x${string}`;
 
     const recoveryDataHash = keccak256(recoveryData);
 
-    // subject = ['Recover', 'account', '{ethAddr}', 'using', 'recovery', 'hash', '{string}']
+    // This function fetches the command template for the recoveryRequest API call. The command template will be in the following format: ['Recover', 'account', '{ethAddr}', 'using', 'recovery', 'hash', '{string}']
     const subject = (await readContract(config, {
       abi: universalEmailRecoveryModuleAbi,
       address: universalEmailRecoveryModule as `0x${string}`,
@@ -123,10 +127,9 @@ const RequestedRecoveries = () => {
           .join()
           ?.replaceAll(",", " ")
           .replace("{ethAddr}", safeWalletAddress)
-          .replace("{string}", recoveryDataHash),
+          .replace("{string}", recoveryDataHash)
       );
 
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       intervalRef.current = setInterval(() => {
         checkIfRecoveryCanBeCompleted();
       }, 5000);
@@ -147,16 +150,13 @@ const RequestedRecoveries = () => {
 
     const recoveryCallData = getRecoveryCallData(newOwner!);
 
-    const recoveryData = getRecoveryData(
-      "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691", // validator address
-      recoveryCallData,
-    );
+    const recoveryData = getRecoveryData(validatorsAddress, recoveryCallData);
 
     try {
       await relayer.completeRecovery(
         universalEmailRecoveryModule as string,
         safeWalletAddress as string,
-        recoveryData,
+        recoveryData
       );
 
       setButtonState(BUTTON_STATES.RECOVERY_COMPLETED);
@@ -168,6 +168,7 @@ const RequestedRecoveries = () => {
   }, [newOwner, safeWalletAddress]);
 
   const getButtonComponent = () => {
+    // Renders the appropriate buttons based on the button state.
     switch (buttonState) {
       case BUTTON_STATES.TRIGGER_RECOVERY:
         return (

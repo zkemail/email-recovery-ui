@@ -51,6 +51,7 @@ const RequestedRecoveries = () => {
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Checks whether recovery has been triggered.
   const checkIfRecoveryCanBeCompleted = useCallback(async () => {
     setIsButtonStateLoading(true);
     const getRecoveryRequest = await readContract(config, {
@@ -67,8 +68,7 @@ const RequestedRecoveries = () => {
       args: [address as `0x${string}`],
     });
 
-    console.log(getRecoveryRequest.currentWeight, getGuardianConfig.threshold);
-
+    // Update the button state based on the condition. The current weight represents the number of users who have confirmed the email, and the threshold indicates the number of confirmations required before the complete recovery can be called
     if (getRecoveryRequest.currentWeight < getGuardianConfig.threshold) {
       setButtonState(BUTTON_STATES.TRIGGER_RECOVERY);
     } else {
@@ -88,8 +88,6 @@ const RequestedRecoveries = () => {
     abi: safeAbi,
     functionName: "getOwners",
   });
-
-  console.log(safeOwnersData);
 
   const requestRecovery = useCallback(async () => {
     setLoading(true);
@@ -117,6 +115,7 @@ const RequestedRecoveries = () => {
       );
     }
 
+    // This function fetches the command template for the recoveryRequest API call. The command template will be in the following format: ["Recover", "account", "{ethAddr}", "from", "old", "owner", "{ethAddr}", "to", "new", "owner", "{ethAddr}"]
     const command = await readContract(config, {
       abi: safeEmailRecoveryModuleAbi,
       address: safeEmailRecoveryModule as `0x${string}`,
@@ -141,10 +140,6 @@ const RequestedRecoveries = () => {
       intervalRef.current = setInterval(() => {
         checkIfRecoveryCanBeCompleted();
       }, 5000); // Adjust the interval time (in milliseconds) as needed
-
-      // Clean up the interval on component unmount
-
-      // setButtonState(BUTTON_STATES.COMPLETE_RECOVERY);
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong while requesting recovery");
@@ -160,14 +155,12 @@ const RequestedRecoveries = () => {
 
   const completeRecovery = useCallback(async () => {
     setLoading(true);
-    console.log(`newOwner: ${newOwner}`);
-    console.log(`safeWalletAddress: ${safeWalletAddress}`);
 
     const swapOwnerCallData = encodeFunctionData({
       abi: safeAbi,
       functionName: "swapOwner",
       args: [
-        "0x0000000000000000000000000000000000000001",
+        "0x0000000000000000000000000000000000000001", // If there is no previous owner of the safe, then the default value will be this
         safeOwnersData[0],
         newOwner,
       ],
@@ -178,13 +171,14 @@ const RequestedRecoveries = () => {
     );
 
     try {
+      // Make the completeRecovery API call
       const res = await relayer.completeRecovery(
         safeEmailRecoveryModule as string,
         safeWalletAddress as string,
         completeCalldata,
       );
 
-      console.debug("complete recovery res", res);
+      console.debug("complete recovery data", res);
       setButtonState(BUTTON_STATES.RECOVERY_COMPLETED);
     } catch (err) {
       toast.error("Something went wrong while completing recovery process");
@@ -194,6 +188,7 @@ const RequestedRecoveries = () => {
   }, [newOwner, safeOwnersData, safeWalletAddress]);
 
   const getButtonComponent = () => {
+    // Renders the appropriate buttons based on the button state.
     switch (buttonState) {
       case BUTTON_STATES.TRIGGER_RECOVERY:
         return (

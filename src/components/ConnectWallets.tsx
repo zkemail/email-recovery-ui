@@ -12,7 +12,7 @@ const ConnectWallets = () => {
   const stepsContext = useContext(StepsContext);
 
   if (address) {
-    console.log(stepsContext, address, "inside useeffect");
+    // If we have the address, we can assume the user has successfully connected the safe wallet. Proceeding to the next step.
     stepsContext?.setStep(STEPS.SAFE_MODULE_RECOVERY);
   }
 
