@@ -24,10 +24,11 @@ RUN yarn build
 FROM nginx:alpine
 
 # Copy the built application from the build stage
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist ./build
+COPY --from=build /app/server.js ./
 
-# Expose port 80 for the application
+# Expose port 80
 EXPOSE 80
 
-# Start Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+# Start the server
+CMD ["node", "server.js"]
