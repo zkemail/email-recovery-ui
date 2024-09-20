@@ -94,7 +94,7 @@ export async function run(
   const account: `0x${string}` = safeAccount.address as `0x${string}`;
   const isInstalledContext = new Uint8Array([0]);
   const functionSelector = keccak256(
-    new TextEncoder().encode("changeOwner(address)")
+    new TextEncoder().encode("swapOwner(address,address,address)")
   ).slice(0, 10);
   const guardians = [guardianAddr];
   const guardianWeights = [1];
@@ -107,7 +107,7 @@ export async function run(
       "address, bytes, bytes4, address[], uint256[], uint256, uint256, uint256"
     ),
     [
-      ownableValidatorAddress as `0x${string}`,
+      account,
       isInstalledContext instanceof Uint8Array
         ? `0x${toHexString(isInstalledContext)}`
         : isInstalledContext, // Convert Uint8Array to hex string if necessary

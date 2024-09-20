@@ -115,11 +115,11 @@ const GuardianSetup = () => {
         safeVersion: "1.4.1",
         entryPoint: ENTRYPOINT_ADDRESS_V07,
         saltNonce: saltNonce,
-        safe4337ModuleAddress,
-        erc7569LaunchpadAddress,
+        safe4337ModuleAddress: safe4337ModuleAddress as `0x${string}`,
+        erc7569LaunchpadAddress: erc7569LaunchpadAddress as `0x${string}`,
         validators: [
           {
-            address: validatorsAddress,
+            address: validatorsAddress as `0x${string}`,
             context: "0x",
           },
         ],
