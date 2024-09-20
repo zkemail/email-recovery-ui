@@ -10,12 +10,12 @@ import { abi as ownableValidatorAbi } from "../abi/OwnableValidator.json";
  */
 export const getRecoveryData = (
   validator: string,
-  recoveryCalldata: string
+  recoveryCalldata: string,
 ): string => {
   const defaultAbiCoder = AbiCoder.defaultAbiCoder();
   return defaultAbiCoder.encode(
     ["address", "bytes"],
-    [validator, recoveryCalldata]
+    [validator, recoveryCalldata],
   );
 };
 
