@@ -2,6 +2,6 @@
   "safeEmailRecoveryModule": "0x87a5647a625a0DB1237C550A27C3629a3de4B65c",
   "universalEmailRecoveryModule": "0xc0EFFe5d3D240d35450A43a3F9Ebd98091f2e6a7",
   "validatorsAddress": "0xd9Ef4a48E4C067d640a9f784dC302E97B21Fd691",
-  "safe4337ModuleAddress": "0x3Fdb5BC686e861480ef99A6E3FaAe03c0b9F32e2",
-  "erc7569LaunchpadAddress": "0xEBe001b3D534B9B6E2500FB78E67a1A137f561CE"
+  "safe4337ModuleAddress": "0x7579F9feedf32331C645828139aFF78d517d0001",
+  "erc7569LaunchpadAddress": "0x7579011aB74c46090561ea277Ba79D510c6C00ff"
 }
