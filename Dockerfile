@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM node:18-alpine AS build
+FROM node:22-alpine AS build
 
 # Set the working directory
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY . .
 RUN yarn build
 
 # Stage 2: Serve the application
-FROM node:18-alpine
+FROM node:22-alpine
 
 # Set the working directory
 WORKDIR /app
