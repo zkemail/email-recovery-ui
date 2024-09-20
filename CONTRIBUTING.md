@@ -3,6 +3,7 @@
 Thank you for considering contributing to our project! We welcome contributions of all kinds, including code, documentation, bug reports, feature requests, and more. This document outlines the process for contributing to this project.
 
 ## Table of Contents
+
 - [Contributing to Email Recovery Demo](#contributing-to-email-recovery-demo)
   - [Table of Contents](#table-of-contents)
   - [1. Code of Conduct](#1-code-of-conduct)
@@ -14,6 +15,7 @@ Thank you for considering contributing to our project! We welcome contributions 
   - [7. Contact](#7-contact)
 
 ## 1. Code of Conduct
+
 We are committed to providing a welcoming and inspiring community for all and expect our Code of Conduct to be honored. Anyone who violates this code of conduct may be banned from the community.
 
 Our community strives to:
@@ -54,24 +56,24 @@ Thank you for helping make this a welcoming, friendly community for all.
 
 This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org), version 1.4, available at [https://www.contributor-covenant.org/version/1/4/code-of-conduct.html](https://www.contributor-covenant.org/version/1/4/code-of-conduct.html)
 
-
 ## 2. Getting Started
+
 To start contributing, follow these steps:
 
 1. Fork the repository.
 2. Clone your fork to your local machine:
-    ```bash
-    git clone https://github.com/zkemail/email-recovery-demo.git
-    ```
-3.	Create a new branch for your feature or bugfix:
-    ```bash
-    git checkout -b feat/your-feature-name
-    ```
-4.	Install the necessary dependencies:
-    ```bash
-    cargo build
-    ```
-5.	Make your changes.
+   ```bash
+   git clone https://github.com/zkemail/email-recovery-demo.git
+   ```
+3. Create a new branch for your feature or bugfix:
+   ```bash
+   git checkout -b feat/your-feature-name
+   ```
+4. Install the necessary dependencies:
+   ```bash
+   cargo build
+   ```
+5. Make your changes.
 
 ## 3. Coding Guidelines
 
@@ -81,8 +83,8 @@ Please follow the coding guidelines in [CODING_GUIDELINES.md](CODING_GUIDELINES.
 
 Please write tests for your contributions. We aim for high test coverage.
 
-	•	Unit Tests: Place unit tests in the same file as the code they are testing.
-	•	Integration Tests: Place integration tests in the tests/ directory.
+    •	Unit Tests: Place unit tests in the same file as the code they are testing.
+    •	Integration Tests: Place integration tests in the tests/ directory.
 
 Run all tests before submitting your code with cargo test.
 
@@ -99,15 +101,15 @@ For more information, see [Conventional Commits](https://www.conventionalcommits
 
 ## 6. Pull Request Process
 
-	1.	Ensure your branch is up-to-date with the main branch:
-	•	git fetch origin
-	•	git checkout main
-	•	git merge origin/main
-	2.	Push your branch to your fork:
-	•	git push origin feature/your-feature-name
-	3.	Open a pull request from your branch to the main branch of the original repository.
-	4.	Ensure that your pull request passes all checks (e.g., CI tests).
-	5.	A reviewer will review your pull request. Be prepared to make adjustments based on feedback.
+    1.	Ensure your branch is up-to-date with the main branch:
+    •	git fetch origin
+    •	git checkout main
+    •	git merge origin/main
+    2.	Push your branch to your fork:
+    •	git push origin feature/your-feature-name
+    3.	Open a pull request from your branch to the main branch of the original repository.
+    4.	Ensure that your pull request passes all checks (e.g., CI tests).
+    5.	A reviewer will review your pull request. Be prepared to make adjustments based on feedback.
 
 ## 7. Contact
 

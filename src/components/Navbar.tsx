@@ -1,18 +1,17 @@
-import React, { useState } from "react";
-import { useTheme } from "@mui/material/styles";
-import { AppBar, Grid, IconButton, Slide } from "@mui/material/";
-import Typography from "@mui/material/Typography";
-import { Button } from "./Button";
-import Box from "@mui/material/Box";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
-import { Web3Provider } from "../providers/Web3Provider";
-import { ConnectKitButton } from "connectkit";
-import { Link } from "react-router-dom";
-import MenuIcon from "@mui/icons-material/Menu";
-
-import { Dialog, Toolbar } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import MenuIcon from "@mui/icons-material/Menu";
+import { Dialog, Toolbar } from "@mui/material";
+import { AppBar, Grid, IconButton, Slide } from "@mui/material/";
+import Box from "@mui/material/Box";
+import { useTheme } from "@mui/material/styles";
 import { TransitionProps } from "@mui/material/transitions";
+import Typography from "@mui/material/Typography";
+import { ConnectKitButton } from "connectkit";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "./Button";
+import { Web3Provider } from "../providers/Web3Provider";
 
 const NAV_LINKS = [
   { link: "https://prove.email/blog", title: "Blog" },
@@ -25,7 +24,7 @@ const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement;
   },
-  ref: React.Ref<unknown>
+  ref: React.Ref<unknown>,
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -218,10 +217,18 @@ const NavBar: React.FC = () => {
               }}
             >
               <MailOutlineIcon
-                style={{ fill: "#000000", marginLeft:'0.5rem', marginRight: "0.625rem" }}
+                style={{
+                  fill: "#000000",
+                  marginLeft: "0.5rem",
+                  marginRight: "0.625rem",
+                }}
               />
               <Link to="/">
-                <Typography variant="h6" color="black" sx={{fontSize:{xs:'0.75rem', sm:'0.85rem'}}}>
+                <Typography
+                  variant="h6"
+                  color="black"
+                  sx={{ fontSize: { xs: "0.75rem", sm: "0.85rem" } }}
+                >
                   ZKEmail Recovery
                 </Typography>
               </Link>
@@ -232,7 +239,7 @@ const NavBar: React.FC = () => {
             sm={5}
             md={6}
             sx={{
-              display: { xs: "none", sm:'none', md: "flex" },
+              display: { xs: "none", sm: "none", md: "flex" },
               borderRight: "0.5px solid black",
               paddingLeft: "1.5625rem",
               paddingY: "0.625rem",
@@ -246,7 +253,10 @@ const NavBar: React.FC = () => {
                     href={navLink.link}
                     target="_blank"
                     sx={{
-                      marginRight: {sm:theme.spacing(1), md:theme.spacing(2)},
+                      marginRight: {
+                        sm: theme.spacing(1),
+                        md: theme.spacing(2),
+                      },
                       textTransform: "none",
                     }}
                   >

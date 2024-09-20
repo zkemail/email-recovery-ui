@@ -1,16 +1,16 @@
+import { ThemeProvider } from "@mui/material";
 import { createContext, useState } from "react";
 import "./App.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import NavBar from "./components/Navbar";
 import { STEPS } from "./constants";
 import { AppContextProvider } from "./context/AppContextProvider";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import LandingPage from "./pages/landingPage";
-import ErrorPage from "./pages/errorPage";
-import SafeWalletFlow from "./pages/safeWalletFlow";
-import { ThemeProvider } from "@mui/material";
-import theme from "./theme"; // Import custom theme
-import RecoverWalletFlow from "./pages/recoverWalletFlow";
-import NavBar from "./components/Navbar";
 import BurnerWalletFlow from "./pages/burnerWalletFlow";
+import ErrorPage from "./pages/errorPage";
+import LandingPage from "./pages/landingPage";
+import RecoverWalletFlow from "./pages/recoverWalletFlow";
+import SafeWalletFlow from "./pages/safeWalletFlow";
+import theme from "./theme"; // Import custom theme
 
 export const StepsContext = createContext(null);
 

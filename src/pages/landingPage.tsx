@@ -1,17 +1,18 @@
-import { useNavigate } from "react-router-dom";
-import { useTheme, Grid, Typography, Box } from "@mui/material";
-import "../App.css";
+import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import SvgWrapper from "../components/SvgIconWrapper";
-import gnosisSafeLogo from "../assets/gnosis-safe-logo.svg";
-import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
-import Toggle from "../components/Toggle";
-import { Link } from "react-router-dom";
+import { Box, Grid, Typography, useTheme } from "@mui/material";
 import { useContext, useState } from "react";
-import FlowInfoCard from "../components/FlowsInfoCard";
-import { STEPS } from "../constants";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import "../App.css";
 import { StepsContext } from "../App";
+import gnosisSafeLogo from "../assets/gnosis-safe-logo.svg";
+import FlowInfoCard from "../components/FlowsInfoCard";
+import SvgWrapper from "../components/SvgIconWrapper";
+import Toggle from "../components/Toggle";
+import { STEPS } from "../constants";
 
 type actionType = "SAFE_WALLET" | "BURNER_WALLET" | "WALLET_RECOVERY";
 type FlowType = "setup" | "recover";
@@ -29,14 +30,16 @@ const LandingPage = () => {
 
   const handleClick = async (action: actionType) => {
     await stepsContext?.setStep(STEPS.CONNECT_WALLETS);
-    await localStorage.removeItem('accountCode')
-    await localStorage.removeItem('burnerWalletConfig')
-
+    // Remove these values from localStorage to prevent conflicts with the safe wallet flow.
+    await localStorage.removeItem("accountCode");
+    await localStorage.removeItem("burnerWalletConfig");
 
     switch (action) {
       case "SAFE_WALLET":
+        toast("Please disconnect previously created wallet");
         return navigate("/safe-wallet");
       case "BURNER_WALLET":
+        toast("Please disconnect previously created wallet");
         return navigate("/burner-wallet");
       case "WALLET_RECOVERY":
         return navigate("/wallet-recovery");

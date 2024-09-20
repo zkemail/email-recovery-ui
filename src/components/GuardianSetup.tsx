@@ -1,25 +1,3 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { ConnectKitButton } from "connectkit";
-import { Button } from "./Button";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { safeAbi } from "../abi/Safe";
-import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
-import infoIcon from "../assets/infoIcon.svg";
-import { useAppContext } from "../context/AppContextHook";
-import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
-import {
-  genAccountCode,
-  getRequestGuardianCommand,
-  templateIdx,
-} from "../utils/email";
-import { readContract } from "wagmi/actions";
-import { config } from "../providers/config";
-import { relayer } from "../services/relayer";
-import { StepsContext } from "../App";
-import { STEPS } from "../constants";
-import toast from "react-hot-toast";
-
-import InputField from "./InputField";
 import {
   Box,
   Grid,
@@ -28,30 +6,32 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { ConnectKitButton } from "connectkit";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import toast from "react-hot-toast";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { readContract } from "wagmi/actions";
+import { Button } from "./Button";
+import InputField from "./InputField";
 import Loader from "./Loader";
-
-const TIME_UNITS = {
-  SECS: {
-    value: "SECS",
-    multiplier: 1,
-    label: "Secs",
-  },
-  MINS: {
-    value: "MINS",
-    multiplier: 60,
-    label: "Mins",
-  },
-  HOURS: {
-    value: "HOURS",
-    multiplier: 60 * 60,
-    label: "Hours",
-  },
-  DAYS: {
-    value: "DAYS",
-    multiplier: 60 * 60 * 24,
-    label: "Days",
-  },
-};
+import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
+import { safeAbi } from "../abi/Safe";
+import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
+import { StepsContext } from "../App";
+import infoIcon from "../assets/infoIcon.svg";
+import { STEPS } from "../constants";
+import { useAppContext } from "../context/AppContextHook";
+import { config } from "../providers/config";
+import { relayer } from "../services/relayer";
+import { genAccountCode, templateIdx } from "../utils/email";
+import { TIME_UNITS } from "../utils/recoveryDataUtils";
 
 //logic for valid email address check for input
 const isValidEmail = (email: string) => {
@@ -73,23 +53,22 @@ const GuardianSetup = () => {
   const [loading, setLoading] = useState(false);
   // 0 = 2 week default delay, don't do for demo
   const [recoveryDelay, setRecoveryDelay] = useState(1);
-  const [recoveryExpiry, setRecoveryExpiry] = useState(7);
+  const recoveryExpiry = 7;
   const [emailError, setEmailError] = useState(false);
   const [recoveryDelayUnit, setRecoveryDelayUnit] = useState(
-    TIME_UNITS.SECS.value
+    TIME_UNITS.SECS.value,
   );
-  const [recoveryExpiryUnit, setRecoveryExpiryUnit] = useState(
-    TIME_UNITS.DAYS.value
-  );
+  // const recoveryExpiryUnit = TIME_UNITS.DAYS.value;
 
-  let interval: NodeJS.Timeout;
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Fetches the safe wallet owners. This will return an array of addresses for various owners.
   const { data: safeOwnersData } = useReadContract({
     address,
     abi: safeAbi,
     functionName: "getOwners",
   });
-  console.log(safeOwnersData);
+
   const firstSafeOwner = useMemo(() => {
     const safeOwners = safeOwnersData as string[];
     if (!safeOwners?.length) {
@@ -98,8 +77,11 @@ const GuardianSetup = () => {
     return safeOwners[0];
   }, [safeOwnersData]);
 
-  const checkIfRecoveryIsConfigured = async () => {
+  const checkIfRecoveryIsConfigured = useCallback(async () => {
     setIsAccountInitializedLoading(true);
+
+    // Check if recovery is set up and activated. If so, proceed to the next step.
+    // Note: In Safe 1.3, we can only verify if the acceptance request email has been replied to, not confirmed. The user must wait for this message before moving to the recovery step.
     const isActivated = await readContract(config, {
       abi: safeEmailRecoveryModuleAbi,
       address: safeEmailRecoveryModule as `0x${string}`,
@@ -107,23 +89,25 @@ const GuardianSetup = () => {
       args: [address as `0x${string}`],
     });
 
-    console.log(isActivated);
-
-    // TODO: add polling for this
     if (isActivated) {
       setIsAccountInitialized(isActivated);
       setLoading(false);
       stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
     }
     setIsAccountInitializedLoading(false);
-  };
+  }, [address, stepsContext]);
 
+  // Polling to check whether recovery is configured.
   useEffect(() => {
     checkIfRecoveryIsConfigured();
 
     // Clean up the interval on component unmount
-    return () => clearInterval(interval);
-  }, []);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [checkIfRecoveryIsConfigured]);
 
   //logic to check if email input is a valid email
   useEffect(() => {
@@ -158,16 +142,19 @@ const GuardianSetup = () => {
           style: {
             background: "white",
           },
-        }
+        },
       );
 
+      // The account code is unique for each account.
       const acctCode = await genAccountCode();
       setAccountCode(accountCode);
 
       const guardianSalt = await relayer.getAccountSalt(
         acctCode,
-        guardianEmail
+        guardianEmail,
       );
+
+      // The guardian address is generated by sending the user's account address and guardian salt to the computeEmailAuthAddress function
       const guardianAddr = await readContract(config, {
         abi: safeEmailRecoveryModuleAbi,
         address: safeEmailRecoveryModule as `0x${string}`,
@@ -175,6 +162,7 @@ const GuardianSetup = () => {
         args: [address, guardianSalt],
       });
 
+      // The configureSafeRecovery function takes recovery delay and expiry to set up the recovery process. Its units can be configured from the UI, but for this demo, we are hardcoding some values for ease of use.
       await writeContractAsync({
         abi: safeEmailRecoveryModuleAbi,
         address: safeEmailRecoveryModule as `0x${string}`,
@@ -188,10 +176,7 @@ const GuardianSetup = () => {
         ],
       });
 
-      console.debug("recovery configured");
-
-      // const command = getRequestGuardianCommand(address);
-
+      // This function fetches the command template for the acceptanceRequest API call. The command template will be in the following format: [['Accept', "guardian", "request", "for", "{ethAddr}"]]
       const command = await readContract(config, {
         abi: safeEmailRecoveryModuleAbi,
         address: safeEmailRecoveryModule as `0x${string}`,
@@ -199,20 +184,20 @@ const GuardianSetup = () => {
         args: [],
       });
 
-      console.log(command[0].join().replace(',', ' ').replace('{ethAddr}', address), "command")
-
-      const { requestId } = await relayer.acceptanceRequest(
+      // requestId
+      await relayer.acceptanceRequest(
         safeEmailRecoveryModule as `0x${string}`,
         guardianEmail,
         acctCode,
         templateIdx,
-        command[0].join()?.replaceAll(',', ' ').replaceAll('{ethAddr}', address)
+        command[0]
+          .join()
+          ?.replaceAll(",", " ")
+          .replaceAll("{ethAddr}", address),
       );
 
-      console.debug("accept req id", requestId);
-
       // Setting up interval for polling
-      interval = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         checkIfRecoveryIsConfigured();
       }, 5000); // Adjust the interval time (in milliseconds) as needed
     } catch (err) {
@@ -228,17 +213,14 @@ const GuardianSetup = () => {
     accountCode,
     writeContractAsync,
     recoveryDelay,
-    recoveryExpiry,
-    stepsContext,
+    recoveryDelayUnit,
+    checkIfRecoveryIsConfigured,
   ]);
 
   if (isAccountInitializedLoading) {
     return <Loader />;
   }
-  console.log(
-    recoveryDelay * TIME_UNITS[recoveryDelayUnit].multiplier,
-    recoveryExpiry * TIME_UNITS[recoveryExpiryUnit].multiplier
-  );
+
   return (
     <Box sx={{ marginX: "auto", marginTop: "100px", marginBottom: "100px" }}>
       <Typography variant="h2" sx={{ paddingBottom: "1.5rem" }}>
@@ -285,7 +267,7 @@ const GuardianSetup = () => {
                 value={recoveryDelay}
                 onChange={(e) =>
                   setRecoveryDelay(
-                    parseInt((e.target as HTMLInputElement).value)
+                    parseInt((e.target as HTMLInputElement).value),
                   )
                 }
                 title="Recovery Delay"

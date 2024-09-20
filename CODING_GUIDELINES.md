@@ -10,19 +10,23 @@ This document outlines the coding guidelines for contributing to the **Email Rec
 - **Line Length**: Aim to keep lines under 100 characters. Longer lines should be broken up for readability.
 - **Function Length**: Aim to keep functions short and focused. If a function is too long, consider breaking it up into smaller functions.
 - **Imports**: Organize imports into the following sections:
+
   1. External dependencies (e.g., libraries from `node_modules`).
   2. Absolute imports (e.g., `import { func } from 'src/utils';`).
   3. Relative imports (e.g., `import { func } from '../utils';`).
 
   Example:
+
   ```ts
-  import fs from 'fs';
-  import { validateEmail } from 'src/utils';
-  import { parseInput } from '../parsers';
+  import fs from "fs";
+  import { validateEmail } from "src/utils";
+  import { parseInput } from "../parsers";
   ```
+
 - **Braces**: Use braces for all control structures, even single-line blocks.
 
   Example:
+
   ```ts
   if (condition) {
     doSomething();
@@ -33,9 +37,10 @@ This document outlines the coding guidelines for contributing to the **Email Rec
 - **Whitespace**: Use a single space after commas and colons, but no space before them.
 
   Example:
+
   ```ts
   const arr = [1, 2, 3];
-  const obj = { name: 'Alice', age: 30 };
+  const obj = { name: "Alice", age: 30 };
   ```
 
 ## 2. Code Linting
@@ -47,20 +52,24 @@ This document outlines the coding guidelines for contributing to the **Email Rec
 
 - **Variables and Functions**: Use `camelCase` for variable and function names.
 
-  Example: 
+  Example:
+
   ```ts
-  const userName = 'Alice';
+  const userName = "Alice";
   ```
+
 - **Classes and Interfaces**: Use `PascalCase`.
 
-  Example: 
+  Example:
+
   ```ts
   class UserAccount { ... }
   ```
 
 - **Constants**: Use `UPPER_CASE` for constant values.
 
-  Example: 
+  Example:
+
   ```ts
   const MAX_USERS = 100;
   ```
@@ -70,6 +79,7 @@ This document outlines the coding guidelines for contributing to the **Email Rec
 - **JSDoc**: Document all public functions, methods, and classes using JSDoc comments.
 
   Example:
+
   ```ts
   /**
    * Creates a new user account.
@@ -88,11 +98,12 @@ This document outlines the coding guidelines for contributing to the **Email Rec
 - **Use of `try`/`catch`**: Use `try`/`catch` blocks for error-prone code. Always handle errors gracefully.
 
   Example:
+
   ```ts
   try {
     const data = await fetchData();
   } catch (error) {
-    console.error('Error fetching data', error);
+    console.error("Error fetching data", error);
   }
   ```
 
