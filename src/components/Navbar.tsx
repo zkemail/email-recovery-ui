@@ -24,7 +24,7 @@ const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement;
   },
-  ref: React.Ref<unknown>,
+  ref: React.Ref<unknown>
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -152,9 +152,7 @@ const MobileNav = ({
         >
           Learn More
         </Button>
-        <Web3Provider>
-          <ConnectKitButton />
-        </Web3Provider>
+        <ConnectKitButton />
       </Grid>
     </Dialog>
   );
@@ -315,9 +313,7 @@ const NavBar: React.FC = () => {
               >
                 Learn More
               </Button>
-              <Web3Provider>
-                <ConnectKitButton />
-              </Web3Provider>
+              <ConnectKitButton />
             </Box>
           </Grid>
         </Grid>

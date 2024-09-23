@@ -11,6 +11,7 @@ import LandingPage from "./pages/landingPage";
 import RecoverWalletFlow from "./pages/recoverWalletFlow";
 import SafeWalletFlow from "./pages/safeWalletFlow";
 import theme from "./theme"; // Import custom theme
+import { Web3Provider } from "./providers/Web3Provider";
 
 export const StepsContext = createContext(null);
 
@@ -26,21 +27,23 @@ function App() {
             setStep,
           }}
         >
-          <BrowserRouter>
-            <NavBar />
-            <div style={{ padding: 16 }}>
-              <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/safe-wallet" element={<SafeWalletFlow />} />
-                <Route path="/burner-wallet" element={<BurnerWalletFlow />} />
-                <Route
-                  path="/wallet-recovery"
-                  element={<RecoverWalletFlow />}
-                />
-                <Route path="*" element={<ErrorPage />} />
-              </Routes>
-            </div>
-          </BrowserRouter>
+          <Web3Provider>
+            <BrowserRouter>
+              <NavBar />
+              <div style={{ padding: 16 }}>
+                <Routes>
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/safe-wallet" element={<SafeWalletFlow />} />
+                  <Route path="/burner-wallet" element={<BurnerWalletFlow />} />
+                  <Route
+                    path="/wallet-recovery"
+                    element={<RecoverWalletFlow />}
+                  />
+                  <Route path="*" element={<ErrorPage />} />
+                </Routes>
+              </div>
+            </BrowserRouter>
+          </Web3Provider>
         </StepsContext.Provider>
       </ThemeProvider>
     </AppContextProvider>

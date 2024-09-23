@@ -1,12 +1,24 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { StepsContext } from "../App";
 import GuardianSetup from "../components/burnerWallet/GuardianSetup";
 import RequestedRecoveries from "../components/burnerWallet/RequestedRecoveries";
 import { STEPS } from "../constants";
-import { Web3Provider } from "../providers/Web3Provider";
 
 const BurnerWalletFlow = () => {
   const stepsContext = useContext(StepsContext);
+  const [burnerWalletAddress, setBurnerWalletAddress] = useState();
+
+  useEffect(() => {
+    const burnerWalletAddressPollingInterval = setInterval(() => {
+      const burnerWalletConfig = localStorage.getItem("burnerWalletConfig");
+      if (burnerWalletConfig !== undefined && burnerWalletConfig !== null) {
+        setBurnerWalletAddress(
+          JSON.parse(burnerWalletConfig)?.burnerWalletAddress
+        );
+        clearInterval(burnerWalletAddressPollingInterval);
+      }
+    }, 1000);
+  }, []);
 
   const renderBody = () => {
     switch (stepsContext?.step) {
@@ -24,9 +36,20 @@ const BurnerWalletFlow = () => {
   };
 
   return (
-    <Web3Provider>
-      <div className="app">{renderBody()}</div>
-    </Web3Provider>
+    <div className="app">
+      {burnerWalletAddress ? (
+        <>
+          Burner Wallet Address:{" "}
+          <a
+            href={`https://app.safe.global/home?safe=basesep%3A${burnerWalletAddress}`}
+            target="_blank"
+          >
+            {burnerWalletAddress}
+          </a>
+        </>
+      ) : null}
+      {renderBody()}
+    </div>
   );
 };
 
