@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { encodeAbiParameters, encodeFunctionData } from "viem";
-import { useReadContract } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
 import { readContract } from "wagmi/actions";
 import { Button } from "./Button";
 import ConnectedWalletCard from "./ConnectedWalletCard";
@@ -21,8 +21,6 @@ import { config } from "../providers/config";
 import { relayer } from "../services/relayer";
 import { templateIdx } from "../utils/email";
 
-import { useGetSafeAccountAddress } from "../utils/useGetSafeAccountAddress";
-
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
   CANCEL_RECOVERY: "Cancel Recovery",
@@ -33,7 +31,7 @@ const BUTTON_STATES = {
 const RequestedRecoveries = () => {
   // const theme = useTheme(); for some reason this was causing trigger recovery button to be skipped??
   const isMobile = window.innerWidth < 768;
-  const address = useGetSafeAccountAddress();
+  const { address } = useAccount();
   const { guardianEmail } = useAppContext();
   const navigate = useNavigate();
 
