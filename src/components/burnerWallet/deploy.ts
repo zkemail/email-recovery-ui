@@ -28,7 +28,7 @@ export const publicClient = createPublicClient({
 
 export const pimlicoBundlerClient = createPimlicoBundlerClient({
   transport: http(
-    `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`
+    `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`,
   ),
   entryPoint: ENTRYPOINT_ADDRESS_V07,
 });
@@ -46,7 +46,7 @@ export const pimlicoBundlerClient = createPimlicoBundlerClient({
 export async function run(
   client: WalletClient,
   safeAccount: object,
-  guardianAddr: string
+  guardianAddr: string,
 ) {
   const ownableValidatorAddress = validatorsAddress;
   // Universal Email Recovery Module with
@@ -73,7 +73,7 @@ export async function run(
     entryPoint: ENTRYPOINT_ADDRESS_V07,
     chain: baseSepolia,
     bundlerTransport: http(
-      `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`
+      `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`,
     ),
     middleware: {
       gasPrice: async () =>
@@ -94,7 +94,7 @@ export async function run(
   const account: `0x${string}` = safeAccount.address as `0x${string}`;
   const isInstalledContext = new Uint8Array([0]);
   const functionSelector = keccak256(
-    new TextEncoder().encode("swapOwner(address,address,address)")
+    new TextEncoder().encode("swapOwner(address,address,address)"),
   ).slice(0, 10);
   const guardians = [guardianAddr];
   const guardianWeights = [1];
@@ -104,7 +104,7 @@ export async function run(
 
   const callData = encodeAbiParameters(
     parseAbiParameters(
-      "address, bytes, bytes4, address[], uint256[], uint256, uint256, uint256"
+      "address, bytes, bytes4, address[], uint256[], uint256, uint256, uint256",
     ),
     [
       account,
@@ -117,7 +117,7 @@ export async function run(
       threshold.toString(),
       delay.toString(),
       expiry.toString(),
-    ]
+    ],
   );
 
   // acceptanceSubjectTemplates -> [["Accept", "guardian", "request", "for", "{ethAddr}"]]

@@ -10,12 +10,12 @@ import { safeAbi as safeAbi } from "../abi/Safe.ts";
  */
 export const getRecoveryData = (
   validator: string,
-  recoveryCalldata: string
+  recoveryCalldata: string,
 ): string => {
   const defaultAbiCoder = AbiCoder.defaultAbiCoder();
   return defaultAbiCoder.encode(
     ["address", "bytes"],
-    [validator, recoveryCalldata]
+    [validator, recoveryCalldata],
   );
 };
 

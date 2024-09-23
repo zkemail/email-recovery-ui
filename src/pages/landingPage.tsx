@@ -30,9 +30,6 @@ const LandingPage = () => {
 
   const handleClick = async (action: actionType) => {
     await stepsContext?.setStep(STEPS.CONNECT_WALLETS);
-    // Remove these values from localStorage to prevent conflicts with the safe wallet flow.
-    await localStorage.removeItem("accountCode");
-    await localStorage.removeItem("burnerWalletConfig");
 
     switch (action) {
       case "SAFE_WALLET":

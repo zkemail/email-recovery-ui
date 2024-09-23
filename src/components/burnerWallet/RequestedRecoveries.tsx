@@ -47,7 +47,7 @@ const RequestedRecoveries = () => {
   const [guardianEmailAddress, setGuardianEmailAddress] =
     useState(guardianEmail);
   const [buttonState, setButtonState] = useState(
-    BUTTON_STATES.TRIGGER_RECOVERY
+    BUTTON_STATES.TRIGGER_RECOVERY,
   );
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -121,8 +121,8 @@ const RequestedRecoveries = () => {
     const recoveryCallData = getRecoveryCallData(prevOwner, safeOwnersData[0], newOwner);
 
     const recoveryData = getRecoveryData(
-      safeWalletAddress,
-      recoveryCallData
+      validatorsAddress,
+      recoveryCallData,
     ) as `0x${string}`;
 
     const recoveryDataHash = keccak256(recoveryData);
@@ -147,7 +147,7 @@ const RequestedRecoveries = () => {
           ?.replaceAll(",", " ")
           .replace("{ethAddr}", safeWalletAddress)
           .replace("{ethAddr}", safeOwnersData[0])
-          .replace("{ethAddr}", newOwner)
+          .replace("{ethAddr}", newOwner),
       );
 
       intervalRef.current = setInterval(() => {
@@ -193,7 +193,7 @@ const RequestedRecoveries = () => {
       await relayer.completeRecovery(
         universalEmailRecoveryModule as string,
         safeWalletAddress as string,
-        recoveryData
+        recoveryData,
       );
 
       setButtonState(BUTTON_STATES.RECOVERY_COMPLETED);

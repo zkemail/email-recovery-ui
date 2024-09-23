@@ -18,9 +18,7 @@ const RecoverWalletFlow = () => {
 
   return (
     <div>
-      <Web3Provider>
-        <div className="app">{renderBody()}</div>
-      </Web3Provider>
+      <div className="app">{renderBody()}</div>
     </div>
   );
 };

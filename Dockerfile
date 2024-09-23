@@ -1,34 +1,32 @@
-# Use an official Node.js runtime as a parent image
-FROM node:18 AS build
+# Stage 1: Build the application
+FROM node:22-alpine AS build
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Copy the package.json and yarn.lock files
+COPY package.json yarn.lock ./
 
 # Install dependencies
-RUN yarn install
+RUN yarn install --network-timeout=500000
 
 # Copy the rest of the application code
 COPY . .
 
-ENV GENERATE_SOURCEMAP=false
-ENV NODE_OPTIONS="--max-old-space-size=2048"
-
-
-# Build the React application
+# Build the frontend (Vite build process)
 RUN yarn build
 
-# Use a smaller image to serve the application
-FROM node:18-alpine
+# Stage 2: Serve the application
+FROM node:22-alpine
 
-# Copy the built application from the build stage
-COPY --from=build /app/dist ./build
-COPY --from=build /app/server.js ./
+# Set the working directory
+WORKDIR /app
 
-# Expose port 80
+# Copy the built app from the build stage
+COPY --from=build /app /app
+
+# Expose the port your server is listening on
 EXPOSE 80
 
-# Start the server
+# Start the Express server
 CMD ["node", "server.js"]

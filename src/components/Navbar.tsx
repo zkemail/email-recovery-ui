@@ -152,9 +152,7 @@ const MobileNav = ({
         >
           Learn More
         </Button>
-        <Web3Provider>
-          <ConnectKitButton />
-        </Web3Provider>
+        <ConnectKitButton />
       </Grid>
     </Dialog>
   );
@@ -315,9 +313,7 @@ const NavBar: React.FC = () => {
               >
                 Learn More
               </Button>
-              <Web3Provider>
-                <ConnectKitButton />
-              </Web3Provider>
+              <ConnectKitButton />
             </Box>
           </Grid>
         </Grid>
