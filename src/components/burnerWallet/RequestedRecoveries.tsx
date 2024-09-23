@@ -19,12 +19,15 @@ import { relayer } from "../../services/relayer";
 import { templateIdx } from "../../utils/email";
 
 import {
+  getPreviousOwnerInLinkedList,
   getRecoveryCallData,
   getRecoveryData,
 } from "../../utils/recoveryDataUtils";
 import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
 import { Button } from "../Button";
 import InputField from "../InputField";
+import { useReadContract } from "wagmi";
+import { safeAbi } from "../../abi/Safe";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -40,7 +43,7 @@ const RequestedRecoveries = () => {
   const navigate = useNavigate();
 
   const [newOwner, setNewOwner] = useState<`0x${string}`>();
-  const safeWalletAddress = address;
+  const safeWalletAddress = address as `0x${string}`;
   const [guardianEmailAddress, setGuardianEmailAddress] =
     useState(guardianEmail);
   const [buttonState, setButtonState] = useState(
@@ -96,11 +99,26 @@ const RequestedRecoveries = () => {
       throw new Error("guardian email not set");
     }
 
+    // TODO: REMOVE IT LATER
+    const newOwner: `0x${string}` = "0xe2835b8cD5B16E1736Ff1bB27a390067948445d5";
+
     if (!newOwner) {
       throw new Error("new owner not set");
     }
 
-    const recoveryCallData = getRecoveryCallData(newOwner);
+    const safeOwnersData = (await readContract(config, {
+      address: safeWalletAddress,
+      abi: safeAbi,
+      functionName: "getOwners",
+      args: [],
+    })) as `0x${string}`[];
+    if(!safeOwnersData) {
+      throw new Error("safe owners data not found");
+    }
+  
+    const prevOwner = getPreviousOwnerInLinkedList(safeOwnersData[0], safeOwnersData);
+
+    const recoveryCallData = getRecoveryCallData(prevOwner, safeOwnersData[0], newOwner);
 
     const recoveryData = getRecoveryData(
       validatorsAddress,
@@ -110,12 +128,13 @@ const RequestedRecoveries = () => {
     const recoveryDataHash = keccak256(recoveryData);
 
     // This function fetches the command template for the recoveryRequest API call. The command template will be in the following format: ['Recover', 'account', '{ethAddr}', 'using', 'recovery', 'hash', '{string}']
-    const subject = (await readContract(config, {
+    const command = (await readContract(config, {
       abi: universalEmailRecoveryModuleAbi,
       address: universalEmailRecoveryModule as `0x${string}`,
       functionName: "recoveryCommandTemplates",
       args: [],
-    })) as [][];
+    })) as readonly (readonly string[])[];
+
 
     try {
       // requestId
@@ -123,11 +142,12 @@ const RequestedRecoveries = () => {
         universalEmailRecoveryModule as string,
         guardianEmailAddress,
         templateIdx,
-        subject[0]
+        command[0]
           .join()
           ?.replaceAll(",", " ")
           .replace("{ethAddr}", safeWalletAddress)
-          .replace("{string}", recoveryDataHash),
+          .replace("{ethAddr}", safeOwnersData[0])
+          .replace("{ethAddr}", newOwner),
       );
 
       intervalRef.current = setInterval(() => {
@@ -148,9 +168,26 @@ const RequestedRecoveries = () => {
   const completeRecovery = useCallback(async () => {
     setLoading(true);
 
-    const recoveryCallData = getRecoveryCallData(newOwner!);
+    const safeOwnersData = (await readContract(config, {
+      address: safeWalletAddress,
+      abi: safeAbi,
+      functionName: "getOwners",
+      args: [],
+    })) as `0x${string}`[];
+    if(!safeOwnersData) {
+      throw new Error("safe owners data not found");
+    }
 
-    const recoveryData = getRecoveryData(validatorsAddress, recoveryCallData);
+    const prevOwner = getPreviousOwnerInLinkedList(safeOwnersData[0], safeOwnersData);
+
+    // TODO: REMOVE IT LATER
+    const newOwner: `0x${string}` = "0xe2835b8cD5B16E1736Ff1bB27a390067948445d5";
+
+    const recoveryCallData = getRecoveryCallData(prevOwner, safeOwnersData[0], newOwner);
+
+    // const recoveryCallData = getRecoveryCallData(newOwner!);
+
+    const recoveryData = getRecoveryData(safeWalletAddress, recoveryCallData);
 
     try {
       await relayer.completeRecovery(
