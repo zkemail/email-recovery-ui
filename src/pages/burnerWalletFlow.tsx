@@ -30,7 +30,7 @@ const BurnerWalletFlow = () => {
         const burnerWalletConfig = localStorage.getItem("burnerWalletConfig");
         if (burnerWalletConfig !== undefined && burnerWalletConfig !== null) {
           setBurnerWalletAddress(
-            JSON.parse(burnerWalletConfig)?.burnerWalletAddress
+            JSON.parse(burnerWalletConfig)?.burnerWalletAddress,
           );
           clearInterval(burnerWalletAddressPollingInterval);
         }
@@ -105,7 +105,7 @@ const BurnerWalletFlow = () => {
               setIsResetBurnerWalletConfirmationModalOpen(false); // Remove these values from localStorage to prevent conflicts with the safe wallet flow.
               await localStorage.removeItem("accountCode");
               await localStorage.removeItem("burnerWalletConfig");
-              window.location.reload()
+              window.location.reload();
               setBurnerWalletAddress(null);
             }}
           >
