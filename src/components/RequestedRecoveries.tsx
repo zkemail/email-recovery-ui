@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { encodeAbiParameters, encodeFunctionData } from "viem";
-import { useAccount, useReadContract } from "wagmi";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { readContract } from "wagmi/actions";
 import { Button } from "./Button";
 import ConnectedWalletCard from "./ConnectedWalletCard";
@@ -20,6 +20,7 @@ import { useAppContext } from "../context/AppContextHook";
 import { config } from "../providers/config";
 import { relayer } from "../services/relayer";
 import { templateIdx } from "../utils/email";
+import Loader from "./Loader";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -32,6 +33,7 @@ const RequestedRecoveries = () => {
   // const theme = useTheme(); for some reason this was causing trigger recovery button to be skipped??
   const isMobile = window.innerWidth < 768;
   const { address } = useAccount();
+  const { writeContractAsync } = useWriteContract();
   const { guardianEmail } = useAppContext();
   const navigate = useNavigate();
 
@@ -40,18 +42,23 @@ const RequestedRecoveries = () => {
   const [guardianEmailAddress, setGuardianEmailAddress] =
     useState(guardianEmail);
   const [buttonState, setButtonState] = useState(
-    BUTTON_STATES.TRIGGER_RECOVERY,
+    BUTTON_STATES.TRIGGER_RECOVERY
   );
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [isButtonStateLoading, setIsButtonStateLoading] = useState(false);
-  console.log(isButtonStateLoading);
+  const [isTriggerRecoveryLoading, setIsTriggerRecoveryLoading] =
+    useState<boolean>(false);
+  const [isCompleteRecoveryLoading, setIsCompleteRecoveryLoading] =
+    useState<boolean>(false);
+  const [isCancelRecoveryLoading, setIsCancelRecoveryLoading] =
+    useState<boolean>(false);
+  const [isRecoveryStatusLoading, setIsRecoveryStatusLoading] = useState(false);
+  console.log(isRecoveryStatusLoading);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Checks whether recovery has been triggered.
   const checkIfRecoveryCanBeCompleted = useCallback(async () => {
-    setIsButtonStateLoading(true);
+    setIsRecoveryStatusLoading(true);
     const getRecoveryRequest = await readContract(config, {
       abi: safeEmailRecoveryModuleAbi,
       address: safeEmailRecoveryModule as `0x${string}`,
@@ -66,15 +73,16 @@ const RequestedRecoveries = () => {
       args: [address as `0x${string}`],
     });
 
+    console.log(getGuardianConfig, getRecoveryRequest);
+
     // Update the button state based on the condition. The current weight represents the number of users who have confirmed the email, and the threshold indicates the number of confirmations required before the complete recovery can be called
     if (getRecoveryRequest.currentWeight < getGuardianConfig.threshold) {
       setButtonState(BUTTON_STATES.TRIGGER_RECOVERY);
     } else {
       setButtonState(BUTTON_STATES.COMPLETE_RECOVERY);
-      setLoading(false);
       clearInterval(intervalRef.current);
     }
-    setIsButtonStateLoading(false);
+    setIsRecoveryStatusLoading(false);
   }, [address, intervalRef]);
 
   useEffect(() => {
@@ -88,7 +96,7 @@ const RequestedRecoveries = () => {
   });
 
   const requestRecovery = useCallback(async () => {
-    setLoading(true);
+    setIsTriggerRecoveryLoading(true);
     toast("Please check your email and accept the email", {
       icon: <img src={infoIcon} />,
       style: {
@@ -109,7 +117,7 @@ const RequestedRecoveries = () => {
 
     if (!safeOwnersData[0]) {
       toast.error(
-        "Could not find safe owner. Please check if safe is configured correctly.",
+        "Could not find safe owner. Please check if safe is configured correctly."
       );
     }
 
@@ -132,7 +140,7 @@ const RequestedRecoveries = () => {
           ?.replaceAll(",", " ")
           .replace("{ethAddr}", safeWalletAddress)
           .replace("{ethAddr}", safeOwnersData[0])
-          .replace("{ethAddr}", newOwner),
+          .replace("{ethAddr}", newOwner)
       );
 
       intervalRef.current = setInterval(() => {
@@ -141,7 +149,7 @@ const RequestedRecoveries = () => {
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong while requesting recovery");
-      setLoading(false);
+      setIsTriggerRecoveryLoading(false);
     }
   }, [
     safeWalletAddress,
@@ -152,7 +160,7 @@ const RequestedRecoveries = () => {
   ]);
 
   const completeRecovery = useCallback(async () => {
-    setLoading(true);
+    setIsCompleteRecoveryLoading(true);
 
     const swapOwnerCallData = encodeFunctionData({
       abi: safeAbi,
@@ -165,7 +173,7 @@ const RequestedRecoveries = () => {
     });
     const completeCalldata = encodeAbiParameters(
       [{ type: "address" }, { type: "bytes" }],
-      [safeWalletAddress, swapOwnerCallData],
+      [safeWalletAddress, swapOwnerCallData]
     );
 
     try {
@@ -173,7 +181,7 @@ const RequestedRecoveries = () => {
       const res = await relayer.completeRecovery(
         safeEmailRecoveryModule as string,
         safeWalletAddress as string,
-        completeCalldata,
+        completeCalldata
       );
 
       console.debug("complete recovery data", res);
@@ -181,7 +189,25 @@ const RequestedRecoveries = () => {
     } catch (err) {
       toast.error("Something went wrong while completing recovery process");
     } finally {
-      setLoading(false);
+      setIsCompleteRecoveryLoading(false);
+    }
+  }, [newOwner, safeOwnersData, safeWalletAddress]);
+
+  const handleCancelRecovery = useCallback(async () => {
+    setIsCancelRecoveryLoading(true);
+    try {
+      await writeContractAsync({
+        abi: safeEmailRecoveryModuleAbi,
+        address: safeEmailRecoveryModule as `0x${string}`,
+        functionName: "cancelRecovery",
+        args: [],
+      });
+
+      console.log("Recovery Cancelled");
+    } catch (err) {
+      toast.error("Something went wrong while completing recovery process");
+    } finally {
+      setIsCancelRecoveryLoading(false);
     }
   }, [newOwner, safeOwnersData, safeWalletAddress]);
 
@@ -190,20 +216,16 @@ const RequestedRecoveries = () => {
     switch (buttonState) {
       case BUTTON_STATES.TRIGGER_RECOVERY:
         return (
-          <Button loading={loading} onClick={requestRecovery}>
-            {loading ? "Waiting for Email Confirmation" : "Trigger Recovery"}
-          </Button>
-        );
-      case BUTTON_STATES.CANCEL_RECOVERY:
-        return (
-          <Button endIcon={<img src={cancelRecoveryIcon} />}>
-            Cancel Recovery
+          <Button loading={isTriggerRecoveryLoading} onClick={requestRecovery}>
+            {isTriggerRecoveryLoading
+              ? "Waiting for Email Confirmation"
+              : "Trigger Recovery"}
           </Button>
         );
       case BUTTON_STATES.COMPLETE_RECOVERY:
         return (
           <Button
-            loading={loading}
+            loading={isCompleteRecoveryLoading}
             onClick={completeRecovery}
             endIcon={<img src={completeRecoveryIcon} />}
           >
@@ -212,12 +234,22 @@ const RequestedRecoveries = () => {
         );
       case BUTTON_STATES.RECOVERY_COMPLETED:
         return (
-          <Button filled={true} loading={loading} onClick={() => navigate("/")}>
+          <Button filled={true} onClick={() => navigate("/")}>
             Complete! Connect new wallet to set new guardians ➔
           </Button>
         );
     }
   };
+
+  // Since we are polling for every actions but only wants to show full screen loader for the initial request
+  if (
+    isRecoveryStatusLoading &&
+    !isTriggerRecoveryLoading &&
+    !isCompleteRecoveryLoading &&
+    !isCancelRecoveryLoading
+  ) {
+    return <Loader />;
+  }
 
   return (
     <Box
@@ -359,8 +391,27 @@ const RequestedRecoveries = () => {
             </Grid>
           </div>
         )}
-        <div style={{ margin: "auto", minWidth: "300px" }}>
-          {getButtonComponent()}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "1rem",
+            margin: "auto",
+          }}
+        >
+          <div style={{ minWidth: "300px" }}>{getButtonComponent()}</div>
+          {buttonState === BUTTON_STATES.COMPLETE_RECOVERY ? (
+            <div style={{ minWidth: "300px" }}>
+              <Button
+                onClick={() => handleCancelRecovery()}
+                endIcon={<img src={cancelRecoveryIcon} />}
+                loading={isCancelRecoveryLoading}
+              >
+                Cancel Recovery
+              </Button>
+            </div>
+          ) : null}
         </div>
       </div>
     </Box>
