@@ -25,6 +25,8 @@ import {
 import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
 import { Button } from "../Button";
 import InputField from "../InputField";
+import { useWriteContract } from "wagmi";
+import Loader from "../Loader";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -38,20 +40,29 @@ const RequestedRecoveries = () => {
   const address = useGetSafeAccountAddress();
   const { guardianEmail } = useAppContext();
   const navigate = useNavigate();
+  const { writeContractAsync } = useWriteContract();
 
   const [newOwner, setNewOwner] = useState<`0x${string}`>();
   const safeWalletAddress = address;
   const [guardianEmailAddress, setGuardianEmailAddress] =
     useState(guardianEmail);
   const [buttonState, setButtonState] = useState(
-    BUTTON_STATES.TRIGGER_RECOVERY,
+    BUTTON_STATES.TRIGGER_RECOVERY
   );
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isTriggerRecoveryLoading, setIsTriggerRecoveryLoading] =
+    useState<boolean>(false);
+  const [isCompleteRecoveryLoading, setIsCompleteRecoveryLoading] =
+    useState<boolean>(false);
+  const [isCancelRecoveryLoading, setIsCancelRecoveryLoading] =
+    useState<boolean>(false);
+  const [isRecoveryStatusLoading, setIsRecoveryStatusLoading] = useState(false);
+  console.log(isRecoveryStatusLoading);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const checkIfRecoveryCanBeCompleted = useCallback(async () => {
+    setIsRecoveryStatusLoading(true);
     const getRecoveryRequest = await readContract(config, {
       abi: universalEmailRecoveryModuleAbi,
       address: universalEmailRecoveryModule as `0x${string}`,
@@ -71,9 +82,9 @@ const RequestedRecoveries = () => {
       setButtonState(BUTTON_STATES.TRIGGER_RECOVERY);
     } else {
       setButtonState(BUTTON_STATES.COMPLETE_RECOVERY);
-      setLoading(false);
       clearInterval(intervalRef.current);
     }
+    setIsRecoveryStatusLoading(false);
   }, [address, intervalRef]);
 
   useEffect(() => {
@@ -81,7 +92,7 @@ const RequestedRecoveries = () => {
   }, [checkIfRecoveryCanBeCompleted]);
 
   const requestRecovery = useCallback(async () => {
-    setLoading(true);
+    setIsTriggerRecoveryLoading(true);
     toast("Please check your email and accept the email", {
       icon: <img src={infoIcon} />,
       style: {
@@ -104,7 +115,7 @@ const RequestedRecoveries = () => {
 
     const recoveryData = getRecoveryData(
       validatorsAddress,
-      recoveryCallData,
+      recoveryCallData
     ) as `0x${string}`;
 
     const recoveryDataHash = keccak256(recoveryData);
@@ -127,7 +138,7 @@ const RequestedRecoveries = () => {
           .join()
           ?.replaceAll(",", " ")
           .replace("{ethAddr}", safeWalletAddress)
-          .replace("{string}", recoveryDataHash),
+          .replace("{string}", recoveryDataHash)
       );
 
       intervalRef.current = setInterval(() => {
@@ -136,7 +147,7 @@ const RequestedRecoveries = () => {
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong while requesting recovery");
-      setLoading(false);
+      setIsTriggerRecoveryLoading(false);
     }
   }, [
     safeWalletAddress,
@@ -146,7 +157,7 @@ const RequestedRecoveries = () => {
   ]);
 
   const completeRecovery = useCallback(async () => {
-    setLoading(true);
+    setIsCompleteRecoveryLoading(true);
 
     const recoveryCallData = getRecoveryCallData(newOwner!);
 
@@ -156,14 +167,33 @@ const RequestedRecoveries = () => {
       await relayer.completeRecovery(
         universalEmailRecoveryModule as string,
         safeWalletAddress as string,
-        recoveryData,
+        recoveryData
       );
 
       setButtonState(BUTTON_STATES.RECOVERY_COMPLETED);
     } catch (err) {
       toast.error("Something went wrong while completing recovery process");
     } finally {
-      setLoading(false);
+      setIsCompleteRecoveryLoading(false);
+    }
+  }, [newOwner, safeWalletAddress]);
+
+  const handleCancelRecovery = useCallback(async () => {
+    setIsCancelRecoveryLoading(true);
+    try {
+      await writeContractAsync({
+        abi: universalEmailRecoveryModuleAbi,
+        address: universalEmailRecoveryModule as `0x${string}`,
+        functionName: "cancelRecovery",
+        args: [],
+      });
+
+      console.log("Recovery Cancelled");
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong while completing recovery process");
+    } finally {
+      setIsCancelRecoveryLoading(false);
     }
   }, [newOwner, safeWalletAddress]);
 
@@ -172,20 +202,14 @@ const RequestedRecoveries = () => {
     switch (buttonState) {
       case BUTTON_STATES.TRIGGER_RECOVERY:
         return (
-          <Button loading={loading} onClick={requestRecovery}>
+          <Button loading={isTriggerRecoveryLoading} onClick={requestRecovery}>
             Trigger Recovery
-          </Button>
-        );
-      case BUTTON_STATES.CANCEL_RECOVERY:
-        return (
-          <Button endIcon={<img src={cancelRecoveryIcon} />}>
-            Cancel Recovery
           </Button>
         );
       case BUTTON_STATES.COMPLETE_RECOVERY:
         return (
           <Button
-            loading={loading}
+            loading={isCompleteRecoveryLoading}
             disabled={!newOwner}
             onClick={completeRecovery}
             endIcon={<img src={completeRecoveryIcon} />}
@@ -195,12 +219,24 @@ const RequestedRecoveries = () => {
         );
       case BUTTON_STATES.RECOVERY_COMPLETED:
         return (
-          <Button filled={true} loading={loading} onClick={() => navigate("/")}>
+          <Button filled={true} onClick={() => navigate("/")}>
             Complete! Connect new wallet to set new guardians ➔
           </Button>
         );
     }
   };
+
+  console.log(isRecoveryStatusLoading)
+
+  // Since we are polling for every actions but only wants to show full screen loader for the initial request
+  if (
+    isRecoveryStatusLoading &&
+    !isTriggerRecoveryLoading &&
+    !isCompleteRecoveryLoading &&
+    !isCancelRecoveryLoading
+  ) {
+    return <Loader />;
+  }
 
   return (
     <Box
@@ -277,8 +313,27 @@ const RequestedRecoveries = () => {
             </Grid>
           </div>
         )}
-        <div style={{ margin: "auto", minWidth: "300px" }}>
-          {getButtonComponent()}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "1rem",
+            margin: "auto",
+          }}
+        >
+          <div style={{ minWidth: "300px" }}>{getButtonComponent()}</div>
+          {buttonState === BUTTON_STATES.COMPLETE_RECOVERY ? (
+            <div style={{ minWidth: "300px" }}>
+              <Button
+                onClick={() => handleCancelRecovery()}
+                endIcon={<img src={cancelRecoveryIcon} />}
+                loading={isCancelRecoveryLoading}
+              >
+                Cancel Recovery
+              </Button>
+            </div>
+          ) : null}
         </div>
       </div>
     </Box>
