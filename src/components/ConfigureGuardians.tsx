@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { readContract } from "viem/actions";
+import { readContract } from "wagmi/actions";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { Button } from "./Button";
 import InputField from "./InputField";
@@ -52,6 +52,7 @@ const ConfigureGuardians = () => {
       args: [newGuardianAddress, guardianSalt],
     });
 
+    console.log(guardianAddr, "guardianAddr");
     const res = await writeContractAsync({
       abi: safeEmailRecoveryModuleAbi,
       address: safeEmailRecoveryModule as `0x${string}`,
