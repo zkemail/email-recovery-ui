@@ -92,7 +92,7 @@ const GuardianSetup = () => {
     if (isActivated) {
       setIsAccountInitialized(isActivated);
       setLoading(false);
-      stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
+      stepsContext?.setStep(STEPS.WALLET_ACTIONS);
     }
     setIsAccountInitializedLoading(false);
   }, [address, stepsContext]);
@@ -147,6 +147,7 @@ const GuardianSetup = () => {
 
       // The account code is unique for each account.
       const acctCode = await genAccountCode();
+      localStorage.setItem("safe1_3AccountCode", acctCode)
       setAccountCode(accountCode);
 
       const guardianSalt = await relayer.getAccountSalt(
