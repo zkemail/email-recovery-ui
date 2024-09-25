@@ -5,7 +5,8 @@ import EnableSafeModule from "../components/EnableSafeModule";
 import GuardianSetup from "../components/GuardianSetup";
 import RequestedRecoveries from "../components/RequestedRecoveries";
 import { STEPS } from "../constants";
-import { Web3Provider } from "../providers/Web3Provider";
+import WalletActions from "../components/WalletActions";
+import ConfigureGuardians from "../components/ConfigureGuardians";
 
 const SafeWalletFlow = () => {
   const stepsContext = useContext(StepsContext);
@@ -23,6 +24,13 @@ const SafeWalletFlow = () => {
       // Step to set up the guardian email
       case STEPS.REQUEST_GUARDIAN:
         return <GuardianSetup />;
+
+      case STEPS.CONFIGURE_GUARDIANS:
+        return <ConfigureGuardians />;
+
+      // Step to set up the guardian email
+      case STEPS.WALLET_ACTIONS:
+        return <WalletActions />;
 
       // Step to add the new owner's address and trigger/complete the recovery process
       case STEPS.REQUESTED_RECOVERIES:

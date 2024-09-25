@@ -310,7 +310,7 @@ const RequestedRecoveries = () => {
               </Grid>
               <Grid item xs={12} sm={5.5}>
                 <InputField
-                  type="email"
+                  type="string"
                   value={newOwner || ""}
                   onChange={(e) => setNewOwner(e.target.value)}
                   label="Requested New Owner Address"
