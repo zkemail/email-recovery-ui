@@ -307,7 +307,7 @@ const RequestedRecoveries = () => {
                   type="email"
                   value={newOwner || ""}
                   onChange={(e) => setNewOwner(e.target.value)}
-                  label="Requested New Wallet Address"
+                  label="Requested New Owner Address"
                 />
               </Grid>
             </Grid>
