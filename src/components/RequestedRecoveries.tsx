@@ -194,7 +194,9 @@ const RequestedRecoveries = () => {
   }, [newOwner, safeOwnersData, safeWalletAddress]);
 
   const handleCancelRecovery = useCallback(async () => {
+    toast("Please execute transaction at Safe website")
     setIsCancelRecoveryLoading(true);
+    setIsTriggerRecoveryLoading(false);
     try {
       await writeContractAsync({
         abi: safeEmailRecoveryModuleAbi,
@@ -204,6 +206,8 @@ const RequestedRecoveries = () => {
       });
 
       console.log("Recovery Cancelled");
+      toast.success("Recovery Cancelled")
+      setButtonState(BUTTON_STATES.TRIGGER_RECOVERY)
     } catch (err) {
       toast.error("Something went wrong while completing recovery process");
     } finally {
