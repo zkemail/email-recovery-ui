@@ -97,7 +97,7 @@ const GuardianSetup = () => {
       getGuardianConfig.threshold !== 0n
     ) {
       setLoading(false);
-      stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES);
+      stepsContext?.setStep(STEPS.WALLET_ACTIONS);
     }
     setIsAccountInitializedLoading(false);
   }, [address, stepsContext]);
@@ -171,10 +171,13 @@ const GuardianSetup = () => {
         },
       }).extend(erc7579Actions({ entryPoint: ENTRYPOINT_ADDRESS_V07 }));
 
-      console.log(safeAccount, smartAccountClient)
+      console.log(safeAccount, smartAccountClient);
 
-      localStorage.setItem("safeAccount", JSON.stringify(safeAccount))
-      localStorage.setItem("smartAccountClient", JSON.stringify(smartAccountClient))
+      localStorage.setItem("safeAccount", JSON.stringify(safeAccount));
+      localStorage.setItem(
+        "smartAccountClient",
+        JSON.stringify(smartAccountClient)
+      );
 
       setBurnerAccountClient(smartAccountClient);
 
@@ -297,7 +300,7 @@ const GuardianSetup = () => {
     checkIfRecoveryIsConfigured,
   ]);
 
-  if (isAccountInitializedLoading) {
+  if (isAccountInitializedLoading && !loading && !isBurnerWalletCreating) {
     return <Loader />;
   }
 

@@ -1,19 +1,22 @@
 import { Box, Grid, Typography } from "@mui/material";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { keccak256 } from "viem";
-import { readContract, writeContract } from "wagmi/actions";
+import { readContract } from "wagmi/actions";
 import {
   universalEmailRecoveryModule,
   validatorsAddress,
 } from "../../../contracts.base-sepolia.json";
 import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
+import { StepsContext } from "../../App";
 import cancelRecoveryIcon from "../../assets/cancelRecoveryIcon.svg";
 import completeRecoveryIcon from "../../assets/completeRecoveryIcon.svg";
 import infoIcon from "../../assets/infoIcon.svg";
+import { STEPS } from "../../constants";
 import { useAppContext } from "../../context/AppContextHook";
 
+import { useBurnerAccount } from "../../context/BurnerAccountContext";
 import { config } from "../../providers/config";
 import { relayer } from "../../services/relayer";
 import { templateIdx } from "../../utils/email";
@@ -25,9 +28,7 @@ import {
 import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
 import { Button } from "../Button";
 import InputField from "../InputField";
-import { useWriteContract } from "wagmi";
 import Loader from "../Loader";
-import { useBurnerAccount } from "../../context/BurnerAccountContext";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -42,6 +43,7 @@ const RequestedRecoveries = () => {
   const { guardianEmail } = useAppContext();
   const navigate = useNavigate();
   const { burnerAccountClient } = useBurnerAccount();
+  const stepsContext = useContext(StepsContext);
 
   const [newOwner, setNewOwner] = useState<`0x${string}`>();
   const safeWalletAddress = address;
@@ -183,7 +185,7 @@ const RequestedRecoveries = () => {
 
   const handleCancelRecovery = useCallback(async () => {
     setIsCancelRecoveryLoading(true);
-    setIsTriggerRecoveryLoading(false)
+    setIsTriggerRecoveryLoading(false);
     try {
       await burnerAccountClient.writeContract({
         abi: universalEmailRecoveryModuleAbi,
@@ -192,8 +194,8 @@ const RequestedRecoveries = () => {
         args: [],
       });
 
-      setButtonState(BUTTON_STATES.TRIGGER_RECOVERY)
-      toast.success("Recovery Cancelled")
+      setButtonState(BUTTON_STATES.TRIGGER_RECOVERY);
+      toast.success("Recovery Cancelled");
       console.log("Recovery Cancelled");
     } catch (err) {
       console.log(err);
@@ -250,8 +252,18 @@ const RequestedRecoveries = () => {
         marginX: "auto",
         marginTop: { xs: "2rem", sm: "9.375rem" },
         marginBottom: "6.25rem",
+        maxWidth: { xs: "100%", md: "80%", lg: "50%" },
       }}
     >
+      <Typography
+        variant="body1"
+        onClick={() => {
+          stepsContext?.setStep(STEPS.WALLET_ACTIONS);
+        }}
+        sx={{ paddingBottom: "20px", textAlign: "left", cursor: "pointer" }}
+      >
+        ← Back
+      </Typography>
       {buttonState === BUTTON_STATES.RECOVERY_COMPLETED ? (
         <>
           <Typography variant="h2" sx={{ paddingBottom: "1.25rem" }}>

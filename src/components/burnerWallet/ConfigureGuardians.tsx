@@ -8,16 +8,20 @@ import {
 } from "@mui/material";
 import { useContext, useState } from "react";
 import toast from "react-hot-toast";
-import { useWriteContract } from "wagmi";
 import { readContract } from "wagmi/actions";
-import { Button } from "./Button";
-import InputField from "./InputField";
-import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
-import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
-import { StepsContext } from "../App";
-import { STEPS } from "../constants";
-import { config } from "../providers/config";
-import { relayer } from "../services/relayer";
+import { safeEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
+import {
+  universalEmailRecoveryModule,
+} from "../../../contracts.base-sepolia.json";
+import { safeEmailRecoveryModuleAbi } from "../../abi/SafeEmailRecoveryModule";
+import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
+import { StepsContext } from "../../App";
+import { STEPS } from "../../constants";
+import { useBurnerAccount } from "../../context/BurnerAccountContext";
+import { config } from "../../providers/config";
+import { relayer } from "../../services/relayer";
+import { Button } from "../Button";
+import InputField from "../InputField";
 
 interface GuardianInfo {
   email: string;
@@ -100,9 +104,9 @@ const AddGuardianModal = ({
 };
 
 const ConfigureGuardians = () => {
-  const { writeContractAsync } = useWriteContract();
   const stepsContext = useContext(StepsContext);
   const accountCode = localStorage.getItem("safe1_3AccountCode");
+  const { burnerAccountClient } = useBurnerAccount();
 
   const [newGuardianAddress, setNewGuardianAddress] = useState<string>("");
   const [newGuardianEmail, setNewGuardianEmail] = useState<string>("");
@@ -114,10 +118,11 @@ const ConfigureGuardians = () => {
     useState<string>("");
 
   // Since currently there is no way to get guardians, we are storing guardian related information in the localstorage
-  const safe1_3Guardians: string | null =
-    localStorage.getItem("safe1_3Guardians");
-  const guardians: GuardianInfo[] = safe1_3Guardians
-    ? JSON.parse(safe1_3Guardians)
+  const burnerWalletGuardians: string | null = localStorage.getItem(
+    "burnerWalletGuardians"
+  );
+  const guardians: GuardianInfo[] = burnerWalletGuardians
+    ? JSON.parse(burnerWalletGuardians)
     : [];
 
   if (!accountCode) {
@@ -127,7 +132,6 @@ const ConfigureGuardians = () => {
 
   const handleAddGuardian = async () => {
     setIsAddGuardianLoading(true);
-    toast("Please execute transaction at safe website");
     // The account code is unique for each account.
     const guardianSalt = await relayer.getAccountSalt(
       accountCode,
@@ -142,17 +146,19 @@ const ConfigureGuardians = () => {
     });
 
     try {
-      await writeContractAsync({
-        abi: safeEmailRecoveryModuleAbi,
-        address: safeEmailRecoveryModule as `0x${string}`,
+      await burnerAccountClient.writeContract({
+        abi: universalEmailRecoveryModuleAbi,
+        address: universalEmailRecoveryModule as `0x${string}`,
         functionName: "addGuardian",
         args: [guardianAddr, 1n],
       });
 
       // Once the guardian is added on the chain, we add them to the localstorage as well
       try {
-        // Check if safe1_3Guardians is not null before parsing
-        const guardians = safe1_3Guardians ? JSON.parse(safe1_3Guardians) : [];
+        // Check if burnerWalletGuardians is not null before parsing
+        const guardians = burnerWalletGuardians
+          ? JSON.parse(burnerWalletGuardians)
+          : [];
 
         // Prepare the new guardian object
         const newGuardian: GuardianInfo = {
@@ -163,7 +169,7 @@ const ConfigureGuardians = () => {
 
         // Add the new guardian to the array and save it back to localStorage
         localStorage.setItem(
-          "safe1_3Guardians",
+          "burnerWalletGuardians",
           JSON.stringify([...guardians, newGuardian])
         );
       } catch (error) {
@@ -183,16 +189,16 @@ const ConfigureGuardians = () => {
 
   const handleRemoveGuardian = async (guardianAddr: `0x${string}`) => {
     setActiveGuardianAddressRemoval(guardianAddr);
-    toast("Please execute transaction at safe website");
-    await writeContractAsync({
-      abi: safeEmailRecoveryModuleAbi,
-      address: safeEmailRecoveryModule as `0x${string}`,
+
+    await burnerAccountClient.writeContract({
+      abi: universalEmailRecoveryModuleAbi,
+      address: universalEmailRecoveryModule as `0x${string}`,
       functionName: "removeGuardian",
       args: [guardianAddr],
     });
 
     localStorage.setItem(
-      "safe1_3Guardians",
+      "burnerWalletGuardians",
       JSON.stringify(
         guardians.filter(
           (guardian: GuardianInfo) => guardian.guardianAddr !== guardianAddr

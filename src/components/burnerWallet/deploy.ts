@@ -1,9 +1,7 @@
 import "viem/window";
 import {
-  createSmartAccountClient,
   ENTRYPOINT_ADDRESS_V07,
 } from "permissionless";
-import { erc7579Actions } from "permissionless/actions/erc7579";
 import {
   createPimlicoBundlerClient,
   //   createPimlicoPaymasterClient,
@@ -16,7 +14,6 @@ import {
   WalletClient,
 } from "viem";
 import { createPublicClient, http } from "viem";
-import { baseSepolia } from "viem/chains";
 import {
   universalEmailRecoveryModule,
   validatorsAddress,

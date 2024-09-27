@@ -10,8 +10,8 @@ import ErrorPage from "./pages/errorPage";
 import LandingPage from "./pages/landingPage";
 import RecoverWalletFlow from "./pages/recoverWalletFlow";
 import SafeWalletFlow from "./pages/safeWalletFlow";
-import theme from "./theme"; // Import custom theme
 import { Web3Provider } from "./providers/Web3Provider";
+import theme from "./theme"; // Import custom theme
 
 export const StepsContext = createContext(null);
 

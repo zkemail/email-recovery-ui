@@ -1,9 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import { StepsContext } from "../App";
-import GuardianSetup from "../components/burnerWallet/GuardianSetup";
-import RequestedRecoveries from "../components/burnerWallet/RequestedRecoveries";
-import { STEPS } from "../constants";
-import { Button } from "../components/Button";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import {
   Dialog,
   DialogActions,
@@ -12,7 +7,14 @@ import {
   DialogTitle,
   IconButton,
 } from "@mui/material";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import { useContext, useEffect, useState } from "react";
+import { StepsContext } from "../App";
+import ConfigureGuardians from "../components/burnerWallet/ConfigureGuardians";
+import GuardianSetup from "../components/burnerWallet/GuardianSetup";
+import RequestedRecoveries from "../components/burnerWallet/RequestedRecoveries";
+import { Button } from "../components/Button";
+import WalletActions from "../components/WalletActions";
+import { STEPS } from "../constants";
 import { BurnerAccountProvider } from "../context/BurnerAccountContext";
 
 const BurnerWalletFlow = () => {
@@ -44,6 +46,13 @@ const BurnerWalletFlow = () => {
       // Step to create a new safe and install the universal email recovery module. This step requires guardian emails before the recovery module can be installed
       case STEPS.REQUEST_GUARDIAN:
         return <GuardianSetup />;
+
+      case STEPS.CONFIGURE_GUARDIANS:
+        return <ConfigureGuardians />;
+
+      // Step to set up the guardian email
+      case STEPS.WALLET_ACTIONS:
+        return <WalletActions />;
 
       // Step to add the new owner's address and trigger/complete the recovery process. This flow is similar to Safe v1.3
       case STEPS.REQUESTED_RECOVERIES:

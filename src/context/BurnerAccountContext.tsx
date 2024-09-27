@@ -1,19 +1,12 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, ReactNode, useContext, useState } from "react";
 import "viem/window";
 
-interface BurnerAccountContextType {
-  burnerAccountClient: any; // Replace 'any' with the actual type if known
-  setBurnerAccountClient: (client: any) => void; // Adjust the type as necessary
-}
-
-const BurnerAccountContext = createContext<BurnerAccountContextType | null>(
-  null
-);
+const BurnerAccountContext = createContext(null);
 
 export const BurnerAccountProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [burnerAccountClient, setBurnerAccountClient] = useState<any>(null); // Adjust type as needed
+  const [burnerAccountClient, setBurnerAccountClient] = useState(null); // Adjust type as needed
 
   return (
     <BurnerAccountContext.Provider

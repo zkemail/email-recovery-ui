@@ -11,7 +11,6 @@ import { ConnectKitButton } from "connectkit";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./Button";
-import { Web3Provider } from "../providers/Web3Provider";
 
 const NAV_LINKS = [
   { link: "https://prove.email/blog", title: "Blog" },

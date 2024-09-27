@@ -1,8 +1,8 @@
+import { Box, Grid, Typography } from "@mui/material";
 import { useContext } from "react";
 import { Button } from "./Button";
 import { StepsContext } from "../App";
 import { STEPS } from "../constants";
-import { Box, Grid, Typography } from "@mui/material";
 
 const WalletActions = () => {
   const stepsContext = useContext(StepsContext);

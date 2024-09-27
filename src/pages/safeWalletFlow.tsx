@@ -1,12 +1,12 @@
 import { useContext } from "react";
 import { StepsContext } from "../App";
+import ConfigureGuardians from "../components/ConfigureGuardians";
 import ConnectWallets from "../components/ConnectWallets";
 import EnableSafeModule from "../components/EnableSafeModule";
 import GuardianSetup from "../components/GuardianSetup";
 import RequestedRecoveries from "../components/RequestedRecoveries";
-import { STEPS } from "../constants";
 import WalletActions from "../components/WalletActions";
-import ConfigureGuardians from "../components/ConfigureGuardians";
+import { STEPS } from "../constants";
 
 const SafeWalletFlow = () => {
   const stepsContext = useContext(StepsContext);
