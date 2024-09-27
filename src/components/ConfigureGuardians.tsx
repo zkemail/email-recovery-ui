@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useContext, useState } from "react";
 import toast from "react-hot-toast";
-import { useWriteContract } from "wagmi";
+import { useAccount, useWriteContract } from "wagmi";
 import { readContract } from "wagmi/actions";
 import { Button } from "./Button";
 import InputField from "./InputField";
@@ -100,6 +100,7 @@ const AddGuardianModal = ({
 };
 
 const ConfigureGuardians = () => {
+  const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
   const stepsContext = useContext(StepsContext);
   const accountCode = localStorage.getItem("safe1_3AccountCode");
@@ -115,7 +116,7 @@ const ConfigureGuardians = () => {
 
   // Since currently there is no way to get guardians, we are storing guardian related information in the localstorage
   const safe1_3Guardians: string | null =
-    localStorage.getItem("safe1_3Guardians");
+    localStorage.getItem(address);
   const guardians: GuardianInfo[] = safe1_3Guardians
     ? JSON.parse(safe1_3Guardians)
     : [];
@@ -163,7 +164,7 @@ const ConfigureGuardians = () => {
 
         // Add the new guardian to the array and save it back to localStorage
         localStorage.setItem(
-          "safe1_3Guardians",
+          address,
           JSON.stringify([...guardians, newGuardian])
         );
       } catch (error) {
@@ -192,7 +193,7 @@ const ConfigureGuardians = () => {
     });
 
     localStorage.setItem(
-      "safe1_3Guardians",
+      address,
       JSON.stringify(
         guardians.filter(
           (guardian: GuardianInfo) => guardian.guardianAddr !== guardianAddr
