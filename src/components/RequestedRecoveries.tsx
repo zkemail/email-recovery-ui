@@ -299,7 +299,6 @@ const RequestedRecoveries = () => {
       )}
       <div
         style={{
-          maxWidth: isMobile ? "100%" : "50%",
           margin: "auto",
           width: "100%",
           display: "flex",
