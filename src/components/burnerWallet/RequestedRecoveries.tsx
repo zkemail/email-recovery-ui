@@ -38,7 +38,6 @@ const BUTTON_STATES = {
 };
 
 const RequestedRecoveries = () => {
-  const isMobile = window.innerWidth < 768;
   const address = useGetSafeAccountAddress();
   const { guardianEmail } = useAppContext();
   const navigate = useNavigate();

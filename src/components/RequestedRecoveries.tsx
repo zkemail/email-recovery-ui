@@ -33,7 +33,6 @@ const BUTTON_STATES = {
 
 const RequestedRecoveries = () => {
   // const theme = useTheme(); for some reason this was causing trigger recovery button to be skipped??
-  const isMobile = window.innerWidth < 768;
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
   const { guardianEmail } = useAppContext();

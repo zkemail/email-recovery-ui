@@ -47,7 +47,6 @@ const GuardianSetup = () => {
     useAppContext();
   const stepsContext = useContext(StepsContext);
 
-  const [isAccountInitialized, setIsAccountInitialized] = useState(false);
   const [isAccountInitializedLoading, setIsAccountInitializedLoading] =
     useState(false);
   const [loading, setLoading] = useState(false);
@@ -82,18 +81,23 @@ const GuardianSetup = () => {
 
     // Check if recovery is set up and activated. If so, proceed to the next step.
     // Note: In Safe 1.3, we can only verify if the acceptance request email has been replied to, not confirmed. The user must wait for this message before moving to the recovery step.
-    const isActivated = await readContract(config, {
+
+    const getGuardianConfig = await readContract(config, {
       abi: safeEmailRecoveryModuleAbi,
       address: safeEmailRecoveryModule as `0x${string}`,
-      functionName: "isActivated",
+      functionName: "getGuardianConfig",
       args: [address as `0x${string}`],
     });
 
-    if (isActivated) {
-      setIsAccountInitialized(isActivated);
+    // Check whether recovery is configured
+    if (
+      getGuardianConfig.acceptedWeight === getGuardianConfig.threshold &&
+      getGuardianConfig.threshold !== 0n
+    ) {
       setLoading(false);
       stepsContext?.setStep(STEPS.WALLET_ACTIONS);
     }
+
     setIsAccountInitializedLoading(false);
   }, [address, stepsContext]);
 
@@ -147,7 +151,7 @@ const GuardianSetup = () => {
 
       // The account code is unique for each account.
       const acctCode = await genAccountCode();
-      localStorage.setItem("safe1_3AccountCode", acctCode)
+      localStorage.setItem("safe1_3AccountCode", acctCode);
       setAccountCode(accountCode);
 
       const guardianSalt = await relayer.getAccountSalt(
@@ -234,7 +238,7 @@ const GuardianSetup = () => {
     checkIfRecoveryIsConfigured,
   ]);
 
-  if (isAccountInitializedLoading) {
+  if (isAccountInitializedLoading && !loading) {
     return <Loader />;
   }
 
@@ -353,7 +357,7 @@ const GuardianSetup = () => {
             sx={{ width: "330px", marginX: "auto", marginTop: "30px" }}
           ></Box>
           <Button
-            disabled={!guardianEmail || isAccountInitialized}
+            disabled={!guardianEmail || loading}
             loading={loading}
             onClick={configureRecoveryAndRequestGuardian}
             filled={true}
