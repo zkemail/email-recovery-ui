@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { keccak256 } from "viem";
-import { readContract } from "wagmi/actions";
+import { readContract, writeContract } from "wagmi/actions";
 import {
   universalEmailRecoveryModule,
   validatorsAddress,
@@ -27,6 +27,7 @@ import { Button } from "../Button";
 import InputField from "../InputField";
 import { useWriteContract } from "wagmi";
 import Loader from "../Loader";
+import { useBurnerAccount } from "../../context/BurnerAccountContext";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -40,7 +41,7 @@ const RequestedRecoveries = () => {
   const address = useGetSafeAccountAddress();
   const { guardianEmail } = useAppContext();
   const navigate = useNavigate();
-  const { writeContractAsync } = useWriteContract();
+  const { burnerAccountClient } = useBurnerAccount();
 
   const [newOwner, setNewOwner] = useState<`0x${string}`>();
   const safeWalletAddress = address;
@@ -69,6 +70,8 @@ const RequestedRecoveries = () => {
       functionName: "getRecoveryRequest",
       args: [address],
     });
+
+    console.log(getRecoveryRequest);
 
     const getGuardianConfig = await readContract(config, {
       abi: universalEmailRecoveryModuleAbi,
@@ -180,14 +183,17 @@ const RequestedRecoveries = () => {
 
   const handleCancelRecovery = useCallback(async () => {
     setIsCancelRecoveryLoading(true);
+    setIsTriggerRecoveryLoading(false)
     try {
-      await writeContractAsync({
+      await burnerAccountClient.writeContract({
         abi: universalEmailRecoveryModuleAbi,
         address: universalEmailRecoveryModule as `0x${string}`,
         functionName: "cancelRecovery",
         args: [],
       });
 
+      setButtonState(BUTTON_STATES.TRIGGER_RECOVERY)
+      toast.success("Recovery Cancelled")
       console.log("Recovery Cancelled");
     } catch (err) {
       console.log(err);
@@ -226,7 +232,7 @@ const RequestedRecoveries = () => {
     }
   };
 
-  console.log(isRecoveryStatusLoading)
+  console.log(isRecoveryStatusLoading);
 
   // Since we are polling for every actions but only wants to show full screen loader for the initial request
   if (

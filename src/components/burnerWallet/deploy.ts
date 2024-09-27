@@ -40,12 +40,14 @@ export const pimlicoBundlerClient = createPimlicoBundlerClient({
  * @async
  * @param {WalletClient} client - The wallet client used for transactions and interactions.
  * @param {object} safeAccount - The smart account object containing the address of the account.
+ * @param {object} smartAccountClient - The safe account client
  * @param {string} guardianAddr - The address of the guardian used in the recovery module.
  * @returns {Promise<string>} The address of the configured smart account.
  */
 export async function run(
   client: WalletClient,
   safeAccount: object,
+  smartAccountClient: object,
   guardianAddr: string,
 ) {
   const ownableValidatorAddress = validatorsAddress;
@@ -65,21 +67,9 @@ export async function run(
   // generate hash
   await client.sendTransaction({
     to: safeAccount.address,
-    value: parseEther("0.003"),
+    value: parseEther("0.0003"),
   });
 
-  const smartAccountClient = createSmartAccountClient({
-    account: safeAccount,
-    entryPoint: ENTRYPOINT_ADDRESS_V07,
-    chain: baseSepolia,
-    bundlerTransport: http(
-      `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`,
-    ),
-    middleware: {
-      gasPrice: async () =>
-        (await pimlicoBundlerClient.getUserOperationGasPrice()).fast, // if using pimlico bundler
-    },
-  }).extend(erc7579Actions({ entryPoint: ENTRYPOINT_ADDRESS_V07 }));
 
   // txHash
   await smartAccountClient.sendTransaction({

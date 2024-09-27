@@ -209,7 +209,7 @@ const RequestedRecoveries = () => {
       toast.success("Recovery Cancelled")
       setButtonState(BUTTON_STATES.TRIGGER_RECOVERY)
     } catch (err) {
-      toast.error("Something went wrong while completing recovery process");
+      toast.error("Something went wrong while cancelling recovery process");
     } finally {
       setIsCancelRecoveryLoading(false);
     }
@@ -386,7 +386,7 @@ const RequestedRecoveries = () => {
               </Grid>
               <Grid item xs={12} sm={5.5}>
                 <InputField
-                  type="email"
+                  type="string"
                   value={newOwner || ""}
                   onChange={(e) => setNewOwner(e.target.value)}
                   label="Requested New Owner Address"
