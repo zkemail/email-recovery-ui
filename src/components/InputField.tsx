@@ -1,7 +1,7 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import InfoIcon from "@mui/icons-material/Info";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, IconButton, TextField, Tooltip, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import React from "react";
 
@@ -32,7 +32,7 @@ const CustomTextField = styled(TextField)(
     "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
       borderColor: status ? statusColor : "#ABBEFF",
     },
-  }),
+  })
 );
 
 interface InputFieldProps {
@@ -44,6 +44,7 @@ interface InputFieldProps {
   locked?: boolean; // 'false' enables the input field, 'true' disables the input field, default set to false
   status?: "error" | "okay" | "waiting"; // 'okay', 'waiting', 'error' status changes colors input box, status icon and message color respectively
   statusNote?: string; // statusNote is a string message under the input field
+  tooltipTitle?: string;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -55,6 +56,7 @@ const InputField: React.FC<InputFieldProps> = ({
   locked = false,
   status,
   statusNote,
+  tooltipTitle,
 }) => {
   let statusColor = "";
   let StatusIcon = null;
@@ -73,14 +75,31 @@ const InputField: React.FC<InputFieldProps> = ({
   return (
     <Box mb={2}>
       {label && (
-        <Typography
-          variant="body2"
-          color="textPrimary"
-          mb={1}
-          sx={{ fontWeight: 500, color: "#454545" }}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "start",
+            alignItems: "center",
+          }}
         >
-          {label}
-        </Typography>
+          <Typography
+            variant="body2"
+            color="textPrimary"
+            sx={{ fontWeight: 500, color: "#454545" }}
+          >
+            {label}
+          </Typography>
+          {tooltipTitle ? (
+            <Tooltip
+              title={tooltipTitle}
+              arrow
+            >
+              <IconButton size="small" aria-label="info" sx={{ marginLeft: 1 }}>
+                <InfoIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          ) : null}
+        </div>
       )}
       <CustomTextField
         variant="outlined"
