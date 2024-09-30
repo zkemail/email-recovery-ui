@@ -222,7 +222,11 @@ const RequestedRecoveries = () => {
     switch (buttonState) {
       case BUTTON_STATES.TRIGGER_RECOVERY:
         return (
-          <Button loading={isTriggerRecoveryLoading} onClick={requestRecovery}>
+          <Button
+            loading={isTriggerRecoveryLoading}
+            onClick={requestRecovery}
+            disabled={safeOwnersData?.includes(newOwner) || !newOwner || !guardianEmailAddress}
+          >
             {isTriggerRecoveryLoading
               ? "Waiting for Email Confirmation"
               : "Trigger Recovery"}
@@ -270,7 +274,7 @@ const RequestedRecoveries = () => {
       <Typography
         variant="body1"
         onClick={() => {
-          navigate('/')
+          navigate("/");
         }}
         sx={{ paddingBottom: "20px", textAlign: "left", cursor: "pointer" }}
       >
@@ -399,6 +403,20 @@ const RequestedRecoveries = () => {
               <Grid item xs={12} sm={5.5}>
                 <InputField
                   type="string"
+                  status={
+                    newOwner
+                      ? safeOwnersData?.includes(newOwner)
+                        ? "error"
+                        : "okay"
+                      : null
+                  }
+                  statusNote={
+                    newOwner
+                      ? safeOwnersData?.includes(newOwner)
+                        ? "The new owner's address cannot be the same as the old owner's"
+                        : "Okay"
+                      : null
+                  }
                   placeholderText="0xAB12..."
                   value={newOwner || ""}
                   onChange={(e) => setNewOwner(e.target.value)}
