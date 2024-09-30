@@ -1,9 +1,11 @@
 import {
   Box,
   Grid,
+  IconButton,
   MenuItem,
   Select,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import {
@@ -39,6 +41,7 @@ import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
 import { Button } from "../Button";
 import InputField from "../InputField";
 import Loader from "../Loader";
+import InfoIcon from "@mui/icons-material/Info";
 
 //logic for valid email address check for input
 const isValidEmail = (email: string) => {
@@ -339,8 +342,22 @@ const GuardianSetup = () => {
             justifyContent={"space-between"}
             alignItems="center"
           >
-            <Grid item>
+            <Grid item container xs alignItems={"center"}>
               <Typography variant="body1">Timelock</Typography>
+              <Tooltip
+                title={
+                  "This is the duration during which guardians cannot initiate recovery. Recovery can only be triggered once this period has ended."
+                }
+                arrow
+              >
+                <IconButton
+                  size="small"
+                  aria-label="info"
+                  sx={{ marginLeft: 1 }}
+                >
+                  <InfoIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
             </Grid>
             <Grid item container xs={"auto"} gap={2}>
               <TextField
@@ -389,6 +406,7 @@ const GuardianSetup = () => {
                   placeholderText="guardian@prove.email"
                   key={index}
                   type="email"
+                  tooltipTitle="Enter the email address of the guardian you want to set up for account recovery"
                   value={guardianEmail}
                   onChange={(e) => setGuardianEmail(e.target.value)}
                   label={`Guardian's Email`}

@@ -314,6 +314,7 @@ const RequestedRecoveries = () => {
                 <InputField
                   type="email"
                   placeholderText="test@gmail.com"
+                  tooltipTitle="Enter the email address of the guardian you used for account recovery"
                   value={guardianEmailAddress}
                   onChange={(e) => setGuardianEmailAddress(e.target.value)}
                   locked={guardianEmail ? true : false}
@@ -327,6 +328,7 @@ const RequestedRecoveries = () => {
                   placeholderText="0xAB12..."
                   onChange={(e) => setNewOwner(e.target.value)}
                   label="Requested New Owner Address"
+                  tooltipTitle="Enter the wallet address of the new owner of this safe account"
                 />
               </Grid>
             </Grid>

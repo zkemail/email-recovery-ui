@@ -1,9 +1,11 @@
 import {
   Box,
   Grid,
+  IconButton,
   MenuItem,
   Select,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { ConnectKitButton } from "connectkit";
@@ -26,6 +28,7 @@ import { safeAbi } from "../abi/Safe";
 import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
 import { StepsContext } from "../App";
 import infoIcon from "../assets/infoIcon.svg";
+import InfoIcon from "@mui/icons-material/Info";
 import { STEPS } from "../constants";
 import { useAppContext } from "../context/AppContextHook";
 import { config } from "../providers/config";
@@ -277,8 +280,22 @@ const GuardianSetup = () => {
             justifyContent={"space-between"}
             alignItems="center"
           >
-            <Grid item>
+            <Grid item container xs alignItems={"center"}>
               <Typography variant="body1">Timelock</Typography>
+              <Tooltip
+                title={
+                  "This is the duration during which guardians cannot initiate recovery. Recovery can only be triggered once this period has ended."
+                }
+                arrow
+              >
+                <IconButton
+                  size="small"
+                  aria-label="info"
+                  sx={{ marginLeft: 1 }}
+                >
+                  <InfoIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
             </Grid>
             <Grid item container xs={"auto"} gap={2}>
               <TextField
@@ -337,6 +354,7 @@ const GuardianSetup = () => {
                   key={index}
                   type="email"
                   value={guardianEmail}
+                  tooltipTitle="Enter the email address of the guardian you want to set up for account recovery"
                   onChange={(e) => setGuardianEmail(e.target.value)}
                   label={`Guardian's Email`}
                   locked={false}
