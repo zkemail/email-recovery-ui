@@ -10,9 +10,7 @@ import { useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { readContract } from "wagmi/actions";
 import { safeEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
-import {
-  universalEmailRecoveryModule,
-} from "../../../contracts.base-sepolia.json";
+import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
 import { safeEmailRecoveryModuleAbi } from "../../abi/SafeEmailRecoveryModule";
 import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
 import { StepsContext } from "../../App";
@@ -70,6 +68,7 @@ const AddGuardianModal = ({
             <InputField
               type="email"
               value={newGuardianEmail || ""}
+              placeholderText="test@gmail.com"
               onChange={(e) => setNewGuardianEmail(e.target.value)}
               label="Guardian Email"
             />
@@ -78,6 +77,7 @@ const AddGuardianModal = ({
             <InputField
               type="string"
               value={newGuardianAddress || ""}
+              placeholderText="0xAB12..."
               onChange={(e) => setNewGuardianAddress(e.target.value)}
               label="Guardian Address"
             />

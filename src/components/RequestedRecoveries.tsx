@@ -389,6 +389,7 @@ const RequestedRecoveries = () => {
               <Grid item xs={12} sm={5.5}>
                 <InputField
                   type="email"
+                  placeholderText="test@gmail.com"
                   value={guardianEmailAddress}
                   onChange={(e) => setGuardianEmailAddress(e.target.value)}
                   locked={guardianEmail ? true : false}
@@ -398,6 +399,7 @@ const RequestedRecoveries = () => {
               <Grid item xs={12} sm={5.5}>
                 <InputField
                   type="string"
+                  placeholderText="0xAB12..."
                   value={newOwner || ""}
                   onChange={(e) => setNewOwner(e.target.value)}
                   label="Requested New Owner Address"

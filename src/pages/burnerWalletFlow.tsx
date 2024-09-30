@@ -6,6 +6,7 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
+  Typography,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { StepsContext } from "../App";
@@ -75,7 +76,7 @@ const BurnerWalletFlow = () => {
               gap: "4px",
             }}
           >
-            Burner Wallet Address:{" "}
+            <Typography>Burner Wallet Address: </Typography>
             <a
               href={`https://app.safe.global/home?safe=basesep%3A${burnerWalletAddress}`}
               target="_blank"
