@@ -270,7 +270,7 @@ const RequestedRecoveries = () => {
       <Typography
         variant="body1"
         onClick={() => {
-          stepsContext?.setStep(STEPS.WALLET_ACTIONS);
+          navigate('/')
         }}
         sx={{ paddingBottom: "20px", textAlign: "left", cursor: "pointer" }}
       >
