@@ -28,6 +28,10 @@ const FlowInfoCard = ({
   return (
     <Grid
       item
+      container
+      justifyContent={"space-between"}
+      alignItems={"center"}
+      direction={"column"}
       xs={12}
       md={4}
       sx={{
@@ -38,49 +42,53 @@ const FlowInfoCard = ({
         maxWidth: "30rem",
       }}
     >
-      <Box sx={{ position: "absolute", top: "10px", right: "12px" }}>
-        <MoreInfoDialog title={infoIconTitle} message={infoIconDescription} />
-      </Box>
-      {icon}
-      <Typography
-        variant="h4"
-        sx={{
-          fontWeight: "medium",
-          letterSpacing: -2,
-          paddingBottom: "10px",
-          paddingTop: "10px",
-        }}
-      >
-        {title}
-      </Typography>
-      <Typography
-        sx={{
-          color: "#848281",
-          fontWeight: "regular",
-          fontSize: {
-            xxs: "13px",
-            xs: "13px",
-            sm: "13px",
-            md: "16px",
-          },
-          paddingBottom: "14px",
-          px: "15px",
-        }}
-      >
-        {description}
-      </Typography>
-      <Box margin="auto">
-        <Tooltip title="Under Audit" placement="top">
-          <span>
-            <Button
-              onClick={handleButtonClick}
-              disabled={isButtonDisabled ?? false}
-            >
-              {buttonText}
-            </Button>
-          </span>
-        </Tooltip>
-      </Box>
+      <Grid item>
+        <Box sx={{ position: "absolute", top: "10px", right: "12px" }}>
+          <MoreInfoDialog title={infoIconTitle} message={infoIconDescription} />
+        </Box>
+        {icon}
+        <Typography
+          variant="h4"
+          sx={{
+            fontWeight: "medium",
+            letterSpacing: -2,
+            paddingBottom: "10px",
+            paddingTop: "10px",
+          }}
+        >
+          {title}
+        </Typography>
+        <Typography
+          sx={{
+            color: "#848281",
+            fontWeight: "regular",
+            fontSize: {
+              xxs: "13px",
+              xs: "13px",
+              sm: "13px",
+              md: "16px",
+            },
+            paddingBottom: "14px",
+            px: "15px",
+          }}
+        >
+          {description}
+        </Typography>
+      </Grid>
+      <Grid item>
+        <Box margin="auto">
+          <Tooltip title="Under Audit" placement="top">
+            <span>
+              <Button
+                onClick={handleButtonClick}
+                disabled={isButtonDisabled ?? false}
+              >
+                {buttonText}
+              </Button>
+            </span>
+          </Tooltip>
+        </Box>
+      </Grid>
     </Grid>
   );
 };
