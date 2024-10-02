@@ -271,7 +271,7 @@ const GuardianSetup = () => {
           md={5.5}
           justifyContent={"space-around"}
           xs={12}
-          sx={{ gap: { xs: 3, sm: 0 } }}
+          sx={{ gap: { xs: 3, md: 0 } }}
         >
           <Grid
             item
