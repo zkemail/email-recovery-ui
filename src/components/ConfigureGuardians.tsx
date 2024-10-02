@@ -117,8 +117,7 @@ const ConfigureGuardians = () => {
     useState<string>("");
 
   // Since currently there is no way to get guardians, we are storing guardian related information in the localstorage
-  const safe1_3Guardians: string | null =
-    localStorage.getItem(address);
+  const safe1_3Guardians: string | null = localStorage.getItem(address);
   const guardians: GuardianInfo[] = safe1_3Guardians
     ? JSON.parse(safe1_3Guardians)
     : [];
@@ -215,15 +214,16 @@ const ConfigureGuardians = () => {
           maxWidth: { xs: "100%", md: "80%", lg: "50%" },
         }}
       >
-        <Typography
-          variant="body1"
-          onClick={() => {
-            stepsContext?.setStep(STEPS.WALLET_ACTIONS);
-          }}
-          sx={{ paddingBottom: "20px", textAlign: "left", cursor: "pointer" }}
-        >
-          ← Back
-        </Typography>
+        <Grid item xs={12} textAlign={"start"}>
+          <Button
+            onClick={() => {
+              stepsContext?.setStep(STEPS.WALLET_ACTIONS);
+            }}
+            sx={{ textAlign: "left", cursor: "pointer", width: "auto" }}
+          >
+            ← Back
+          </Button>
+        </Grid>
         <Typography variant="h2" sx={{ paddingBottom: "20px" }}>
           Configure Guardians
         </Typography>

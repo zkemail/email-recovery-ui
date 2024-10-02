@@ -225,7 +225,11 @@ const RequestedRecoveries = () => {
           <Button
             loading={isTriggerRecoveryLoading}
             onClick={requestRecovery}
-            disabled={safeOwnersData?.includes(newOwner) || !newOwner || !guardianEmailAddress}
+            disabled={
+              safeOwnersData?.includes(newOwner) ||
+              !newOwner ||
+              !guardianEmailAddress
+            }
           >
             {isTriggerRecoveryLoading
               ? "Waiting for Email Confirmation"
@@ -270,16 +274,16 @@ const RequestedRecoveries = () => {
         maxWidth: { xs: "100%", md: "80%", lg: "50%" },
       }}
     >
-      {" "}
-      <Typography
-        variant="body1"
-        onClick={() => {
-          navigate("/");
-        }}
-        sx={{ paddingBottom: "20px", textAlign: "left", cursor: "pointer" }}
-      >
-        ← Back
-      </Typography>
+      <Grid item xs={12} textAlign={"start"}>
+        <Button
+          onClick={() => {
+            navigate("/");
+          }}
+          sx={{ textAlign: "left", cursor: "pointer", width: "auto" }}
+        >
+          ← Back
+        </Button>
+      </Grid>
       {buttonState === BUTTON_STATES.RECOVERY_COMPLETED ? (
         <>
           <Typography variant="h2" sx={{ paddingBottom: "1.25rem" }}>

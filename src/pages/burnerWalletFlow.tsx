@@ -43,6 +43,26 @@ const BurnerWalletFlow = () => {
     }
   }, [burnerWalletAddress]);
 
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      // Standard across browsers (Chrome, Firefox, etc.)
+      event.preventDefault();
+      event.returnValue = ""; // Required for Chrome to show the alert
+
+      // Return any string for some older browsers (though modern browsers ignore it)
+      return "Are you sure you want to leave? Your changes may not be saved.";
+    };
+
+    // Add event listener
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Clean up the event listener
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+
   const renderBody = () => {
     switch (stepsContext?.step) {
       // Step to create a new safe and install the universal email recovery module. This step requires guardian emails before the recovery module can be installed

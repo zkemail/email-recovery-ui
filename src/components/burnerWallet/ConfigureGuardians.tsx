@@ -218,15 +218,16 @@ const ConfigureGuardians = () => {
           maxWidth: { xs: "100%", md: "80%", lg: "50%" },
         }}
       >
-        <Typography
-          variant="body1"
-          onClick={() => {
-            stepsContext?.setStep(STEPS.WALLET_ACTIONS);
-          }}
-          sx={{ paddingBottom: "20px", textAlign: "left", cursor: "pointer" }}
-        >
-          ← Back
-        </Typography>
+        <Grid item xs={12} textAlign={"start"}>
+          <Button
+            onClick={() => {
+              stepsContext?.setStep(STEPS.WALLET_ACTIONS);
+            }}
+            sx={{ textAlign: "left", cursor: "pointer", width: "auto" }}
+          >
+            ← Back
+          </Button>
+        </Grid>
         <Typography variant="h2" sx={{ paddingBottom: "20px" }}>
           Configure Guardians
         </Typography>
