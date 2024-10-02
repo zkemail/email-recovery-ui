@@ -41,7 +41,7 @@ import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
 import { Button } from "../Button";
 import InputField from "../InputField";
 import Loader from "../Loader";
-import InfoIcon from "@mui/icons-material/Info";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 //logic for valid email address check for input
 const isValidEmail = (email: string) => {
@@ -361,6 +361,7 @@ const GuardianSetup = () => {
             <Grid item container xs alignItems={"center"}>
               <Typography variant="body1">Timelock</Typography>
               <Tooltip
+                placement="top"
                 title={
                   "This is the duration during which guardians cannot initiate recovery. Recovery can only be triggered once this period has ended."
                 }
@@ -371,7 +372,7 @@ const GuardianSetup = () => {
                   aria-label="info"
                   sx={{ marginLeft: 1 }}
                 >
-                  <InfoIcon fontSize="small" />
+                  <InfoOutlinedIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
             </Grid>

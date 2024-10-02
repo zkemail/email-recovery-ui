@@ -6,6 +6,7 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
@@ -83,13 +84,15 @@ const BurnerWalletFlow = () => {
             >
               {burnerWalletAddress}
             </a>
-            <IconButton
-              onClick={async () => {
-                setIsResetBurnerWalletConfirmationModalOpen(true);
-              }}
-            >
-              <RestartAltIcon />
-            </IconButton>
+            <Tooltip title="Reset Wallet" placement="top">
+              <IconButton
+                onClick={async () => {
+                  setIsResetBurnerWalletConfirmationModalOpen(true);
+                }}
+              >
+                <RestartAltIcon />
+              </IconButton>
+            </Tooltip>
           </div>
         ) : null}
         <Dialog

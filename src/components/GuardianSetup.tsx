@@ -1,3 +1,4 @@
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import {
   Box,
   Grid,
@@ -28,7 +29,6 @@ import { safeAbi } from "../abi/Safe";
 import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
 import { StepsContext } from "../App";
 import infoIcon from "../assets/infoIcon.svg";
-import InfoIcon from "@mui/icons-material/Info";
 import { STEPS } from "../constants";
 import { useAppContext } from "../context/AppContextHook";
 import { config } from "../providers/config";
@@ -283,6 +283,7 @@ const GuardianSetup = () => {
             <Grid item container xs alignItems={"center"}>
               <Typography variant="body1">Timelock</Typography>
               <Tooltip
+                placement="top"
                 title={
                   "This is the duration during which guardians cannot initiate recovery. Recovery can only be triggered once this period has ended."
                 }
@@ -293,7 +294,7 @@ const GuardianSetup = () => {
                   aria-label="info"
                   sx={{ marginLeft: 1 }}
                 >
-                  <InfoIcon fontSize="small" />
+                  <InfoOutlinedIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
             </Grid>

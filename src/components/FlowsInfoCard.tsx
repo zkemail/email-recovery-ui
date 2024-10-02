@@ -70,7 +70,7 @@ const FlowInfoCard = ({
         {description}
       </Typography>
       <Box margin="auto">
-        <Tooltip title="Under Audit" placement="bottom">
+        <Tooltip title="Under Audit" placement="top">
           <span>
             <Button
               onClick={handleButtonClick}
