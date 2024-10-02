@@ -75,23 +75,32 @@ const GuardianSetup = () => {
   const [isBurnerWalletCreating, setIsBurnerWalletCreating] = useState(false);
 
   // A new account code must be created for each session to enable the creation of a new wallet, and it will be used throughout the demo flow
-  const localStorageAccountCode = localStorage.getItem("accountCode");
 
-  const initialSaltNonce = BigInt(localStorage.getItem("saltNonce") || "0");
+  const initialSaltNonce = BigInt(
+    localStorage.getItem("saltNonce") || Math.floor(Math.random() * 100000)
+  );
   const [saltNonce, setSaltNonce] = useState<bigint>(initialSaltNonce);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const checkIfRecoveryIsConfigured = useCallback(async () => {
-    if (!address) {
+    let burnerWalletAddress;
+    const burnerWalletConfig = localStorage.getItem("burnerWalletConfig");
+
+    if (burnerWalletConfig) {
+      burnerWalletAddress = JSON.parse(burnerWalletConfig).burnerWalletAddress;
+    }
+
+    if (!burnerWalletAddress) {
       return;
     }
+
     setIsAccountInitializedLoading(true);
     const getGuardianConfig = await readContract(config, {
       abi: universalEmailRecoveryModuleAbi,
       address: universalEmailRecoveryModule as `0x${string}`,
       functionName: "getGuardianConfig",
-      args: [address],
+      args: [burnerWalletAddress],
     });
 
     // Check whether recovery is configured
@@ -103,7 +112,7 @@ const GuardianSetup = () => {
       stepsContext?.setStep(STEPS.WALLET_ACTIONS);
     }
     setIsAccountInitializedLoading(false);
-  }, [address, stepsContext]);
+  }, [stepsContext]);
 
   const connectWallet = async () => {
     setIsBurnerWalletCreating(true);
@@ -145,7 +154,7 @@ const GuardianSetup = () => {
 
       const acctCode = await genAccountCode();
 
-      localStorage.setItem("accountCode", acctCode);
+      await localStorage.setItem("accountCode", acctCode);
       await setAccountCode(accountCode);
 
       const guardianSalt = await relayer.getAccountSalt(
@@ -176,7 +185,7 @@ const GuardianSetup = () => {
 
       console.log(safeAccount, smartAccountClient);
 
-      localStorage.setItem("safeAccount", JSON.stringify(safeAccount));
+      await localStorage.setItem("safeAccount", JSON.stringify(safeAccount));
       localStorage.setItem(
         "smartAccountClient",
         JSON.stringify(smartAccountClient)
@@ -191,7 +200,7 @@ const GuardianSetup = () => {
         smartAccountClient,
         guardianAddr
       );
-      localStorage.setItem(
+      await localStorage.setItem(
         "burnerWalletConfig",
         JSON.stringify({ burnerWalletAddress })
       );
@@ -233,20 +242,26 @@ const GuardianSetup = () => {
   }, [guardianEmail]);
 
   const configureRecoveryAndRequestGuardian = useCallback(async () => {
-    if (!address) {
-      throw new Error("unable to get account address");
-    }
-
-    if (!guardianEmail) {
-      throw new Error("guardian email not set");
-    }
-
-    if (!localStorageAccountCode) {
-      toast.error("Seomthing went wrong, please restart the flow");
-      console.error("Invalid account code");
-    }
-
     try {
+      if (!guardianEmail) {
+        throw new Error("guardian email not set");
+      }
+
+      const localStorageAccountCode = localStorage.getItem("accountCode");
+      let burnerWalletAddress;
+
+      const burnerWalletConfig = localStorage.getItem("burnerWalletConfig");
+
+      if (burnerWalletConfig) {
+        burnerWalletAddress =
+          JSON.parse(burnerWalletConfig).burnerWalletAddress;
+      }
+
+      if (!localStorageAccountCode) {
+        toast.error("Seomthing went wrong, please restart the flow");
+        console.error("Invalid account code");
+      }
+
       setLoading(true);
       toast("Please check your email", {
         icon: <img src={infoIcon} />,
@@ -270,7 +285,10 @@ const GuardianSetup = () => {
           guardianEmail,
           localStorageAccountCode,
           templateIdx,
-          subject[0].join().replaceAll(",", " ").replace("{ethAddr}", address)
+          subject[0]
+            .join()
+            .replaceAll(",", " ")
+            .replace("{ethAddr}", burnerWalletAddress)
         );
       } catch (error) {
         // retry mechanism as this API call fails for the first time
@@ -281,7 +299,10 @@ const GuardianSetup = () => {
           guardianEmail,
           localStorageAccountCode,
           templateIdx,
-          subject[0].join().replaceAll(",", " ").replace("{ethAddr}", address)
+          subject[0]
+            .join()
+            .replaceAll(",", " ")
+            .replace("{ethAddr}", burnerWalletAddress)
         );
       }
 
@@ -296,12 +317,7 @@ const GuardianSetup = () => {
       );
       setLoading(false);
     }
-  }, [
-    address,
-    guardianEmail,
-    localStorageAccountCode,
-    checkIfRecoveryIsConfigured,
-  ]);
+  }, [address, guardianEmail, checkIfRecoveryIsConfigured]);
 
   if (isAccountInitializedLoading && !loading && !isBurnerWalletCreating) {
     return <Loader />;
@@ -440,7 +456,12 @@ const GuardianSetup = () => {
             <Button
               disabled={!guardianEmail || isBurnerWalletCreating}
               loading={isBurnerWalletCreating}
-              onClick={connectWallet}
+              onClick={async () => {
+                await connectWallet();
+                setLoading(true);
+                // await new Promise((resolve) => setTimeout(resolve, 10000)); // 5000 ms = 5 seconds
+                configureRecoveryAndRequestGuardian();
+              }}
               filled={true}
             >
               Create burner wallet

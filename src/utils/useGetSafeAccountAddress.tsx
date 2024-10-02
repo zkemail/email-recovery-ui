@@ -1,5 +1,3 @@
-import { useAccount } from "wagmi";
-
 /**
  * Retrieves the safe account address. If a burner wallet configuration is found in local storage,
  * it returns the burner wallet address. Otherwise, it returns the current user's account address.
@@ -7,12 +5,9 @@ import { useAccount } from "wagmi";
  * or the current user's account address.
  */
 export const useGetSafeAccountAddress = (): string | undefined => {
-  const { address } = useAccount();
   const burnerWalletConfig = localStorage.getItem("burnerWalletConfig");
 
   if (burnerWalletConfig) {
     return JSON.parse(burnerWalletConfig).burnerWalletAddress;
   }
-
-  return address;
 };

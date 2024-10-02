@@ -22,6 +22,7 @@ const WalletActions = () => {
           <Grid item>
             <Button
               onClick={() => stepsContext?.setStep(STEPS.CONFIGURE_GUARDIANS)}
+              disabled
             >
               Edit Guardians
             </Button>
