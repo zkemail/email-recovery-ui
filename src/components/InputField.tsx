@@ -1,5 +1,6 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import InfoIcon from "@mui/icons-material/Info";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Box, IconButton, TextField, Tooltip, Typography } from "@mui/material";
 import { styled } from "@mui/system";
