@@ -11,6 +11,7 @@ import { ConnectKitButton } from "connectkit";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./Button";
+import zkEmailLogo from "../assets/ZKEmailLogo.svg";
 
 const NAV_LINKS = [
   { link: "https://prove.email/blog", title: "Blog" },
@@ -23,7 +24,7 @@ const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement;
   },
-  ref: React.Ref<unknown>,
+  ref: React.Ref<unknown>
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -213,21 +214,8 @@ const NavBar: React.FC = () => {
                 justifyContent: { xs: "left", md: "center" },
               }}
             >
-              <MailOutlineIcon
-                style={{
-                  fill: "#000000",
-                  marginLeft: "0.5rem",
-                  marginRight: "0.625rem",
-                }}
-              />
               <Link to="/">
-                <Typography
-                  variant="h6"
-                  color="black"
-                  sx={{ fontSize: { xs: "0.75rem", sm: "0.85rem" } }}
-                >
-                  ZKEmail Recovery
-                </Typography>
+                <img style={{ verticalAlign: "middle" }} src={zkEmailLogo} />
               </Link>
             </Box>
           </Grid>

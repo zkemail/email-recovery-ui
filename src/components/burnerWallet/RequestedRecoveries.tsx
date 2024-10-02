@@ -100,7 +100,7 @@ const RequestedRecoveries = () => {
 
   const requestRecovery = useCallback(async () => {
     setIsTriggerRecoveryLoading(true);
-    toast("Please check your email and accept the email", {
+    toast("Please check your email and reply to the email", {
       icon: <img src={infoIcon} />,
       style: {
         background: "white",
