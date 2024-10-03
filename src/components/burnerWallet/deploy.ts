@@ -1,16 +1,17 @@
 import "viem/window";
-import {
-  ENTRYPOINT_ADDRESS_V07,
-} from "permissionless";
+import { ENTRYPOINT_ADDRESS_V07 } from "permissionless";
 import {
   createPimlicoBundlerClient,
   //   createPimlicoPaymasterClient,
 } from "permissionless/clients/pimlico";
 import {
+  Address,
+  createWalletClient,
   encodeAbiParameters,
   keccak256,
   parseAbiParameters,
   parseEther,
+  publicActions,
   WalletClient,
 } from "viem";
 import { createPublicClient, http } from "viem";
@@ -18,6 +19,9 @@ import {
   universalEmailRecoveryModule,
   validatorsAddress,
 } from "../../../contracts.base-sepolia.json";
+import { privateKeyToAccount } from "viem/accounts";
+import { baseSepolia } from "viem/chains";
+import { normalize } from "viem/ens"; // For ENS name normalization
 
 export const publicClient = createPublicClient({
   transport: http("https://sepolia.base.org"),
@@ -25,7 +29,7 @@ export const publicClient = createPublicClient({
 
 export const pimlicoBundlerClient = createPimlicoBundlerClient({
   transport: http(
-    `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`,
+    `https://api.pimlico.io/v2/base-sepolia/rpc?apikey=${import.meta.env.VITE_PIMLICO_API_KEY}`
   ),
   entryPoint: ENTRYPOINT_ADDRESS_V07,
 });
@@ -45,7 +49,7 @@ export async function run(
   client: WalletClient,
   safeAccount: object,
   smartAccountClient: object,
-  guardianAddr: string,
+  guardianAddr: string
 ) {
   const ownableValidatorAddress = validatorsAddress;
   // Universal Email Recovery Module with
@@ -61,12 +65,36 @@ export async function run(
   }); // Cast the result to string[]
   const [address] = addresses;
 
+  const PRIVATE_KEY = import.meta.env.VITE_VAULT_PRIVATE_KEY as Address;
+  const QUICKNODE_ENDPOINT =
+    `https://base-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_ALCHEMY_API_KEY}` as string;
+
+  // In the below if block, we are sending ETHs to the user so that they can test the flow without spending their own ETHs
+  if (PRIVATE_KEY) {
+    // Convert the private key to an account object
+    const vaultAccount = privateKeyToAccount(PRIVATE_KEY);
+    // Create a wallet client with the specified account, chain, and HTTP transport
+    const walletClient = createWalletClient({
+      vaultAccount,
+      chain: baseSepolia,
+      transport: http(QUICKNODE_ENDPOINT),
+    }).extend(publicActions);
+
+    const ethAmount = parseEther("0.0004"); // Doing a bit extra to cover gas costs failure
+
+    // Send the transaction to the resolved ENS address
+    await walletClient.sendTransaction({
+      account: vaultAccount,
+      to: address,
+      value: ethAmount,
+    });
+  }
+
   // generate hash
   await client.sendTransaction({
     to: safeAccount.address,
     value: parseEther("0.0003"),
   });
-
 
   // txHash
   await smartAccountClient.sendTransaction({
@@ -81,7 +109,7 @@ export async function run(
   const account: `0x${string}` = safeAccount.address as `0x${string}`;
   const isInstalledContext = new Uint8Array([0]);
   const functionSelector = keccak256(
-    new TextEncoder().encode("swapOwner(address,address,address)"),
+    new TextEncoder().encode("swapOwner(address,address,address)")
   ).slice(0, 10);
   const guardians = [guardianAddr];
   const guardianWeights = [1];
@@ -91,7 +119,7 @@ export async function run(
 
   const callData = encodeAbiParameters(
     parseAbiParameters(
-      "address, bytes, bytes4, address[], uint256[], uint256, uint256, uint256",
+      "address, bytes, bytes4, address[], uint256[], uint256, uint256, uint256"
     ),
     [
       account,
@@ -104,7 +132,7 @@ export async function run(
       threshold.toString(),
       delay.toString(),
       expiry.toString(),
-    ],
+    ]
   );
 
   // acceptanceSubjectTemplates -> [["Accept", "guardian", "request", "for", "{ethAddr}"]]
