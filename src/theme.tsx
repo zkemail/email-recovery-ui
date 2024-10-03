@@ -14,16 +14,16 @@ const theme = createTheme({
       main: "#FF4081", // Choose your accent color here
     },
   },
-
   typography: {
-    fontFamily: "Space Grotesk",
+    fontFamily: "Fustat",
     h1: {
+      fontFamily: "Newsreader",
       fontSize: "3rem",
-      letterSpacing: -3,
-      fontWeight: "500",
+      fontWeight: "300",
     },
     h2: {
-      fontWeight: "700",
+      fontFamily: "Newsreader",
+      fontWeight: "300",
       color: "#333741",
       letterSpacing: -1,
     },
@@ -31,7 +31,6 @@ const theme = createTheme({
     h4: {
       color: "#333741",
     },
-
     h5: {
       color: "#333741",
     },
@@ -56,8 +55,15 @@ const theme = createTheme({
       color: "#333741",
     },
   },
-
-  components: {},
+  components: {
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: "black",
+        },
+      },
+    },
+  },
 });
 
 export default theme;

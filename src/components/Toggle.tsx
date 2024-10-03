@@ -55,14 +55,14 @@ export default function CustomizedToggleButton({ onFlowChange }) {
       <ToggleButton
         value="setup"
         aria-label="set up"
-        sx={{ textTransform: "none", paddingY: "3px", paddingX: "30px" }}
+        sx={{ textTransform: "none", paddingY: "3px", paddingX: "36.5px" }}
       >
         Set Up
       </ToggleButton>
       <ToggleButton
         value="recover"
         aria-label="recover"
-        sx={{ textTransform: "none", paddingY: "3px", paddingX: "30px" }}
+        sx={{ textTransform: "none", paddingY: "3px", paddingX: "36.5px" }}
       >
         Recover
       </ToggleButton>

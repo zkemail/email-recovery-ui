@@ -82,6 +82,7 @@ const FlowInfoCard = ({
               <Button
                 onClick={handleButtonClick}
                 disabled={isButtonDisabled ?? false}
+                style={{padding: '0.5rem 2rem'}}
               >
                 {buttonText}
               </Button>

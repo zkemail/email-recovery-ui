@@ -48,7 +48,7 @@ const LandingPage = () => {
   return (
     <div className="bg-white">
       <Grid sx={{ paddingTop: { xs: "5rem", md: "7.5rem" } }}>
-        <Link to="https://prove.email/" target="_blank">
+        {/* <Link to="https://prove.email/" target="_blank">
           <Box
             display="flex"
             alignItems="center"
@@ -76,7 +76,7 @@ const LandingPage = () => {
               ZKEmail Tech
             </Typography>
           </Box>
-        </Link>
+        </Link> */}
         <Typography variant="h1" sx={{ color: theme.palette.primary.main }}>
           Email Recovery Demo
         </Typography>
