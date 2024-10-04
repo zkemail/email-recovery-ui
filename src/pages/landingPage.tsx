@@ -1,7 +1,6 @@
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
-import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import { Box, Grid, Typography, useTheme } from "@mui/material";
+import { Grid, Typography, useTheme } from "@mui/material";
 import { useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";

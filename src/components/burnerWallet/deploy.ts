@@ -15,13 +15,11 @@ import {
   WalletClient,
 } from "viem";
 import { createPublicClient, http } from "viem";
-import {
-  universalEmailRecoveryModule,
-  validatorsAddress,
-} from "../../../contracts.base-sepolia.json";
 import { privateKeyToAccount } from "viem/accounts";
 import { baseSepolia } from "viem/chains";
-import { normalize } from "viem/ens"; // For ENS name normalization
+import {
+  universalEmailRecoveryModule,
+} from "../../../contracts.base-sepolia.json";
 
 export const publicClient = createPublicClient({
   transport: http("https://sepolia.base.org"),
@@ -51,7 +49,6 @@ export async function run(
   smartAccountClient: object,
   guardianAddr: string
 ) {
-  const ownableValidatorAddress = validatorsAddress;
   // Universal Email Recovery Module with
   // ECDSAOwnedDKIMRegistry
   // Verifier

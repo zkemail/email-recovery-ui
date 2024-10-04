@@ -1,6 +1,6 @@
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { Box, Grid, Typography } from "@mui/material";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { encodeAbiParameters, encodeFunctionData } from "viem";
@@ -13,11 +13,9 @@ import Loader from "./Loader";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import { safeAbi } from "../abi/Safe";
 import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
-import { StepsContext } from "../App";
 import cancelRecoveryIcon from "../assets/cancelRecoveryIcon.svg";
 import completeRecoveryIcon from "../assets/completeRecoveryIcon.svg";
 import infoIcon from "../assets/infoIcon.svg";
-import { STEPS } from "../constants";
 import { useAppContext } from "../context/AppContextHook";
 
 import { config } from "../providers/config";
@@ -37,7 +35,6 @@ const RequestedRecoveries = () => {
   const { writeContractAsync } = useWriteContract();
   const { guardianEmail } = useAppContext();
   const navigate = useNavigate();
-  const stepsContext = useContext(StepsContext);
 
   const [newOwner, setNewOwner] = useState<string>();
   const safeWalletAddress = address;

@@ -2,12 +2,11 @@ import { Box, Grid, Typography } from "@mui/material";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { keccak256 } from "viem";
 import { readContract } from "wagmi/actions";
 import {
   universalEmailRecoveryModule,
-  validatorsAddress,
 } from "../../../contracts.base-sepolia.json";
+import { safeAbi } from "../../abi/Safe";
 import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
 import { StepsContext } from "../../App";
 import cancelRecoveryIcon from "../../assets/cancelRecoveryIcon.svg";
@@ -30,8 +29,6 @@ import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
 import { Button } from "../Button";
 import InputField from "../InputField";
 import Loader from "../Loader";
-import { useReadContract } from "wagmi";
-import { safeAbi } from "../../abi/Safe";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -129,24 +126,6 @@ const RequestedRecoveries = () => {
     if (!safeOwnersData) {
       throw new Error("safe owners data not found");
     }
-
-    const prevOwner = getPreviousOwnerInLinkedList(
-      safeOwnersData[0],
-      safeOwnersData
-    );
-
-    const recoveryCallData = getRecoveryCallData(
-      prevOwner,
-      safeOwnersData[0],
-      newOwner
-    );
-
-    const recoveryData = getRecoveryData(
-      safeWalletAddress,
-      recoveryCallData
-    ) as `0x${string}`;
-
-    const recoveryDataHash = keccak256(recoveryData);
 
     // This function fetches the command template for the recoveryRequest API call. The command template will be in the following format: ['Recover', 'account', '{ethAddr}', 'using', 'recovery', 'hash', '{string}']
     const command = (await readContract(config, {

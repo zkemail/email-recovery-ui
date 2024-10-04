@@ -1,5 +1,4 @@
 import CloseIcon from "@mui/icons-material/Close";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Dialog, Toolbar } from "@mui/material";
 import { AppBar, Grid, IconButton, Slide } from "@mui/material/";
@@ -7,7 +6,6 @@ import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import { TransitionProps } from "@mui/material/transitions";
 import Typography from "@mui/material/Typography";
-import { ConnectKitButton } from "connectkit";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./Button";
@@ -152,7 +150,6 @@ const MobileNav = ({
         >
           Learn More
         </Button>
-        <ConnectKitButton />
       </Grid>
     </Dialog>
   );
@@ -234,7 +231,6 @@ const NavBar: React.FC = () => {
               {NAV_LINKS.map((navLink) => {
                 return (
                   <Button
-                    color="primary"
                     href={navLink.link}
                     target="_blank"
                     sx={{
@@ -300,7 +296,6 @@ const NavBar: React.FC = () => {
               >
                 Learn More
               </Button>
-              <ConnectKitButton />
             </Box>
           </Grid>
         </Grid>

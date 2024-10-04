@@ -1,3 +1,4 @@
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import {
   Box,
   Grid,
@@ -41,7 +42,6 @@ import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
 import { Button } from "../Button";
 import InputField from "../InputField";
 import Loader from "../Loader";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 //logic for valid email address check for input
 const isValidEmail = (email: string) => {
