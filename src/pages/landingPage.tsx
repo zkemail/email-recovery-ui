@@ -76,7 +76,7 @@ const LandingPage = () => {
             </Typography>
           </Box>
         </Link> */}
-        <Typography variant="h1" sx={{ color: theme.palette.primary.main }}>
+        <Typography variant="h1">
           Email Recovery Demo
         </Typography>
         <Typography

@@ -57,6 +57,7 @@ const RequestedRecoveries = () => {
 
   // Checks whether recovery has been triggered.
   const checkIfRecoveryCanBeCompleted = useCallback(async () => {
+    if (!address) return;
     setIsRecoveryStatusLoading(true);
     const getRecoveryRequest = await readContract(config, {
       abi: safeEmailRecoveryModuleAbi,
@@ -221,11 +222,13 @@ const RequestedRecoveries = () => {
         return (
           <Button
             loading={isTriggerRecoveryLoading}
+            variant="contained"
             onClick={requestRecovery}
             disabled={
               safeOwnersData?.includes(newOwner) ||
               !newOwner ||
-              !guardianEmailAddress
+              !guardianEmailAddress ||
+              !address
             }
           >
             {isTriggerRecoveryLoading
@@ -237,6 +240,7 @@ const RequestedRecoveries = () => {
         return (
           <Button
             loading={isCompleteRecoveryLoading}
+            variant="contained"
             onClick={completeRecovery}
             endIcon={<img src={completeRecoveryIcon} />}
           >
@@ -245,7 +249,7 @@ const RequestedRecoveries = () => {
         );
       case BUTTON_STATES.RECOVERY_COMPLETED:
         return (
-          <Button filled={true} onClick={() => navigate("/")}>
+          <Button variant={"contained"} onClick={() => navigate("/")}>
             Complete! Connect new wallet to set new guardians ➔
           </Button>
         );
@@ -273,6 +277,7 @@ const RequestedRecoveries = () => {
     >
       <Grid item xs={12} textAlign={"start"}>
         <Button
+          variant="text"
           onClick={() => {
             navigate("/");
           }}
@@ -438,18 +443,19 @@ const RequestedRecoveries = () => {
             margin: "auto",
           }}
         >
-          <div style={{ minWidth: "300px" }}>{getButtonComponent()}</div>
           {buttonState === BUTTON_STATES.COMPLETE_RECOVERY ? (
             <div style={{ minWidth: "300px" }}>
               <Button
                 onClick={() => handleCancelRecovery()}
                 endIcon={<img src={cancelRecoveryIcon} />}
                 loading={isCancelRecoveryLoading}
+                variant="outlined"
               >
                 Cancel Recovery
               </Button>
             </div>
           ) : null}
+          <div style={{ minWidth: "300px" }}>{getButtonComponent()}</div>
         </div>
       </div>
     </Box>

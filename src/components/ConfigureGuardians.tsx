@@ -81,16 +81,20 @@ const AddGuardianModal = ({
             />
           </Grid>
           <Grid item xs={6}>
-            <Button onClick={handleClose} disabled={isAddGuardianLoading}>
+            <Button
+              variant="outlined"
+              onClick={handleClose}
+              disabled={isAddGuardianLoading}
+            >
               Cancel
             </Button>
           </Grid>
           <Grid item xs={6}>
             <Button
+              variant="contained"
               onClick={handleAddGuardian}
               disabled={isAddGuardianLoading}
               loading={isAddGuardianLoading}
-              filled={true}
             >
               Add Guardian
             </Button>
@@ -216,6 +220,7 @@ const ConfigureGuardians = () => {
       >
         <Grid item xs={12} textAlign={"start"}>
           <Button
+            variant="text"
             onClick={() => {
               stepsContext?.setStep(STEPS.WALLET_ACTIONS);
             }}
@@ -239,12 +244,13 @@ const ConfigureGuardians = () => {
             </Grid>
             <Grid item>
               <Button
+                variant="contained"
                 onClick={() => {
                   setNewGuardianAddress("");
                   setNewGuardianEmail("");
                   setIsAddGuardianModalOpen(true);
                 }}
-                filled={true}
+                variant={"contained"}
               >
                 + Add Guardian
               </Button>
@@ -268,6 +274,7 @@ const ConfigureGuardians = () => {
                 </Grid>
                 <Grid item>
                   <Button
+                    variant="contained"
                     disabled={
                       activeGuardianAddressRemoval !== "" &&
                       activeGuardianAddressRemoval !== guardianInfo.guardianAddr

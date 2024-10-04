@@ -27,12 +27,6 @@ const CustomTextField = styled(TextField)(
       padding: "10px 12px",
       color: "#667085",
     },
-    "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: status ? statusColor : "#ABBEFF",
-    },
-    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: status ? statusColor : "#ABBEFF",
-    },
   })
 );
 

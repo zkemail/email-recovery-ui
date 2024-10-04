@@ -379,7 +379,7 @@ const GuardianSetup = () => {
             disabled={!guardianEmail || loading}
             loading={loading}
             onClick={configureRecoveryAndRequestGuardian}
-            filled={true}
+            variant={"contained"}
           >
             Configure Recovery & Request Guardian
           </Button>

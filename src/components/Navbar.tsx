@@ -129,23 +129,13 @@ const MobileNav = ({
         style={{ marginTop: "auto", marginBottom: "2rem" }}
       >
         <Button
-          color="secondary"
           variant="outlined"
           href="https://prove.email/blog/recovery"
           target="_blank"
           sx={{
             marginRight: theme.spacing(2),
+            color: 'white',
             textTransform: "none",
-            borderRadius: "26px",
-            ":hover": {
-              backgroundColor: "#E0F6FF", // Background color on hover
-            },
-            ":focus": {
-              outline: "none", // Remove outline on focus
-            },
-            ":active": {
-              outline: "none", // Remove outline on active
-            },
           }}
         >
           Learn More
@@ -280,18 +270,8 @@ const NavBar: React.FC = () => {
                 target="_blank"
                 sx={{
                   display: { xs: "none", lg: "block" },
-                  marginRight: theme.spacing(2),
                   textTransform: "none",
-                  borderRadius: "26px",
-                  ":hover": {
-                    backgroundColor: "#E0F6FF", // Background color on hover
-                  },
-                  ":focus": {
-                    outline: "none", // Remove outline on focus
-                  },
-                  ":active": {
-                    outline: "none", // Remove outline on active
-                  },
+                  lineHeight: '14px'
                 }}
               >
                 Learn More

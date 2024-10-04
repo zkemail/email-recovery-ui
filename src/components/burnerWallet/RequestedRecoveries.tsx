@@ -3,9 +3,7 @@ import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { readContract } from "wagmi/actions";
-import {
-  universalEmailRecoveryModule,
-} from "../../../contracts.base-sepolia.json";
+import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
 import { safeAbi } from "../../abi/Safe";
 import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
 import { StepsContext } from "../../App";
@@ -235,7 +233,11 @@ const RequestedRecoveries = () => {
     switch (buttonState) {
       case BUTTON_STATES.TRIGGER_RECOVERY:
         return (
-          <Button loading={isTriggerRecoveryLoading} onClick={requestRecovery}>
+          <Button
+            loading={isTriggerRecoveryLoading}
+            variant="contained"
+            onClick={requestRecovery}
+          >
             Trigger Recovery
           </Button>
         );
@@ -244,6 +246,7 @@ const RequestedRecoveries = () => {
           <Button
             loading={isCompleteRecoveryLoading}
             disabled={!newOwner}
+            variant="contained"
             onClick={completeRecovery}
             endIcon={<img src={completeRecoveryIcon} />}
           >
@@ -252,7 +255,7 @@ const RequestedRecoveries = () => {
         );
       case BUTTON_STATES.RECOVERY_COMPLETED:
         return (
-          <Button filled={true} onClick={() => navigate("/")}>
+          <Button variant={"contained"} onClick={() => navigate("/")}>
             Complete! Connect new wallet to set new guardians ➔
           </Button>
         );
@@ -282,10 +285,11 @@ const RequestedRecoveries = () => {
     >
       <Grid item xs={12} textAlign={"start"}>
         <Button
+          variant="text"
           onClick={() => {
             stepsContext?.setStep(STEPS.WALLET_ACTIONS);
           }}
-          sx={{ textAlign: "left", cursor: "pointer", width: "auto" }}
+          sx={{ textAlign: "left", width: "auto" }}
         >
           ← Back
         </Button>
@@ -370,18 +374,19 @@ const RequestedRecoveries = () => {
             margin: "auto",
           }}
         >
-          <div style={{ minWidth: "300px" }}>{getButtonComponent()}</div>
           {buttonState === BUTTON_STATES.COMPLETE_RECOVERY ? (
             <div style={{ minWidth: "300px" }}>
               <Button
                 onClick={() => handleCancelRecovery()}
                 endIcon={<img src={cancelRecoveryIcon} />}
+                variant="outlined"
                 loading={isCancelRecoveryLoading}
               >
                 Cancel Recovery
               </Button>
             </div>
           ) : null}
+          <div style={{ minWidth: "300px" }}>{getButtonComponent()}</div>
         </div>
       </div>
     </Box>

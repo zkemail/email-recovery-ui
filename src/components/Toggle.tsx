@@ -5,16 +5,19 @@ import * as React from "react";
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(() => ({
   "&.MuiToggleButtonGroup-root": {
-    backgroundColor: "#F6F6F6",
-    borderRadius: "20px",
+    backgroundColor: "#F3F3F3",
+    borderRadius: "12px",
     padding: "4px",
   },
   "& .MuiToggleButton-root": {
     border: "none",
-    color: "#757575",
-    borderRadius: "20px",
+    color: "#000",
+    fontSize: '16px',
+    fontWeight: "semibold",
+    borderRadius: "12px",
     "&.Mui-selected": {
       backgroundColor: "white",
+      border: "2px solid #EBEBEB",
       color: "black",
     },
     "&:focus": {
@@ -29,7 +32,7 @@ export default function CustomizedToggleButton({ onFlowChange }) {
 
   const handleAlignment = (
     event: React.MouseEvent<HTMLElement>,
-    newAlignment: string,
+    newAlignment: string
   ) => {
     if (newAlignment !== null) {
       setAlignment(newAlignment);
@@ -47,7 +50,6 @@ export default function CustomizedToggleButton({ onFlowChange }) {
         marginY: "25px",
         paddingX: "30px",
         height: "40px",
-        width: "250px",
         justifyContent: "center",
         gap: "10px",
       }}

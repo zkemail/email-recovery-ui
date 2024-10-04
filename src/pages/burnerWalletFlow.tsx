@@ -62,7 +62,6 @@ const BurnerWalletFlow = () => {
     };
   }, []);
 
-
   const renderBody = () => {
     switch (stepsContext?.step) {
       // Step to create a new safe and install the universal email recovery module. This step requires guardian emails before the recovery module can be installed
@@ -131,11 +130,13 @@ const BurnerWalletFlow = () => {
           </DialogContent>
           <DialogActions>
             <Button
+              variant="outlined"
               onClick={() => setIsResetBurnerWalletConfirmationModalOpen(false)}
             >
               Cancel
             </Button>
             <Button
+              variant="contained"
               onClick={async () => {
                 setIsResetBurnerWalletConfirmationModalOpen(false); // Remove these values from localStorage to prevent conflicts with the safe wallet flow.
                 await localStorage.removeItem("accountCode");

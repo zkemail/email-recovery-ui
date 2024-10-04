@@ -449,7 +449,7 @@ const GuardianSetup = () => {
               disabled={!guardianEmail || loading}
               loading={loading}
               onClick={configureRecoveryAndRequestGuardian}
-              filled={true}
+              variant={"contained"}
             >
               Configure Recovery & Request Guardian
             </Button>
@@ -463,7 +463,7 @@ const GuardianSetup = () => {
                 // await new Promise((resolve) => setTimeout(resolve, 10000)); // 5000 ms = 5 seconds
                 configureRecoveryAndRequestGuardian();
               }}
-              filled={true}
+              variant={"contained"}
             >
               Create burner wallet
             </Button>

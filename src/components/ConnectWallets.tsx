@@ -32,7 +32,7 @@ const ConnectWallets = () => {
             return (
               <Box width="200px" margin="auto">
                 <Button
-                  filled={true}
+                  variant="contained"
                   onClick={show}
                   endIcon={<AccountBalanceWalletOutlinedIcon />}
                 >

@@ -5,19 +5,17 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#000000",
+      main: "#FD3E9A",
     },
     secondary: {
       main: "#8E8E8E",
-    },
-    accent: {
-      main: "#FF4081", // Choose your accent color here
     },
   },
   typography: {
     fontFamily: "Fustat",
     h1: {
       fontFamily: "Newsreader",
+      color: "#000000",
       fontSize: "3rem",
       fontWeight: "300",
     },

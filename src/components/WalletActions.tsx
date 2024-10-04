@@ -21,6 +21,7 @@ const WalletActions = () => {
         >
           <Grid item>
             <Button
+              variant="outlined"
               onClick={() => stepsContext?.setStep(STEPS.CONFIGURE_GUARDIANS)}
               disabled
             >
@@ -29,6 +30,7 @@ const WalletActions = () => {
           </Grid>
           <Grid>
             <Button
+              variant="outlined"
               onClick={() => stepsContext?.setStep(STEPS.REQUESTED_RECOVERIES)}
             >
               Trigger Recovery

@@ -72,7 +72,7 @@ const EnableSafeModule = () => {
         {!isModuleEnabled ? (
           <Box sx={{ marginX: "auto", width: "18.75rem" }}>
             <Button
-              filled={true}
+              variant={"contained"}
               disabled={isEnableModalLoading}
               loading={isEnableModalLoading}
               onClick={enableEmailRecoveryModule}
