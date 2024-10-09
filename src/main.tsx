@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       toastOptions={{
         duration: 5000,
         style: {
-          fontSize: "12px",
+          fontSize: "16px",
         },
       }}
     />

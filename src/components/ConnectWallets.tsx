@@ -6,6 +6,7 @@ import { useAccount } from "wagmi";
 import { Button } from "./Button";
 import { StepsContext } from "../App";
 import { STEPS } from "../constants";
+import toast from "react-hot-toast";
 
 const ConnectWallets = () => {
   const { address } = useAccount();
@@ -33,7 +34,12 @@ const ConnectWallets = () => {
               <Box width="200px" margin="auto">
                 <Button
                   variant="contained"
-                  onClick={show}
+                  onClick={() => {
+                    toast("Please select wallet connect");
+                    setTimeout(() => {
+                      show();
+                    }, 200);
+                  }}
                   endIcon={<AccountBalanceWalletOutlinedIcon />}
                 >
                   Connect Safe
