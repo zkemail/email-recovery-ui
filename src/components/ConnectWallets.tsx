@@ -35,7 +35,7 @@ const ConnectWallets = () => {
                 <Button
                   variant="contained"
                   onClick={() => {
-                    toast("Please select wallet connect");
+                    toast("Please use WalletConnect to connect to the Safe account");
                     setTimeout(() => {
                       show();
                     }, 200);
