@@ -10,9 +10,11 @@ import { safeAbi } from "../abi/Safe";
 import { StepsContext } from "../App";
 import infoIcon from "../assets/infoIcon.svg";
 import { STEPS } from "../constants";
+import CustomConnectButton from "./CustomConnectKitButton";
 
 const EnableSafeModule = () => {
   const { address } = useAccount();
+  console.log(address)
   const { writeContractAsync } = useWriteContract();
   const stepsContext = useContext(StepsContext);
   const [isEnableModalLoading, setIsEnableModuleLoading] = useState(false);
@@ -44,6 +46,8 @@ const EnableSafeModule = () => {
       },
     });
 
+    console.log(safeEmailRecoveryModule, safeAbi, address)
+
     // This section enables the recovery module in the safe wallet.
     await writeContractAsync({
       abi: safeAbi,
@@ -68,7 +72,7 @@ const EnableSafeModule = () => {
         recoverable by guardian.
       </Typography>
       <div style={{ display: "flex", gap: "2rem", flexDirection: "column" }}>
-        <ConnectedWalletCard address={address} />
+      <CustomConnectButton />
         {!isModuleEnabled ? (
           <Box sx={{ marginX: "auto", width: "18.75rem" }}>
             <Button

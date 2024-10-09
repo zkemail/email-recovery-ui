@@ -35,6 +35,7 @@ import { config } from "../providers/config";
 import { relayer } from "../services/relayer";
 import { genAccountCode, templateIdx } from "../utils/email";
 import { TIME_UNITS } from "../utils/recoveryDataUtils";
+import CustomConnectButton from "./CustomConnectKitButton";
 
 //logic for valid email address check for input
 const isValidEmail = (email: string) => {
@@ -335,7 +336,7 @@ const GuardianSetup = () => {
             alignItems={"center"}
           >
             <Typography variant="body1">Connected Wallet:</Typography>
-            <ConnectKitButton />
+            <CustomConnectButton />
           </Grid>
         </Grid>
         <Grid item sx={{ borderRight: { md: "1px solid #EBEBEB" } }} />

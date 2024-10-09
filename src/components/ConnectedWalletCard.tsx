@@ -1,8 +1,17 @@
 import CircleIcon from "@mui/icons-material/Circle";
 import { Box, Grid, Typography } from "@mui/material";
 import { ConnectKitButton } from "connectkit";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { walletConnect } from "wagmi/connectors";
+import { Button } from "./Button";
+import CustomConnectButton from "./CustomConnectKitButton";
 
 const ConnectedWalletCard = ({ address }: { address?: string }) => {
+  const { connect } = useConnect({});
+
+  const { disconnect } = useDisconnect();
+  const { isConnected } = useAccount();
+
   return (
     <Box
       borderRadius={3}
@@ -26,7 +35,25 @@ const ConnectedWalletCard = ({ address }: { address?: string }) => {
           </Grid>
         </Grid>
         <Grid item>
-          <ConnectKitButton />
+          <CustomConnectButton />
+          {isConnected ? (
+            <div>
+              <p>Connected Wallet: {address}</p>
+              <button onClick={() => disconnect()}>Disconnect</button>
+            </div>
+          ) : (
+            <Button
+              onClick={() =>
+                connect({
+                  connector: walletConnect({
+                    projectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID,
+                  }),
+                })
+              }
+            >
+              Connect Safe
+            </Button>
+          )}
         </Grid>
       </Grid>
     </Box>

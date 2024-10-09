@@ -2,14 +2,18 @@ import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalance
 import { Box, Typography } from "@mui/material";
 import { ConnectKitButton } from "connectkit";
 import { useContext } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { Button } from "./Button";
 import { StepsContext } from "../App";
 import { STEPS } from "../constants";
+import { walletConnect } from "wagmi/connectors";
+import CustomConnectButton from "./CustomConnectKitButton";
 
 const ConnectWallets = () => {
-  const { address } = useAccount();
+  // const { address } = useAccount();
   const stepsContext = useContext(StepsContext);
+  const { address, isConnected } = useAccount();
+  console.log(address, isConnected)
 
   if (address) {
     // If we have the address, we can assume the user has successfully connected the safe wallet. Proceeding to the next step.
@@ -27,8 +31,9 @@ const ConnectWallets = () => {
           guardian.
         </Typography>
 
-        <ConnectKitButton.Custom>
-          {({ show }) => {
+        {/* <ConnectKitButton.Custom>
+          {({ show, chain, unsupported }) => {
+            console.log(show, chain, unsupported);
             return (
               <Box width="200px" margin="auto">
                 <Button
@@ -41,7 +46,22 @@ const ConnectWallets = () => {
               </Box>
             );
           }}
-        </ConnectKitButton.Custom>
+        </ConnectKitButton.Custom> */}
+            <div>
+      <CustomConnectButton />
+    </div>
+
+        {/* <Button
+          onClick={() =>
+            connect({
+              connector: walletConnect({
+                projectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID,
+              }),
+            })
+          }
+        >
+          Connect Safe
+        </Button> */}
       </Box>
     </div>
   );
