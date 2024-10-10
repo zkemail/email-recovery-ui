@@ -346,11 +346,46 @@ const GuardianSetup = () => {
         <Grid
           item
           container
-          md={5.5}
+          md={9}
           justifyContent={"space-around"}
           xs={12}
-          sx={{ gap: { xs: 3, sm: 0 } }}
+          sx={{ gap: 3 }}
         >
+          <Grid item container>
+            <Grid item container xs alignItems={"center"}>
+              <Typography variant="body1">Guardian's Email</Typography>
+              <Tooltip
+                placement="top"
+                title={
+                  "Enter the email address of the guardian you want to set up for account recovery."
+                }
+                arrow
+              >
+                <IconButton
+                  size="small"
+                  aria-label="info"
+                  sx={{ marginLeft: 1 }}
+                >
+                  <InfoOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Grid>
+            <Grid item container xs={6} gap={2}>
+              <TextField
+                type="email"
+                size="small"
+                fullWidth
+                value={guardianEmail}
+                error={emailError}
+                helperText={
+                  emailError ? "Please enter the correct email address" : null
+                }
+                placeholder="guardian@prove.email"
+                onChange={(e) => setGuardianEmail(e.target.value)}
+                title="Guardian's Email"
+              />
+            </Grid>
+          </Grid>
           <Grid
             item
             container
@@ -407,38 +442,22 @@ const GuardianSetup = () => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item sx={{ borderRight: { md: "1px solid #EBEBEB" } }} />
 
-        <Grid item md={5.5} xs={12} sx={{ textAlign: "left" }}>
-          <Box>
-            <Typography
-              variant="h5"
-              sx={{ paddingBottom: "20px", fontWeight: 700 }}
-            >
-              Guardian Details:
-            </Typography>
-            <Box display="flex" flexDirection="column" gap="1rem">
-              {[1].map((index) => (
-                <InputField
-                  placeholderText="guardian@prove.email"
-                  key={index}
-                  type="email"
-                  tooltipTitle="Enter the email address of the guardian you want to set up for account recovery"
-                  value={guardianEmail}
-                  onChange={(e) => setGuardianEmail(e.target.value)}
-                  label={`Guardian's Email`}
-                  locked={false}
-                  {...(guardianEmail && {
-                    status: emailError ? "error" : "okay",
-                    statusNote: emailError
-                      ? "Please enter the correct email address"
-                      : "Okay",
-                  })}
-                />
-              ))}
-            </Box>
-          </Box>
-        </Grid>
+        {/* <InputField
+              placeholderText="guardian@prove.email"
+              type="email"
+              tooltipTitle="Enter the email address of the guardian you want to set up for account recovery"
+              value={guardianEmail}
+              onChange={(e) => setGuardianEmail(e.target.value)}
+              label={`Guardian's Email`}
+              locked={false}
+              {...(guardianEmail && {
+                status: emailError ? "error" : "okay",
+                statusNote: emailError
+                  ? "Please enter the correct email address"
+                  : "Okay",
+              })}
+            /> */}
 
         <Grid item sx={{ marginX: "auto" }}>
           <Box
