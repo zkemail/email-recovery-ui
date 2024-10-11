@@ -36,6 +36,12 @@ const LandingPage = () => {
         return navigate("/safe-wallet");
       case "BURNER_WALLET":
         toast("Please disconnect previously created wallet");
+        if (!!window?.ethereum?.isMetaMask === false) {
+          toast.error(
+            "It appears that the Metamask extension is not installed. To ensure the website functions correctly, please install Metamask before proceeding.",
+            { duration: 5000000 }
+          );
+        }
         return navigate("/burner-wallet");
       case "WALLET_RECOVERY":
         return navigate("/wallet-recovery");

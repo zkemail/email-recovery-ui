@@ -17,7 +17,7 @@ export const StepsContext = createContext(null);
 
 function App() {
   const [step, setStep] = useState(STEPS.STEP_SELECTION);
-
+  
   return (
     <AppContextProvider>
       <ThemeProvider theme={theme}>
@@ -30,7 +30,8 @@ function App() {
           <Web3Provider>
             <BrowserRouter>
               <NavBar />
-              <Grid container
+              <Grid
+                container
                 style={{ padding: 16, height: "calc(100vh - 70px - 32px)" }}
                 justifyContent={"center"}
                 alignItems={"center"}
