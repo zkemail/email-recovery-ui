@@ -216,10 +216,8 @@ const ConfigureGuardians = () => {
     <div className="connect-wallets-container">
       <Box
         sx={{
-          marginX: "auto",
-          marginTop: { xs: "2rem", sm: "9.375rem" },
-          marginBottom: "6.25rem",
-          maxWidth: { xs: "100%", md: "80%", lg: "50%" },
+          minHeight: "40rem",
+          minWidth: "50rem",
         }}
       >
         <Grid item xs={12} textAlign={"start"}>

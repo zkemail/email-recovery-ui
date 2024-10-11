@@ -275,14 +275,7 @@ const RequestedRecoveries = () => {
   }
 
   return (
-    <Box
-      sx={{
-        marginX: "auto",
-        marginTop: { xs: "2rem", sm: "9.375rem" },
-        marginBottom: "6.25rem",
-        maxWidth: { xs: "100%", md: "80%", lg: "50%" },
-      }}
-    >
+    <Box>
       <Grid item xs={12} textAlign={"start"}>
         <Button
           variant="text"

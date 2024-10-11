@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@mui/material";
+import { Grid, ThemeProvider } from "@mui/material";
 import { createContext, useState } from "react";
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -30,7 +30,11 @@ function App() {
           <Web3Provider>
             <BrowserRouter>
               <NavBar />
-              <div style={{ padding: 16 }}>
+              <Grid container
+                style={{ padding: 16, height: "calc(100vh - 70px - 32px)" }}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
                 <Routes>
                   <Route path="/" element={<LandingPage />} />
                   <Route path="/safe-wallet" element={<SafeWalletFlow />} />
@@ -41,7 +45,7 @@ function App() {
                   />
                   <Route path="*" element={<ErrorPage />} />
                 </Routes>
-              </div>
+              </Grid>
             </BrowserRouter>
           </Web3Provider>
         </StepsContext.Provider>

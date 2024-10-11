@@ -45,8 +45,8 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="bg-white">
-      <Grid sx={{ paddingTop: { xs: "5rem", md: "7.5rem" } }}>
+    <div className="bg-white h-full">
+      <Grid sx={{ marginBottom: "auto" }}>
         {/* <Link to="https://prove.email/" target="_blank">
           <Box
             display="flex"
@@ -76,9 +76,7 @@ const LandingPage = () => {
             </Typography>
           </Box>
         </Link> */}
-        <Typography variant="h1">
-          Email Recovery Demo
-        </Typography>
+        <Typography variant="h1">Email Recovery Demo</Typography>
         <Typography
           sx={{
             color: theme.palette.secondary.main,

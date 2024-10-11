@@ -1,6 +1,6 @@
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { Box, Grid, Typography } from "@mui/material";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { encodeAbiParameters, encodeFunctionData } from "viem";
@@ -21,6 +21,8 @@ import { useAppContext } from "../context/AppContextHook";
 import { config } from "../providers/config";
 import { relayer } from "../services/relayer";
 import { templateIdx } from "../utils/email";
+import { StepsContext } from "../App";
+import { STEPS } from "../constants";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -35,6 +37,7 @@ const RequestedRecoveries = () => {
   const { writeContractAsync } = useWriteContract();
   const { guardianEmail } = useAppContext();
   const navigate = useNavigate();
+  const stepsContext = useContext(StepsContext);
 
   const [newOwner, setNewOwner] = useState<string>();
   const safeWalletAddress = address;
@@ -267,18 +270,14 @@ const RequestedRecoveries = () => {
   }
 
   return (
-    <Box
-      sx={{
-        marginX: "auto",
-        marginTop: { xs: "2rem", sm: "9.375rem" },
-        marginBottom: "6.25rem",
-        maxWidth: { xs: "100%", md: "80%", lg: "50%" },
-      }}
-    >
+    <Box>
       <Grid item xs={12} textAlign={"start"}>
         <Button
           variant="text"
           onClick={() => {
+            if (window.location.pathname === "/safe-wallet") {
+              return stepsContext?.setStep(STEPS.WALLET_ACTIONS);
+            }
             navigate("/");
           }}
           sx={{ textAlign: "left", cursor: "pointer", width: "auto" }}

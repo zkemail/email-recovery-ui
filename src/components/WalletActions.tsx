@@ -9,7 +9,7 @@ const WalletActions = () => {
 
   return (
     <div className="connect-wallets-container">
-      <Box sx={{ marginX: "auto", marginTop: "180px" }}>
+      <Box>
         <Typography variant="h2" sx={{ paddingBottom: "20px" }}>
           Wallet Actions
         </Typography>

@@ -58,7 +58,7 @@ const EnableSafeModule = () => {
   }
 
   return (
-    <Box sx={{ marginX: "auto", marginTop: { xs: "2rem", sm: "9.375rem" } }}>
+    <Box>
       <Typography variant="h2" sx={{ paddingBottom: "10px" }}>
         Set Up Wallet Recovery
       </Typography>
