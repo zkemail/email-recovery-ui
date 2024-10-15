@@ -1,15 +1,17 @@
-import { useNavigate } from "react-router-dom";
-import { useTheme, Grid, Typography, Box } from "@mui/material";
-import "../App.css";
-import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import SvgWrapper from "../components/SvgIconWrapper";
-import gnosisSafeLogo from "../assets/gnosis-safe-logo.svg";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
-import Toggle from "../components/Toggle";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import { Grid, Typography, useTheme } from "@mui/material";
+import { useContext, useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import "../App.css";
+import { StepsContext } from "../App";
+import gnosisSafeLogo from "../assets/gnosis-safe-logo.svg";
 import FlowInfoCard from "../components/FlowsInfoCard";
+import SvgWrapper from "../components/SvgIconWrapper";
+import Toggle from "../components/Toggle";
+import { STEPS } from "../constants";
 
 type actionType = "SAFE_WALLET" | "BURNER_WALLET" | "WALLET_RECOVERY";
 type FlowType = "setup" | "recover";
@@ -17,6 +19,7 @@ type FlowType = "setup" | "recover";
 const LandingPage = () => {
   const theme = useTheme();
   const [flow, setFlow] = useState<FlowType>("setup");
+  const stepsContext = useContext(StepsContext);
 
   const navigate = useNavigate();
 
@@ -25,10 +28,20 @@ const LandingPage = () => {
   };
 
   const handleClick = async (action: actionType) => {
+    await stepsContext?.setStep(STEPS.CONNECT_WALLETS);
+
     switch (action) {
       case "SAFE_WALLET":
+        toast("Please disconnect previously created wallet");
         return navigate("/safe-wallet");
       case "BURNER_WALLET":
+        toast("Please disconnect previously created wallet");
+        if (!!window?.ethereum?.isMetaMask === false) {
+          toast.error(
+            "It appears that the Metamask extension is not installed. To ensure the website functions correctly, please install Metamask before proceeding.",
+            { duration: 5000000 }
+          );
+        }
         return navigate("/burner-wallet");
       case "WALLET_RECOVERY":
         return navigate("/wallet-recovery");
@@ -38,9 +51,9 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="bg-white">
-      <Grid sx={{ paddingTop: { xs: "5rem", md: "7.5rem" } }}>
-        <Link to="https://prove.email/" target="_blank">
+    <div className="bg-white h-full">
+      <Grid sx={{ marginBottom: "auto" }}>
+        {/* <Link to="https://prove.email/" target="_blank">
           <Box
             display="flex"
             alignItems="center"
@@ -68,10 +81,8 @@ const LandingPage = () => {
               ZKEmail Tech
             </Typography>
           </Box>
-        </Link>
-        <Typography variant="h1" sx={{ color: theme.palette.primary.main }}>
-          Email Recovery Demo
-        </Typography>
+        </Link> */}
+        <Typography variant="h1">Email Recovery Demo</Typography>
         <Typography
           sx={{
             color: theme.palette.secondary.main,
@@ -118,9 +129,8 @@ const LandingPage = () => {
                 />
               }
               buttonText={"Burner Safe Flow (v1.4.1)"}
-              isButtonDisabled={true}
               handleButtonClick={() => handleClick("BURNER_WALLET")}
-              title={" Test Wallet"}
+              title={"Test Wallet"}
               description={"Connect to see the test wallet flow"}
               infoIconTitle={"Test Wallet Recovery Setup"}
               infoIconDescription={
