@@ -38,7 +38,7 @@ const EnableSafeModule = () => {
     }
 
     toast("Please check Safe Website to complete transaction", {
-      icon: <img src={infoIcon} />,
+      icon: <img src={infoIcon} alt="info-icon" />,
       style: {
         background: "white",
       },

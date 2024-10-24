@@ -3,7 +3,12 @@ import { Box, Grid, Typography } from "@mui/material";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { encodeAbiParameters, encodeFunctionData } from "viem";
+import {
+  encodeAbiParameters,
+  encodeFunctionData,
+  encodePacked,
+  keccak256,
+} from "viem";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { readContract } from "wagmi/actions";
 import { Button } from "./Button";
@@ -13,16 +18,16 @@ import Loader from "./Loader";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import { safeAbi } from "../abi/Safe";
 import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
+import { StepsContext } from "../App";
 import cancelRecoveryIcon from "../assets/cancelRecoveryIcon.svg";
 import completeRecoveryIcon from "../assets/completeRecoveryIcon.svg";
 import infoIcon from "../assets/infoIcon.svg";
+import { STEPS } from "../constants";
 import { useAppContext } from "../context/AppContextHook";
 
 import { config } from "../providers/config";
 import { relayer } from "../services/relayer";
 import { templateIdx } from "../utils/email";
-import { StepsContext } from "../App";
-import { STEPS } from "../constants";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -132,6 +137,25 @@ const RequestedRecoveries = () => {
       args: [],
     });
 
+    const accountHash = keccak256(encodePacked(["address"], [address]));
+
+    const swapOwnerCallData = encodeFunctionData({
+      abi: safeAbi,
+      functionName: "swapOwner",
+      args: [
+        "0x0000000000000000000000000000000000000001", // If there is no previous owner of the safe, then the default value will be this
+        safeOwnersData[0],
+        newOwner,
+      ],
+    });
+
+    const recoveryCalldata = encodeAbiParameters(
+      [{ type: "address" }, { type: "bytes" }],
+      [safeWalletAddress, swapOwnerCallData]
+    );
+
+    const recoveryCallDatahash = keccak256(recoveryCalldata)
+
     try {
       // requestId
       await relayer.recoveryRequest(
@@ -141,9 +165,8 @@ const RequestedRecoveries = () => {
         command[0]
           .join()
           ?.replaceAll(",", " ")
-          .replace("{ethAddr}", safeWalletAddress)
-          .replace("{ethAddr}", safeOwnersData[0])
-          .replace("{ethAddr}", newOwner)
+          .replace("{string}", accountHash)
+          .replace("{string}", recoveryCallDatahash)
       );
 
       intervalRef.current = setInterval(() => {

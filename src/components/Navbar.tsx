@@ -134,7 +134,7 @@ const MobileNav = ({
           target="_blank"
           sx={{
             marginRight: theme.spacing(2),
-            color: 'white',
+            color: "white",
             textTransform: "none",
           }}
         >
@@ -202,7 +202,11 @@ const NavBar: React.FC = () => {
               }}
             >
               <Link to="/">
-                <img style={{ verticalAlign: "middle" }} src={zkEmailLogo} />
+                <img
+                  style={{ verticalAlign: "middle" }}
+                  src={zkEmailLogo}
+                  alt="zkemail-logo"
+                />
               </Link>
             </Box>
           </Grid>
@@ -271,7 +275,7 @@ const NavBar: React.FC = () => {
                 sx={{
                   display: { xs: "none", lg: "block" },
                   textTransform: "none",
-                  lineHeight: '14px'
+                  lineHeight: "14px",
                 }}
               >
                 Learn More

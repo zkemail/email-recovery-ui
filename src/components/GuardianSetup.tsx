@@ -19,12 +19,13 @@ import {
   useState,
 } from "react";
 import toast from "react-hot-toast";
+import { encodePacked, keccak256 } from "viem";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { readContract } from "wagmi/actions";
 import { Button } from "./Button";
-import InputField from "./InputField";
 import Loader from "./Loader";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
+import { abi as accountHidingRecoveryCommandHandlerAbi } from "../abi/AccountHidingRecoveryCommandHandler.json";
 import { safeAbi } from "../abi/Safe";
 import { safeEmailRecoveryModuleAbi } from "../abi/SafeEmailRecoveryModule";
 import { StepsContext } from "../App";
@@ -145,7 +146,7 @@ const GuardianSetup = () => {
       toast(
         "Please check Safe Website to complete transaction and check your email later",
         {
-          icon: <img src={infoIcon} />,
+          icon: <img src={infoIcon} alt="info-icon" />,
           style: {
             background: "white",
           },
@@ -184,6 +185,15 @@ const GuardianSetup = () => {
         ],
       });
 
+      await writeContractAsync({
+        abi: accountHidingRecoveryCommandHandlerAbi,
+        address: "0x11AAEEd0629124A0075A0074Ff4AB54286F72D3d" as `0x${string}`,
+        functionName: "storeAccountHash",
+        args: [address],
+      });
+
+      const accountHash = keccak256(encodePacked(["address"], [address]));
+
       // This function fetches the command template for the acceptanceRequest API call. The command template will be in the following format: [['Accept', "guardian", "request", "for", "{ethAddr}"]]
       const command = await readContract(config, {
         abi: safeEmailRecoveryModuleAbi,
@@ -202,7 +212,7 @@ const GuardianSetup = () => {
           command[0]
             .join()
             ?.replaceAll(",", " ")
-            .replaceAll("{ethAddr}", address)
+            .replaceAll("{string}", accountHash)
         );
       } catch (error) {
         // retry mechanism as this API call fails for the first time
@@ -216,7 +226,7 @@ const GuardianSetup = () => {
           command[0]
             .join()
             ?.replaceAll(",", " ")
-            .replaceAll("{ethAddr}", address)
+            .replaceAll("{string}", accountHash)
         );
       }
 
