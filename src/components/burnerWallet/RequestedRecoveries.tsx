@@ -12,7 +12,7 @@ import completeRecoveryIcon from "../../assets/completeRecoveryIcon.svg";
 import infoIcon from "../../assets/infoIcon.svg";
 import { STEPS } from "../../constants";
 import { useAppContext } from "../../context/AppContextHook";
-
+import { encodeAbiParameters, encodeFunctionData, keccak256 } from "viem"
 import { useBurnerAccount } from "../../context/BurnerAccountContext";
 import { config } from "../../providers/config";
 import { relayer } from "../../services/relayer";
@@ -134,6 +134,22 @@ const RequestedRecoveries = () => {
     })) as [][];
 
     try {
+      const prevOwner = getPreviousOwnerInLinkedList(
+        safeOwnersData[0],
+        safeOwnersData
+      );
+
+      const recoveryCallData = getRecoveryCallData(
+        prevOwner,
+        safeOwnersData[0],
+        newOwner!
+      );
+      const recoveryData = getRecoveryData(safeWalletAddress, recoveryCallData) as `0x${string}`;
+      const recoveryDataHash = keccak256(recoveryData);
+      // keccak256(
+      //   new TextEncoder().encode("swapOwner(address,address,address)")
+      // ).slice(0, 10);
+      // const recoveryData =
       // requestId
       await relayer.recoveryRequest(
         universalEmailRecoveryModule as string,
@@ -143,8 +159,7 @@ const RequestedRecoveries = () => {
           .join()
           ?.replaceAll(",", " ")
           .replace("{ethAddr}", safeWalletAddress)
-          .replace("{ethAddr}", safeOwnersData[0])
-          .replace("{ethAddr}", newOwner)
+          .replace("{string}", recoveryDataHash)
       );
 
       intervalRef.current = setInterval(() => {

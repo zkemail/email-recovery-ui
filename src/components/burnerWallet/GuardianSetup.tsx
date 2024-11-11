@@ -26,7 +26,6 @@ import {
   erc7569LaunchpadAddress,
   safe4337ModuleAddress,
   universalEmailRecoveryModule,
-  validatorsAddress,
 } from "../../../contracts.base-sepolia.json";
 import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
 import { StepsContext } from "../../App";
@@ -140,10 +139,10 @@ const GuardianSetup = () => {
         safe4337ModuleAddress: safe4337ModuleAddress as `0x${string}`,
         erc7569LaunchpadAddress: erc7569LaunchpadAddress as `0x${string}`,
         validators: [
-          {
-            address: validatorsAddress as `0x${string}`,
-            context: "0x",
-          },
+          // {
+          //   address: validatorsAddress as `0x${string}`,
+          //   context: "0x",
+          // },
         ],
       });
 
@@ -423,7 +422,7 @@ const GuardianSetup = () => {
                   )
                 }
                 title="Recovery Delay"
-                // helperText="This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians."
+              // helperText="This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians."
               />
 
               <Select
