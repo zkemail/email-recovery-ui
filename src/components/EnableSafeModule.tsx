@@ -1,15 +1,15 @@
-import { Button } from "./Button";
+import { Box, Typography } from "@mui/material";
+import { useCallback, useContext, useState } from "react";
+import toast from "react-hot-toast";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { Button } from "./Button";
+import ConnectedWalletCard from "./ConnectedWalletCard";
+import Loader from "./Loader";
 import { safeEmailRecoveryModule } from "../../contracts.base-sepolia.json";
 import { safeAbi } from "../abi/Safe";
-import { useCallback, useContext, useState } from "react";
 import { StepsContext } from "../App";
-import { STEPS } from "../constants";
-import Loader from "./Loader";
 import infoIcon from "../assets/infoIcon.svg";
-import toast from "react-hot-toast";
-import { Box, Typography } from "@mui/material";
-import ConnectedWalletCard from "./ConnectedWalletCard";
+import { STEPS } from "../constants";
 
 const EnableSafeModule = () => {
   const { address } = useAccount();
@@ -17,6 +17,7 @@ const EnableSafeModule = () => {
   const stepsContext = useContext(StepsContext);
   const [isEnableModalLoading, setIsEnableModuleLoading] = useState(false);
 
+  // Check if the module is already installed in the wallet.
   const { data: isModuleEnabled, isLoading: isCheckModuleEnabledLoading } =
     useReadContract({
       address,
@@ -37,12 +38,13 @@ const EnableSafeModule = () => {
     }
 
     toast("Please check Safe Website to complete transaction", {
-      icon: <img src={infoIcon} />,
+      icon: <img src={infoIcon} alt="info-icon" />,
       style: {
         background: "white",
       },
     });
 
+    // This section enables the recovery module in the safe wallet.
     await writeContractAsync({
       abi: safeAbi,
       address,
@@ -56,7 +58,7 @@ const EnableSafeModule = () => {
   }
 
   return (
-    <Box sx={{ marginX: "auto", marginTop: { xs: "2rem", sm: "9.375rem" } }}>
+    <Box>
       <Typography variant="h2" sx={{ paddingBottom: "10px" }}>
         Set Up Wallet Recovery
       </Typography>
@@ -70,7 +72,7 @@ const EnableSafeModule = () => {
         {!isModuleEnabled ? (
           <Box sx={{ marginX: "auto", width: "18.75rem" }}>
             <Button
-              filled={true}
+              variant={"contained"}
               disabled={isEnableModalLoading}
               loading={isEnableModalLoading}
               onClick={enableEmailRecoveryModule}
