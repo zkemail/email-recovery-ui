@@ -131,7 +131,9 @@ const LandingPage = () => {
               buttonText={"Burner Safe Flow (v1.4.1)"}
               handleButtonClick={() => handleClick("BURNER_WALLET")}
               title={"Test Wallet"}
-              description={"Connect to see the test wallet flow"}
+              description={
+                "A burner wallet is a temporary crypto wallet for quick, low-value transactions, ideal for short-term use, events, or testing, with minimal security."
+              }
               infoIconTitle={"Test Wallet Recovery Setup"}
               infoIconDescription={
                 "Test out our setup and recovery flow with a test wallet."

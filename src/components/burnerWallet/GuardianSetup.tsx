@@ -63,7 +63,7 @@ const GuardianSetup = () => {
   const [loading, setLoading] = useState(false);
 
   // 0 = 2 week default delay, don't do for demo
-  const [recoveryDelay, setRecoveryDelay] = useState(1);
+  const [recoveryDelay, setRecoveryDelay] = useState(0);
   const [isWalletPresent, setIsWalletPresent] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [recoveryDelayUnit, setRecoveryDelayUnit] = useState(
@@ -386,78 +386,7 @@ const GuardianSetup = () => {
               />
             </Grid>
           </Grid>
-          <Grid
-            item
-            container
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems="center"
-          >
-            <Grid item container xs alignItems={"center"}>
-              <Typography variant="body1">Timelock</Typography>
-              <Tooltip
-                placement="top"
-                title={
-                  "This is the duration during which guardians cannot initiate recovery. Recovery can only be triggered once this period has ended."
-                }
-                arrow
-              >
-                <IconButton
-                  size="small"
-                  aria-label="info"
-                  sx={{ marginLeft: 1 }}
-                >
-                  <InfoOutlinedIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </Grid>
-            <Grid item container xs={"auto"} gap={2}>
-              <TextField
-                type="number"
-                size="small"
-                sx={{ maxWidth: "6rem" }}
-                value={recoveryDelay}
-                onChange={(e) =>
-                  setRecoveryDelay(
-                    parseInt((e.target as HTMLInputElement).value)
-                  )
-                }
-                title="Recovery Delay"
-                // helperText="This is the delay you the actual wallet owner has to cancel recovery after recovery has been initiated, helpful for preventing malicious behavior from guardians."
-              />
-
-              <Select
-                value={recoveryDelayUnit}
-                size="small"
-                onChange={(e) => setRecoveryDelayUnit(e.target.value)}
-              >
-                {Object.keys(TIME_UNITS).map((timeUnit) => {
-                  return (
-                    <MenuItem value={TIME_UNITS[timeUnit].value}>
-                      {TIME_UNITS[timeUnit].label}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </Grid>
-          </Grid>
         </Grid>
-
-        {/* <InputField
-              placeholderText="guardian@prove.email"
-              type="email"
-              tooltipTitle="Enter the email address of the guardian you want to set up for account recovery"
-              value={guardianEmail}
-              onChange={(e) => setGuardianEmail(e.target.value)}
-              label={`Guardian's Email`}
-              locked={false}
-              {...(guardianEmail && {
-                status: emailError ? "error" : "okay",
-                statusNote: emailError
-                  ? "Please enter the correct email address"
-                  : "Okay",
-              })}
-            /> */}
 
         <Grid item sx={{ marginX: "auto" }}>
           <Box

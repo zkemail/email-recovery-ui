@@ -77,18 +77,16 @@ const FlowInfoCard = ({
       </Grid>
       <Grid item>
         <Box margin="auto">
-          <Tooltip title="Under Audit" placement="top">
-            <span>
-              <Button
-                variant="outlined"
-                onClick={handleButtonClick}
-                disabled={isButtonDisabled ?? false}
-                style={{ padding: "0.5rem 2rem" }}
-              >
-                {buttonText}
-              </Button>
-            </span>
-          </Tooltip>
+          <span>
+            <Button
+              variant="outlined"
+              onClick={handleButtonClick}
+              disabled={isButtonDisabled ?? false}
+              style={{ padding: "0.5rem 2rem" }}
+            >
+              {buttonText}
+            </Button>
+          </span>
         </Box>
       </Grid>
     </Grid>
