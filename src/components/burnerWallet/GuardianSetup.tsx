@@ -14,8 +14,13 @@ import toast from "react-hot-toast";
 import { createWalletClient, custom, WalletClient } from "viem";
 import { baseSepolia } from "viem/chains";
 import { readContract } from "wagmi/actions";
-import { getSafeAccount, publicClient } from "./client";
+import {
+  createOwnerFromMetaMask,
+  getSafeAccount,
+  publicClient,
+} from "./client";
 import { getSmartAccountClient } from "./client";
+import config from "./config";
 import { run } from "./deploy";
 import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
 import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
@@ -24,27 +29,19 @@ import infoIcon from "../../assets/infoIcon.svg";
 import { STEPS } from "../../constants";
 import { useAppContext } from "../../context/AppContextHook";
 import { useBurnerAccount } from "../../context/BurnerAccountContext";
-// import { config } from "../../providers/config";
+import { config as connectKitConfig } from "../../providers/config";
 import { relayer } from "../../services/relayer";
 import { genAccountCode, templateIdx } from "../../utils/email";
 import { TIME_UNITS } from "../../utils/recoveryDataUtils";
 import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
 import { Button } from "../Button";
 import Loader from "../Loader";
-import { privateKeyToAccount } from "viem/accounts";
-import config from "./config";
 
 //logic for valid email address check for input
 const isValidEmail = (email: string) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(String(email).toLowerCase());
 };
-
-const owner = privateKeyToAccount(
-  "0x9ef1a6de7dd5bfede20283c1d41b3b8589915c9b47ce9eea381ba53cb82409a4"
-);
-
-console.log(owner, "owner")   
 
 const GuardianSetup = () => {
   const address = useGetSafeAccountAddress();
@@ -81,27 +78,27 @@ const GuardianSetup = () => {
 
   const checkIfRecoveryIsConfigured = useCallback(async () => {
     let burnerWalletAddress;
-    const burnerWalletConfig = localStorage.getItem("burnerWalletConfig");
+    const safeAccount = localStorage.getItem("safeAccount");
 
-    if (burnerWalletConfig) {
-      burnerWalletAddress = JSON.parse(burnerWalletConfig).burnerWalletAddress;
+    if (safeAccount) {
+      burnerWalletAddress = JSON.parse(safeAccount).address;
     }
 
     if (!burnerWalletAddress) {
       return;
     }
 
-    console.log(burnerWalletAddress, "burnerWalletAddress")
+    console.log(burnerWalletAddress, "burnerWalletAddress");
 
     setIsAccountInitializedLoading(true);
-    const getGuardianConfig = await readContract(config, {
+    const getGuardianConfig = await readContract(connectKitConfig, {
       abi: universalEmailRecoveryModuleAbi,
       address: universalEmailRecoveryModule as `0x${string}`,
       functionName: "getGuardianConfig",
       args: [burnerWalletAddress],
     });
 
-    console.log(getGuardianConfig, "getGuardianConfig")
+    console.log(getGuardianConfig, "getGuardianConfig");
 
     // Check whether recovery is configured
     if (
@@ -132,25 +129,30 @@ const GuardianSetup = () => {
       });
 
       console.log(address);
+      const burnerWallerOwner = await createOwnerFromMetaMask();
 
-      const safeAccount = await getSafeAccount(owner);
-      const smartAccountClient = await getSmartAccountClient(owner);
+      console.log(burnerWallerOwner, "burnerWallerOwner");
+
+      localStorage.setItem("burnerWallerOwner", JSON.stringify(burnerWallerOwner));
+
+      const safeAccount = await getSafeAccount(burnerWallerOwner);
+      const smartAccountClient = await getSmartAccountClient(burnerWallerOwner);
 
       // Updating this for the new burner wallet flow. We want to create a new burner account, which can be achieved by changing the nonce, as all other parameters remain the same.
       const newSaltNonce = saltNonce + 1n;
       setSaltNonce(newSaltNonce);
       localStorage.setItem("saltNonce", newSaltNonce.toString());
 
-      console.log(saltNonce, "saltNonce")
+      console.log(saltNonce, "saltNonce");
 
       const acctCode: `0x${string}` = await genAccountCode();
 
-      console.log(acctCode, "acctcode")
+      console.log(acctCode, "acctcode");
 
-      await localStorage.setItem("accountCode", acctCode);
+      await localStorage.setItem("burnerWalletAccountCode", acctCode);
       await setAccountCode(acctCode);
 
-      console.log(accountCode, acctCode, "accountCode")
+      console.log(accountCode, acctCode, "accountCode");
 
       await localStorage.setItem("safeAccount", JSON.stringify(safeAccount));
       localStorage.setItem(
@@ -158,7 +160,7 @@ const GuardianSetup = () => {
         JSON.stringify(smartAccountClient)
       );
 
-      console.log(safeAccount, "safeaccount")
+      console.log(safeAccount, "safeaccount");
 
       setBurnerAccountClient(smartAccountClient);
 
@@ -169,13 +171,13 @@ const GuardianSetup = () => {
         safeAccount,
         smartAccountClient
       );
-      console.log(burnerWalletAddress, "burnerwllet")
+      console.log(burnerWalletAddress, "burnerwllet");
       await localStorage.setItem(
         "burnerWalletConfig",
         JSON.stringify({ burnerWalletAddress })
       );
 
-      console.log(burnerWalletAddress, "burnerwalletddress")
+      console.log(burnerWalletAddress, "burnerwalletddress");
       setIsWalletPresent(true);
     } catch (error) {
       console.log(error);
@@ -184,8 +186,6 @@ const GuardianSetup = () => {
       setIsBurnerWalletCreating(false);
     }
   };
-
-  checkIfRecoveryIsConfigured();
 
   useEffect(() => {
     checkIfRecoveryIsConfigured();
@@ -221,7 +221,9 @@ const GuardianSetup = () => {
         throw new Error("guardian email not set");
       }
 
-      const localStorageAccountCode = localStorage.getItem("accountCode");
+      const burnerWalletAccountCode = localStorage.getItem(
+        "burnerWalletAccountCode"
+      );
       let burnerWalletAddress;
 
       const burnerWalletConfig = localStorage.getItem("burnerWalletConfig");
@@ -231,7 +233,7 @@ const GuardianSetup = () => {
           JSON.parse(burnerWalletConfig).burnerWalletAddress;
       }
 
-      if (!localStorageAccountCode) {
+      if (!burnerWalletAccountCode) {
         toast.error("Seomthing went wrong, please restart the flow");
         console.error("Invalid account code");
       }
@@ -252,6 +254,8 @@ const GuardianSetup = () => {
         args: [],
       });
 
+      const owner = await createOwnerFromMetaMask();
+
       const safeAccount = await getSafeAccount(owner);
 
       try {
@@ -259,7 +263,7 @@ const GuardianSetup = () => {
         await relayer.acceptanceRequest(
           universalEmailRecoveryModule as `0x${string}`,
           guardianEmail,
-          localStorageAccountCode.slice(2),
+          burnerWalletAccountCode.slice(2),
           templateIdx,
           subject[0]
             .join()
@@ -273,7 +277,7 @@ const GuardianSetup = () => {
         await relayer.acceptanceRequest(
           universalEmailRecoveryModule as `0x${string}`,
           guardianEmail,
-          localStorageAccountCode.slice(2),
+          burnerWalletAccountCode.slice(2),
           templateIdx,
           subject[0]
             .join()
@@ -453,10 +457,12 @@ const GuardianSetup = () => {
               disabled={!guardianEmail || isBurnerWalletCreating}
               loading={isBurnerWalletCreating}
               onClick={async () => {
-                await connectWallet();
                 setLoading(true);
+                connectWallet().then(() => {
+                  configureRecoveryAndRequestGuardian();
+                });
                 // await new Promise((resolve) => setTimeout(resolve, 10000)); // 5000 ms = 5 seconds
-                configureRecoveryAndRequestGuardian();
+                // configureRecoveryAndRequestGuardian();
               }}
               variant={"contained"}
             >

@@ -2,7 +2,11 @@ import { Box, Grid, Typography } from "@mui/material";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { readContract } from "wagmi/actions";
+import { keccak256, parseAbiParameters } from "viem";
+import { encodeAbiParameters } from "viem";
+import { encodeFunctionData } from "viem";
+import { createOwnerFromMetaMask, getSafeAccount, publicClient } from "./client";
+import { CompleteRecoveryResponseSchema } from "./types";
 import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
 import { safeAbi } from "../../abi/Safe";
 import { abi as universalEmailRecoveryModuleAbi } from "../../abi/UniversalEmailRecoveryModule.json";
@@ -16,23 +20,12 @@ import { useAppContext } from "../../context/AppContextHook";
 import { useBurnerAccount } from "../../context/BurnerAccountContext";
 import { config } from "../../providers/config";
 import { relayer } from "../../services/relayer";
-import { templateIdx } from "../../utils/email";
 
 import {
   getPreviousOwnerInLinkedList,
-  getRecoveryCallData,
-  getRecoveryData,
 } from "../../utils/recoveryDataUtils";
-import { useGetSafeAccountAddress } from "../../utils/useGetSafeAccountAddress";
 import { Button } from "../Button";
 import InputField from "../InputField";
-import Loader from "../Loader";
-import { getSafeAccount, owner, publicClient } from "./client";
-import { keccak256, parseAbiParameters } from "viem";
-import { encodeAbiParameters } from "viem";
-import { encodeFunctionData } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { CompleteRecoveryResponseSchema } from "./types";
 
 const BUTTON_STATES = {
   TRIGGER_RECOVERY: "Trigger Recovery",
@@ -67,11 +60,10 @@ const RequestedRecoveries = () => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const checkIfRecoveryCanBeCompleted = useCallback(async () => {
-    const owner = privateKeyToAccount(
-      "0x9ef1a6de7dd5bfede20283c1d41b3b8589915c9b47ce9eea381ba53cb82409a4"
-    );
+    const address = localStorage.getItem('burnerWallerOwner');
+    const burnerWallerOwner = await createOwnerFromMetaMask(address);
 
-    const safeAccount = await getSafeAccount(owner);
+    const safeAccount = await getSafeAccount(burnerWallerOwner);
 
     setIsRecoveryStatusLoading(true);
     const getRecoveryRequest = await publicClient.readContract({
@@ -126,11 +118,10 @@ const RequestedRecoveries = () => {
 
     // const recoveryCallData = getRecoveryCallData(newOwner);
 
-    const owner = privateKeyToAccount(
-      "0x9ef1a6de7dd5bfede20283c1d41b3b8589915c9b47ce9eea381ba53cb82409a4"
-    );
+    const address = localStorage.getItem('burnerWallerOwner');
+    const burnerWallerOwner = await createOwnerFromMetaMask(address);
 
-    const safeAccount = await getSafeAccount(owner);
+    const safeAccount = await getSafeAccount(burnerWallerOwner);
 
     const safeOwners = await publicClient.readContract({
       abi: safeAbi,
@@ -200,11 +191,10 @@ const RequestedRecoveries = () => {
   }, [guardianEmailAddress, newOwner, checkIfRecoveryCanBeCompleted]);
 
   const completeRecovery = useCallback(async () => {
-    const owner = privateKeyToAccount(
-      "0x9ef1a6de7dd5bfede20283c1d41b3b8589915c9b47ce9eea381ba53cb82409a4"
-    );
+    const address = localStorage.getItem('burnerWallerOwner');
+    const burnerWallerOwner = await createOwnerFromMetaMask(address);
 
-    const safeAccount = await getSafeAccount(owner);
+    const safeAccount = await getSafeAccount(burnerWallerOwner);
 
     setIsCompleteRecoveryLoading(true);
 

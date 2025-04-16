@@ -72,8 +72,10 @@ export async function run(
   const guardians = [guardianAddress];
   const guardianWeights = [1n];
   const threshold = 1n;
-  const delay = 6n; // 6 seconds
+  const delay = 6n * 60n * 60n; // 6 hours
   const expiry = 2n * 7n * 24n * 60n * 60n; // 2 weeks in seconds
+
+  console.log(validator, isInstalledContext, functionSelector, guardians, guardianWeights, threshold, delay, expiry, "moduleData")
 
   const moduleData = encodeAbiParameters(
     [
@@ -98,13 +100,23 @@ export async function run(
     ]
   );
 
+  console.log(moduleData, "moduleData")
+
   // acceptanceSubjectTemplates -> [["Accept", "guardian", "request", "for", "{ethAddr}"]]
   // recoverySubjectTemplates -> [["Recover", "account", "{ethAddr}", "using", "recovery", "hash", "{string}"]]
-  const userOpHash = await smartAccountClient.installModule({
-    type: "executor",
-    address: config.addresses.universalEmailRecoveryModule,
-    context: moduleData,
-    account: safeAccount,
-  });
-  console.log("opHash", userOpHash);
+  try {
+    const userOpHash = await smartAccountClient.installModule({
+      type: "executor",
+      address: config.addresses.universalEmailRecoveryModule,
+      context: moduleData,
+      account: safeAccount,
+    });
+    console.log("opHash", userOpHash);
+  } catch (error: unknown) {
+    console.error("Error installing module:", error);
+    if (error instanceof Error && error.message.includes("Owners length mismatch")) {
+      throw new Error("The Safe account owners are not configured correctly. Please ensure you have the correct owners set up.");
+    }
+    throw error;
+  }
 }

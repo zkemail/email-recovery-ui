@@ -18,10 +18,13 @@ import { Button } from "../components/Button";
 import WalletActions from "../components/WalletActions";
 import { STEPS } from "../constants";
 import { BurnerAccountProvider } from "../context/BurnerAccountContext";
+import { useGetSafeAccountAddress } from "../utils/useGetSafeAccountAddress";
 
 const BurnerWalletFlow = () => {
   const stepsContext = useContext(StepsContext);
-  const [burnerWalletAddress, setBurnerWalletAddress] = useState<
+  const [burnerWalletAccountAddress, setBurnerWalletAccountAddress] =
+    useState();
+  const [burnerWalletAccountCode, setBurnerWalletAccountCode] = useState<
     string | null
   >();
   const [
@@ -30,18 +33,24 @@ const BurnerWalletFlow = () => {
   ] = useState(false);
 
   useEffect(() => {
-    if (!burnerWalletAddress) {
-      const burnerWalletAddressPollingInterval = setInterval(() => {
-        const burnerWalletConfig = localStorage.getItem("burnerWalletConfig");
-        if (burnerWalletConfig !== undefined && burnerWalletConfig !== null) {
-          setBurnerWalletAddress(
-            JSON.parse(burnerWalletConfig)?.burnerWalletAddress
-          );
-          clearInterval(burnerWalletAddressPollingInterval);
-        }
+    const getBurnerWalletAccountAddress = async () => {
+      const walletAddress = await useGetSafeAccountAddress();
+      setBurnerWalletAccountAddress(walletAddress);
+    };
+    getBurnerWalletAccountAddress();
+  }, []);
+
+  useEffect(() => {
+    if (!burnerWalletAccountCode) {
+      const burnerWalletAccountCodePollingInterval = setInterval(() => {
+        const burnerWalletAccountCode = localStorage.getItem(
+          "burnerWalletAccountCode"
+        );
+        setBurnerWalletAccountCode(burnerWalletAccountCode);
+        clearInterval(burnerWalletAccountCodePollingInterval);
       }, 1000);
     }
-  }, [burnerWalletAddress]);
+  }, [burnerWalletAccountCode]);
 
   useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -87,7 +96,7 @@ const BurnerWalletFlow = () => {
   return (
     <BurnerAccountProvider>
       <div className="app">
-        {burnerWalletAddress ? (
+        {burnerWalletAccountCode ? (
           <div
             style={{
               display: "flex",
@@ -98,10 +107,10 @@ const BurnerWalletFlow = () => {
           >
             <Typography>Burner Wallet Address: </Typography>
             <a
-              href={`https://app.safe.global/home?safe=basesep%3A${burnerWalletAddress}`}
+              href={`https://app.safe.global/home?safe=basesep%3A${burnerWalletAccountAddress}`}
               target="_blank"
             >
-              {burnerWalletAddress}
+              {burnerWalletAccountAddress}
             </a>
             <Tooltip title="Reset Wallet" placement="top">
               <IconButton
@@ -139,10 +148,10 @@ const BurnerWalletFlow = () => {
               variant="contained"
               onClick={async () => {
                 setIsResetBurnerWalletConfirmationModalOpen(false); // Remove these values from localStorage to prevent conflicts with the safe wallet flow.
-                await localStorage.removeItem("accountCode");
+                await localStorage.removeItem("burnerWalletAccountCode");
                 await localStorage.removeItem("burnerWalletConfig");
                 window.location.reload();
-                setBurnerWalletAddress(null);
+                setBurnerWalletAccountCode(null);
               }}
             >
               Reset

@@ -42,7 +42,63 @@ export const pimlicoClient: PimlicoClient = createPimlicoClient({
   chain: baseSepolia,
 });
 
-export const owner = privateKeyToAccount("0x9ef1a6de7dd5bfede20283c1d41b3b8589915c9b47ce9eea381ba53cb82409a4");
+// Function to connect to MetaMask and get the selected account
+export const connectToMetaMask = async (): Promise<string> => {
+  // Check if MetaMask is installed
+  if (typeof window.ethereum === "undefined") {
+    throw new Error(
+      "MetaMask is not installed. Please install MetaMask and try again."
+    );
+  }
+
+  try {
+    // Request account access
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+
+    if (accounts.length === 0) {
+      throw new Error("No MetaMask accounts found.");
+    }
+
+    // Return the first selected account
+    return accounts[0];
+  } catch (error) {
+    console.error("Error connecting to MetaMask:", error);
+    throw error;
+  }
+};
+
+// Function to create an owner object from the MetaMask account
+export const createOwnerFromMetaMask = async (
+  address?: string | null
+): Promise<PrivateKeyAccount> => {
+  if (!address) {
+    address = await connectToMetaMask();
+  }
+
+  // Since we can't get the private key from MetaMask, we'll create a signer object
+  // that will use MetaMask for signing operations
+  const signer = {
+    address,
+    signMessage: async (message: { message: string }) => {
+      const signature = await window.ethereum.request({
+        method: "personal_sign",
+        params: [message.message, address],
+      });
+      return signature;
+    },
+    signTypedData: async (typedData: any) => {
+      const signature = await window.ethereum.request({
+        method: "eth_signTypedData_v4",
+        params: [address, JSON.stringify(typedData)],
+      });
+      return signature;
+    },
+  };
+
+  return signer;
+};
 
 export const getSafeAccount = async (
   owner: PrivateKeyAccount
