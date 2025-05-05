@@ -201,13 +201,13 @@ const NavBar: React.FC = () => {
                 justifyContent: { xs: "left", md: "center" },
               }}
             >
-              <Link to="/">
+              <a href="/">
                 <img
                   style={{ verticalAlign: "middle" }}
                   src={zkEmailLogo}
                   alt="zkemail-logo"
                 />
-              </Link>
+              </a>
             </Box>
           </Grid>
           <Grid
