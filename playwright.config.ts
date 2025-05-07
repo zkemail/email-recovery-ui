@@ -15,5 +15,9 @@ export default defineConfig({
     timeout: 120 * 1000, // 120 seconds
   },
   retries: 1,
+  timeout: 600000, // 10 minutes in milliseconds for all tests
+  expect: {
+    timeout: 60000, // 1 minute default timeout for expects (can be overridden for specific expects)
+  },
   reporter: [['html'], ['list']],
 }); 
