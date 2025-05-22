@@ -7,7 +7,6 @@ import { useTheme } from "@mui/material/styles";
 import { TransitionProps } from "@mui/material/transitions";
 import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { Button } from "./Button";
 import zkEmailLogo from "../assets/ZKEmailLogo.svg";
 
