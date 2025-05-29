@@ -8,3 +8,6 @@ export const STEPS = {
   REQUESTED_RECOVERIES: 6,
   TRIGGER_ACCOUNT_RECOVERY: 7,
 };
+
+export const DEFAULT_EXPIRATION_TIME = 2n * 7n * 24n * 60n * 60n; // 2 weeks in seconds
+export const DEFAULT_SIGNER_THRESHOLD = 1n; // Default threshold for signer weight

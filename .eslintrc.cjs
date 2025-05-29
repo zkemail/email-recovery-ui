@@ -31,7 +31,7 @@ module.exports = {
             group: "internal",
           },
           {
-            pattern: "routes/ **",
+            pattern: "routes/**",
             group: "internal",
           },
           {

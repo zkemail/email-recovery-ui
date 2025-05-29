@@ -1,6 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
-
 if (!import.meta.env.VITE_PIMLICO_API_KEY) {
   throw new Error("VITE_PIMLICO_API_KEY does not exist");
 }

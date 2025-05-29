@@ -1,19 +1,27 @@
 import "viem/window";
+import { SmartAccountClient } from "permissionless";
 import { SafeSmartAccountImplementation } from "permissionless/accounts";
 import { Erc7579Actions } from "permissionless/actions/erc7579";
 import {
   Chain,
+  checksumAddress,
   Client,
   encodeAbiParameters,
+  encodeFunctionData,
   RpcSchema,
   toFunctionSelector,
   toHex,
   Transport,
 } from "viem";
-import { SmartAccount } from "viem/account-abstraction";
-import { pimlicoClient, publicClient } from "./client";
-import { computeGuardianAddress } from "./helpers/computeGuardianAddress";
+import { SmartAccount, WebAuthnAccount } from "viem/account-abstraction";
+import { publicClient } from "./client";
+import { sendTransactionFromSafeWithWebAuthn } from "./utils";
 import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.json";
+import {
+  DEFAULT_EXPIRATION_TIME,
+  DEFAULT_SIGNER_THRESHOLD,
+} from "../../constants";
+import { computeGuardianAddress } from "../burnerWallet/helpers/computeGuardianAddress";
 
 /**
  * Executes a series of operations to configure a smart account, including transferring Ether,
@@ -21,7 +29,7 @@ import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.js
  *
  * @async
  * @param {WalletClient} client - The wallet client used for transactions and interactions.
- * @param {object} safeAccount - The smart account object containing the address of the account.
+ * @param {object} kernelAccount - The smart account object containing the address of the account.
  * @param {object} smartAccountClient - The safe account client
  * @param {string} guardianAddr - The address of the guardian used in the recovery module.
  * @returns {Promise<string>} The address of the configured smart account.
@@ -29,22 +37,29 @@ import { universalEmailRecoveryModule } from "../../../contracts.base-sepolia.js
 export async function run(
   accountCode: `0x${string}`,
   guardianEmail: string,
-  safeAccount: SmartAccount<SafeSmartAccountImplementation>,
-  smartAccountClient: Client<Transport, Chain, SmartAccount, RpcSchema> &
+  ownerAccount: WebAuthnAccount,
+  kernelAccount: SmartAccount<SafeSmartAccountImplementation>,
+  smartAccountClient: SmartAccountClient<
+    Transport,
+    Chain,
+    SmartAccount<SafeSmartAccountImplementation>,
+    Client,
+    RpcSchema
+  > &
     Erc7579Actions<SmartAccount<SafeSmartAccountImplementation>>,
   delay: number,
 ) {
   console.log("init run");
 
   const guardianAddress = await computeGuardianAddress(
-    safeAccount.address,
+    kernelAccount.address,
     accountCode,
     guardianEmail,
   );
   console.log(guardianAddress, "guardian address");
 
   const bytecode = await publicClient.getCode({
-    address: safeAccount.address,
+    address: kernelAccount.address,
   });
   if (bytecode) {
     const isModuleInstalled = await smartAccountClient.isModuleInstalled({
@@ -61,15 +76,15 @@ export async function run(
   }
   console.log(bytecode, "byte code");
 
-  const validator = safeAccount.address;
+  const validator = kernelAccount.address;
   const isInstalledContext = toHex(0);
   const functionSelector = toFunctionSelector(
     "swapOwner(address,address,address)",
   );
   const guardians = [guardianAddress];
   const guardianWeights = [1n];
-  const threshold = 1n;
-  const expiry = 2n * 7n * 24n * 60n * 60n; // 2 weeks in seconds
+  const threshold = DEFAULT_SIGNER_THRESHOLD;
+  const expiry = DEFAULT_EXPIRATION_TIME;
 
   const moduleData = encodeAbiParameters(
     [
@@ -94,19 +109,39 @@ export async function run(
     ],
   );
 
+  const installModuleCall = {
+    to: smartAccountClient.account.address as `0x${string}`,
+    value: BigInt(0),
+    data: encodeFunctionData({
+      abi: [
+        {
+          inputs: [
+            { internalType: "uint256", name: "moduleType", type: "uint256" },
+            { internalType: "address", name: "module", type: "address" },
+            { internalType: "bytes", name: "initData", type: "bytes" },
+          ],
+          name: "installModule",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+      ],
+      functionName: "installModule",
+      args: [
+        BigInt(2),
+        checksumAddress(universalEmailRecoveryModule as `0x${string}`),
+        moduleData,
+      ],
+    }),
+  };
+
   // acceptanceSubjectTemplates -> [["Accept", "guardian", "request", "for", "{ethAddr}"]]
   // recoverySubjectTemplates -> [["Recover", "account", "{ethAddr}", "using", "recovery", "hash", "{string}"]]
-  const userOpHash = await smartAccountClient.installModule({
-    type: "executor",
-    address: universalEmailRecoveryModule as `0x${string}`,
-    context: moduleData,
-    account: safeAccount,
-  });
-  console.log("opHash", userOpHash);
+  const userOpReceipt = await sendTransactionFromSafeWithWebAuthn(
+    ownerAccount,
+    smartAccountClient,
+    installModuleCall,
+  );
 
-  await pimlicoClient.waitForUserOperationReceipt({
-    hash: userOpHash,
-  });
-
-  return userOpHash;
+  return userOpReceipt;
 }

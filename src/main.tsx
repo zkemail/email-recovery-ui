@@ -9,10 +9,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <App />
     <Toaster
       toastOptions={{
-        duration: 5000,
+        duration: 7000,
         style: {
-          fontSize: "16px",
+          fontSize: "20px",
+          padding: "16px",
         },
+        position: "bottom-center",
       }}
     />
   </React.StrictMode>,

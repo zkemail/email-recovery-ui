@@ -1,16 +1,57 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import "viem/window";
 
-const BurnerAccountContext = createContext(null);
+type BurnerAccountContextType = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  burnerAccountClient: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setBurnerAccountClient: (accountClient: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  burnerAccount: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setBurnerAccount: (account: any) => void;
+  burnerEOAWalletAddress: string | null;
+  setBurnerEOAWalletAddress: (address: string | null) => void;
+  isResetBurnerWalletConfirmationModalOpen: boolean;
+  setIsResetBurnerWalletConfirmationModalOpen: (isOpen: boolean) => void;
+};
+
+const BurnerAccountContext = createContext<BurnerAccountContextType>({
+  burnerAccountClient: null,
+  setBurnerAccountClient: () => {},
+  burnerAccount: null,
+  setBurnerAccount: () => {},
+  burnerEOAWalletAddress: null,
+  setBurnerEOAWalletAddress: () => {},
+  isResetBurnerWalletConfirmationModalOpen: false,
+  setIsResetBurnerWalletConfirmationModalOpen: () => {},
+});
 
 export const BurnerAccountProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [burnerAccountClient, setBurnerAccountClient] = useState(null); // Adjust type as needed
+  const [burnerAccountClient, setBurnerAccountClient] = useState(null);
+  const [burnerAccount, setBurnerAccount] = useState(null);
+  const [burnerEOAWalletAddress, setBurnerEOAWalletAddress] = useState<
+    string | null
+  >(null);
+  const [
+    isResetBurnerWalletConfirmationModalOpen,
+    setIsResetBurnerWalletConfirmationModalOpen,
+  ] = useState<boolean>(false);
 
   return (
     <BurnerAccountContext.Provider
-      value={{ burnerAccountClient, setBurnerAccountClient }}
+      value={{
+        burnerAccountClient,
+        setBurnerAccountClient,
+        burnerAccount,
+        setBurnerAccount,
+        burnerEOAWalletAddress,
+        setBurnerEOAWalletAddress,
+        isResetBurnerWalletConfirmationModalOpen,
+        setIsResetBurnerWalletConfirmationModalOpen,
+      }}
     >
       {children}
     </BurnerAccountContext.Provider>

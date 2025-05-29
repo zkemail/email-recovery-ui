@@ -6,6 +6,7 @@ type CustomButtonProps = {
   loading?: boolean;
   filled?: boolean; // Add the filled prop
   variant?: "text" | "outlined" | "contained";
+  fullWidth?: boolean; // Add the fullWidth prop
 } & React.ComponentPropsWithoutRef<"button">; // Ensure compatibility with standard button props
 
 export function Button({
@@ -13,6 +14,7 @@ export function Button({
   endIcon,
   loading,
   variant = "text",
+  fullWidth = true,
   ...buttonProps
 }: CustomButtonProps) {
   const theme = useTheme();
@@ -93,7 +95,7 @@ export function Button({
         ...getStyles(),
         ...buttonProps.sx,
       }}
-      fullWidth
+      fullWidth={fullWidth}
       endIcon={loading ? <CircularProgress size={24} /> : endIcon}
       disabled={loading || buttonProps.disabled}
     >

@@ -1,11 +1,14 @@
 import { Grid, ThemeProvider } from "@mui/material";
 import { createContext, useState } from "react";
 import "./App.css";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import NavBar from "./components/Navbar";
 import { STEPS } from "./constants";
 import { AppContextProvider } from "./context/AppContextProvider";
 import BurnerWalletFlow from "./pages/burnerWalletFlow";
+import EOA7702SafeFlow from "./pages/EOA7702SafeFlow";
+import ErrorPage from "./pages/errorPage";
+import LandingPage from "./pages/landingPage";
 import { Web3Provider } from "./providers/Web3Provider";
 import theme from "./theme"; // Import custom theme
 
@@ -36,7 +39,15 @@ function App() {
               alignItems={"center"}
             >
               <BrowserRouter>
-                <BurnerWalletFlow />
+                <Routes>
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/burner-wallet" element={<BurnerWalletFlow />} />
+                  <Route
+                    path="/7702-eoa-wallet"
+                    element={<EOA7702SafeFlow />}
+                  />
+                  <Route path="*" element={<ErrorPage />} />
+                </Routes>
               </BrowserRouter>
             </Grid>
           </Web3Provider>

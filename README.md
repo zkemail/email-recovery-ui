@@ -11,16 +11,51 @@ Based on `yarn creat vite w/ React, Typescript`
 
 ```sh
 yarn
-yarn setup # this will overwrite your existing .env file
+yarn setup # this will overwrite your existing .env file with a template.
 ```
 
-You will need to set `VITE_WALLET_CONNECT_PROJECT_ID` . You can create a new WalletConnect project at https://cloud.walletconnect.com/
+After running `yarn setup`, you will need to configure the following environment variables in the newly created `.env` file:
 
-## Run
+```
+VITE_WALLET_CONNECT_PROJECT_ID=YOUR_PROJECT_ID
+VITE_ALCHEMY_API_KEY=YOUR_ALCHEMY_API_KEY
+VITE_PIMLICO_API_KEY=YOUR_PIMLICO_API_KEY
+RELAYER_PRIVATE_KEY=YOUR_RELAYER_PRIVATE_KEY
+```
+
+- `VITE_WALLET_CONNECT_PROJECT_ID`: You can create a new WalletConnect project and get your Project ID at [https://cloud.walletconnect.com/](https://cloud.walletconnect.com/).
+- `VITE_ALCHEMY_API_KEY`: Obtain this key from [Alchemy](https://www.alchemy.com/) after signing up or logging in. This is used for interacting with the network ( Base Sepolia in this case ).
+- `VITE_PIMLICO_API_KEY`: Obtain this key from [Pimlico](https://dashboard.pimlico.io) after signing up or logging in. This is used for the account abstraction features like paymaster and sending the user operations
+- `RELAYER_PRIVATE_KEY`: This is the private key for the relayer service that sends the 7702 authorizations for EOAs. You need to generate this securely. **This account needs to have funds on Base sepolia (~0.1 ETH). Ensure this key is kept secret and has no funds associated with it other than for gas fees if necessary.**
+
+## Run Development Server
 
 ```sh
-yarn dev
+yarn dev # Runs the Vite development server
+node server.js # Run the relayer server in a separate terminal
 ```
+
+## Production Deployment
+
+To deploy the application for production:
+
+1.  **Build the application:**
+
+    ```sh
+    yarn build
+    ```
+
+    This command bundles the React application into static files for production.
+
+2.  **Run the application:**
+
+    ```sh
+    node server.js
+    ```
+
+    This command will serve both the static files and the backend api endpoints.
+
+    Ensure your `.env` file with production-ready keys is present and configured when running the server. The server handles relaying and other backend functionalities.
 
 ## Base Sepolia Guide
 

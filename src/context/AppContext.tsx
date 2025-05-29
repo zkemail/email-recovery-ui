@@ -5,6 +5,8 @@ type AppContextType = {
   setAccountCode: (ac: `0x${string}`) => void;
   guardianEmail: string;
   setGuardianEmail: (ge: string) => void;
+  newOwnerAddress: `0x${string}` | null;
+  setNewOwnerAddress: (address: `0x${string}` | null) => void;
 };
 
 export const appContext = createContext<AppContextType>({
@@ -12,4 +14,6 @@ export const appContext = createContext<AppContextType>({
   setAccountCode: () => {},
   guardianEmail: "",
   setGuardianEmail: () => {},
+  newOwnerAddress: null,
+  setNewOwnerAddress: () => {},
 });
