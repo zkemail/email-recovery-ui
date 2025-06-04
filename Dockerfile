@@ -4,6 +4,9 @@ FROM node:22-alpine AS build
 # Set the working directory
 WORKDIR /app
 
+# Install Python and build dependencies
+RUN apk add --no-cache python3 make g++ gcc
+
 # Copy the package.json and yarn.lock files
 COPY package.json yarn.lock ./
 
@@ -24,6 +27,9 @@ WORKDIR /app
 
 # Copy the built app from the build stage
 COPY --from=build /app /app
+
+# Set the port environment variable
+ENV PORT=80
 
 # Expose the port your server is listening on
 EXPOSE 80
