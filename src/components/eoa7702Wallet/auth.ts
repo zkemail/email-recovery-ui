@@ -76,8 +76,8 @@ export async function upgradeEOAWith7702(
   });
   let txHash: Hex;
 
-  const RELAYER_PRIVATE_KEY =
-    (import.meta.env.VITE_7702_RELAYER_PRIVATE_KEY as `0x${string}`) || "0x";
+  const RELAYER_PRIVATE_KEY = import.meta.env
+    .VITE_7702_RELAYER_PRIVATE_KEY as `0x${string}`;
 
   if (RELAYER_PRIVATE_KEY) {
     const relayAccount = privateKeyToAccount(RELAYER_PRIVATE_KEY);

@@ -318,6 +318,12 @@ const GuardianSetup = () => {
         Choose a Guardian you trust to be enable wallet recovery via email.
         They'll receive an email request.
       </Typography>
+      {moduleInstalled && (
+        <Typography variant="h6" sx={{ paddingBottom: "5rem" }}>
+          You have already set up a guardian. You can resend the request to the
+          guardian if needed or refresh the page to see the current status.
+        </Typography>
+      )}
 
       <Grid
         container

@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { keccak256, parseAbiParameters, PrivateKeyAccount } from "viem";
 import { encodeAbiParameters } from "viem";
 import { encodeFunctionData } from "viem";
-import { WebAuthnAccount } from "viem/account-abstraction";
 import { getSafeSmartAccountClient, publicClient } from "./client";
 import { GuardianConfig } from "./types";
 import { sendTransactionFromSafeWithWebAuthn } from "./utils";
@@ -22,6 +21,7 @@ import { STEPS } from "../../constants";
 import { useAppContext } from "../../context/AppContextHook";
 
 import { useBurnerAccount } from "../../context/BurnerAccountContext";
+import { useOwnerPasskey } from "../../context/OwnerPasskeyContext";
 import { relayer } from "../../services/relayer";
 import { TIME_UNITS } from "../../utils/recoveryDataUtils";
 
@@ -170,6 +170,7 @@ const RequestedRecoveries = () => {
   } = useAppContext();
   const navigate = useNavigate();
   const { burnerAccount } = useBurnerAccount();
+  const { ownerPasskeyAccount } = useOwnerPasskey();
   const stepsContext = useContext(StepsContext);
 
   const [guardianEmailAddress, setGuardianEmailAddress] =
@@ -177,8 +178,6 @@ const RequestedRecoveries = () => {
   const [buttonState, setButtonState] = useState(
     BUTTON_STATES.TRIGGER_RECOVERY,
   );
-
-  const [ownerAccount] = useState<WebAuthnAccount>();
 
   const [isTriggerRecoveryLoading, setIsTriggerRecoveryLoading] =
     useState<boolean>(false);
@@ -429,22 +428,22 @@ const RequestedRecoveries = () => {
   }, [newOwner]);
 
   const handleCancelRecovery = useCallback(async () => {
-    setIsCancelRecoveryLoading(true);
-    setIsTriggerRecoveryLoading(false);
-
     if (!burnerAccount) {
       console.log("burner account not found");
       stepsContext?.setStep(STEPS.CONNECT_WALLETS);
     }
 
-    if (!ownerAccount) {
+    if (!ownerPasskeyAccount) {
       console.log("owner account not found");
       return;
     }
 
+    setIsCancelRecoveryLoading(true);
+    setIsTriggerRecoveryLoading(false);
+
     try {
       const smartAccountClient = await getSafeSmartAccountClient(
-        ownerAccount,
+        ownerPasskeyAccount,
         burnerAccount as PrivateKeyAccount,
       );
 
@@ -458,7 +457,7 @@ const RequestedRecoveries = () => {
       };
 
       const userOpReciept = await sendTransactionFromSafeWithWebAuthn(
-        ownerAccount,
+        ownerPasskeyAccount,
         smartAccountClient,
         cancelCall,
       );
@@ -466,7 +465,7 @@ const RequestedRecoveries = () => {
       console.log("User Operation Reciept:", userOpReciept);
 
       localStorage.removeItem("newOwnerAddress");
-
+      setNewOwner(null);
       setButtonState(BUTTON_STATES.TRIGGER_RECOVERY);
       toast.success("Recovery Cancelled");
       console.log("Recovery Cancelled");
@@ -484,7 +483,7 @@ const RequestedRecoveries = () => {
     } finally {
       setIsCancelRecoveryLoading(false);
     }
-  }, [ownerAccount, burnerAccount, stepsContext]);
+  }, [ownerPasskeyAccount, setNewOwner, burnerAccount, stepsContext]);
 
   const getButtonComponent = () => {
     // Renders the appropriate buttons based on the button state.

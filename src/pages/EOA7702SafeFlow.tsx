@@ -1,4 +1,7 @@
 import { useContext, useEffect } from "react"; // Removed useState
+import { createWalletClient, http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { baseSepolia } from "viem/chains";
 import { StepsContext } from "../App";
 import { generateNewAccount } from "../components/burnerWallet/helpers/generateNewAccount";
 import EOA7702Entry from "../components/eoa7702Wallet/EOA7702Entry";
@@ -17,7 +20,11 @@ import {
 
 const EOA7702SafeFlowContent = () => {
   const stepsContext = useContext(StepsContext);
-  const { setBurnerEOAWalletAddress } = useBurnerAccount();
+  const {
+    setBurnerEOAWalletAddress,
+    setBurnerAccount,
+    setBurnerAccountClient,
+  } = useBurnerAccount();
 
   const { isLoading: isOwnerPasskeyLoading } = useOwnerPasskey();
 
@@ -31,6 +38,18 @@ const EOA7702SafeFlowContent = () => {
           "burnerEOA7702OwnerPrivateKey",
           newAccount.privateKey,
         );
+
+        const burnerEOA7702Owner = privateKeyToAccount(
+          newAccount.privateKey as `0x${string}`,
+        );
+        setBurnerAccount(burnerEOA7702Owner);
+
+        const burnerWalletClient = createWalletClient({
+          account: burnerEOA7702Owner,
+          chain: baseSepolia,
+          transport: http(),
+        });
+        setBurnerAccountClient(burnerWalletClient);
       });
     } else {
       setBurnerEOAWalletAddress(
@@ -58,7 +77,7 @@ const EOA7702SafeFlowContent = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [setBurnerEOAWalletAddress]);
+  }, [setBurnerEOAWalletAddress, setBurnerAccount, setBurnerAccountClient]);
 
   const renderBody = () => {
     switch (stepsContext?.step) {

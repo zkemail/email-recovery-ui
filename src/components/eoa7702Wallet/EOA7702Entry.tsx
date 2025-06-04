@@ -63,7 +63,7 @@ const EOA7702Entry = () => {
 
         if (code !== "0x" && code !== undefined) {
           const burnerWalletClient = createWalletClient({
-            account: burnerAccount,
+            account: burnerEOA7702Owner,
             chain: baseSepolia,
             transport: http(),
           });
@@ -85,7 +85,7 @@ const EOA7702Entry = () => {
       );
     }
     setIsAccountInitializedLoading(false);
-  }, [burnerAccount, setBurnerAccount, setBurnerAccountClient, stepsContext]);
+  }, [setBurnerAccount, setBurnerAccountClient, stepsContext]);
 
   // Check if the burner wallet is already present
   useEffect(() => {
@@ -229,9 +229,9 @@ const EOA7702Entry = () => {
             }}
           >
             {`To begin, please create a Passkey. This will allow you to:
-• Make the passkey the primary owner of your new Smart Account.
-• Upgrade your standard EOA to a Smart Account using EIP-7702.
-• Access features like transaction batching, session keys, and enhanced security.
+• Upgrade the standard burner EOA to a Smart Account using EIP-7702.
+• Make the passkey the primary owner of your new Smart EOA
+• Enable features like transaction batching, session keys, and enhanced security on the EOA
 • Keep everything controlled by your passkey.`}
           </Typography>
         </>
@@ -277,7 +277,7 @@ const EOA7702Entry = () => {
               color: "text.secondary",
             }}
           >
-            Click the button below to upgrade it to a Safe(v1.4.1) smart account
+            Click the button above to upgrade it to a Safe(v1.4.1) smart account
             using <strong>EIP-7702</strong>. Your connected passkey will be set
             as an owner.
           </Typography>

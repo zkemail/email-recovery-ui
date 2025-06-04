@@ -26,7 +26,7 @@ const ALCHEMY_API_KEY = process.env.VITE_ALCHEMY_API_KEY;
 
 if (!RELAYER_PRIVATE_KEY || !ALCHEMY_API_KEY) {
   console.error(
-    "FATAL ERROR: RELAYER_PRIVATE_KEY or ALCHEMY_API_KEY is not defined in the server environment."
+    "FATAL ERROR: RELAYER_PRIVATE_KEY or ALCHEMY_API_KEY is not defined in the server environment.",
   );
   process.exit(1); // Exit if the key is not found
 }
