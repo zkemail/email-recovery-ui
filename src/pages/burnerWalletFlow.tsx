@@ -85,7 +85,7 @@ const BurnerWalletFlow = () => {
 
       // Step to set up the guardian email
       case STEPS.WALLET_ACTIONS:
-        return <WalletActions />;
+        return <WalletActions connectionInfoComponent={null} />;
 
       // Step to add the new owner's address and trigger/complete the recovery process. This flow is similar to Safe v1.3
       case STEPS.REQUESTED_RECOVERIES:

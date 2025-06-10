@@ -1,11 +1,14 @@
 import { Box, Grid, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { ReactNode, useContext, useEffect, useState } from "react";
 import { Button } from "./Button";
-import ConnectionInfoCard from "./ConnectionInfoCard";
 import { StepsContext } from "../App";
 import { STEPS } from "../constants";
 
-const WalletActions = () => {
+interface WalletActionsProps {
+  connectionInfoComponent?: ReactNode;
+}
+
+const WalletActions = ({ connectionInfoComponent }: WalletActionsProps) => {
   const stepsContext = useContext(StepsContext);
   const [guardianEmail, setGuardianEmail] = useState<string | null>(null);
 
@@ -28,7 +31,7 @@ const WalletActions = () => {
       <Typography variant="h2" sx={{ paddingBottom: "1rem" }}>
         Wallet Actions
       </Typography>
-      <ConnectionInfoCard />
+      {connectionInfoComponent}
       <Typography variant="body1" sx={{ color: "text.secondary" }}>
         Manage your wallet actions and recovery options.
       </Typography>

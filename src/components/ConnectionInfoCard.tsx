@@ -18,7 +18,7 @@ import { STEPS } from "../constants";
 import { useBurnerAccount } from "../context/BurnerAccountContext";
 import { useOwnerPasskey } from "../context/OwnerPasskeyContext";
 
-const ConnectionInfoCard = () => {
+const PasskeyConnectionInfoCard = () => {
   const stepsContext = useContext(StepsContext);
   const {
     ownerPasskeyCredential,
@@ -154,4 +154,4 @@ const ConnectionInfoCard = () => {
   );
 };
 
-export default ConnectionInfoCard;
+export default PasskeyConnectionInfoCard;
