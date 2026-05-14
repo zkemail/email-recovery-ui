@@ -12,7 +12,7 @@ import zkEmailLogo from "../assets/ZKEmailLogo.svg";
 
 const NAV_LINKS = [
   { link: "https://prove.email/blog", title: "Blog" },
-  { link: "https://docs.zk.email", title: "Docs" },
+  { link: "https://docs.zk.email/account-recovery/", title: "Docs" },
   { link: "https://prove.email/", title: "Demos" },
   { link: "https://t.me/zkemail", title: "Contact" },
 ];
